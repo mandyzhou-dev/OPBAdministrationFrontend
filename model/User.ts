@@ -1,9 +1,9 @@
 export class User{
     username!: string | undefined;
-    realname!: string | undefined;
+    name!: string | undefined;
 
-    constructor(username: string, realname: string){
+    constructor(username: string, name: string){
         this.username = username;
-        this.realname = realname;
+        this.name = name;
     }
 }

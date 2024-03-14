@@ -35,6 +35,7 @@ export default function TabLayout() {
             <Link href="/modal" asChild>
               <Pressable>
                 {({ pressed }) => (
+                  
                   <FontAwesome
                     name="info-circle"
                     size={25}
@@ -50,8 +51,16 @@ export default function TabLayout() {
       <Tabs.Screen
         name="two"
         options={{
-          title: 'Tab Two',
+          title: 'Assignment',
           tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="my"
+        options={{
+          title:'My',
+          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+
         }}
       />
     </Tabs>

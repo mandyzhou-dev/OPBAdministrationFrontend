@@ -3,12 +3,23 @@ import { StyleSheet } from 'react-native';
 import EditScreenInfo from '@/components/EditScreenInfo';
 import { Text, View } from '@/components/Themed';
 import { ScheduleTable } from '@/components/shift/ScheduleTable';
+import { useFocusEffect } from 'expo-router';
+import React from 'react';
 
 export default function TabOneScreen() {
+
+  const [refreshCount, setRefreshCount] = React.useState(0)
+
+  useFocusEffect(
+    React.useCallback(() =>{
+      setRefreshCount(refreshCount+1)
+    },[])
+  )
+  
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Schedule</Text>
-      <ScheduleTable></ScheduleTable>
+      <ScheduleTable ></ScheduleTable>
     </View>
   );
 }
