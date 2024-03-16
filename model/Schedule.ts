@@ -1,3 +1,4 @@
+import { Shift } from "./Shift";
 import { User } from "./User";
 
 export class Schedule{

@@ -9,7 +9,7 @@ import React from 'react';
 export default function TabOneScreen() {
 
   const [refreshCount, setRefreshCount] = React.useState(0)
-
+  
   useFocusEffect(
     React.useCallback(() =>{
       setRefreshCount(refreshCount+1)

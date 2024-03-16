@@ -7,5 +7,8 @@ export const getUserByRole = async (role:String):Promise<User[]>=>{
 
 export const login = async(username:String, password:String):Promise<Object>=>{
     const userRequest = new UserRequest()
-    return userRequest.login(username,password)
+    let data = await userRequest.login(username,password)
+    
+    localStorage.setItem("user", JSON.stringify(data));
+    return data;
 }

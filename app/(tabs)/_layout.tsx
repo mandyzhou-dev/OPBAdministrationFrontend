@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Link, Tabs } from 'expo-router';
 import { Pressable } from 'react-native';
@@ -16,6 +16,15 @@ function TabBarIcon(props: {
 }
 
 export default function TabLayout() {
+  const [showAssignment, setShowAssignment]= useState(false);
+  useEffect(()=>{
+    if(localStorage.getItem("user")){
+        setShowAssignment(true);
+    }
+    else{
+      setShowAssignment(false);
+    }
+  });
   const colorScheme = useColorScheme();
 
   return (
@@ -52,6 +61,7 @@ export default function TabLayout() {
         name="two"
         options={{
           title: 'Assignment',
+          href:showAssignment?"two":null,
           tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
         }}
       />

@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { Badge, BadgeText, InfoIcon, BadgeIcon, VStack, HStack} from "@gluestack-ui/themed"
 import { TextInput, View } from "react-native"
 import { User } from "@/model/User";
@@ -17,10 +17,18 @@ interface ShiftCellProps {
 export const ShiftCell: React.FC<ShiftCellProps> = ({ workers, shifts,onUpdated }) => {
     const [currentShift, setCurrentShift] = React.useState(new Shift())
     const [showModal, setShowModal] = React.useState(false)
+
+
+
     const callModals=(currentShift:Shift)=>{
         console.log("cliked")
-        setCurrentShift(currentShift)
-        setShowModal(true);
+        try{
+            const items = JSON.parse(localStorage.getItem("user")).roles;
+            if(items=="Manager") {
+            setCurrentShift(currentShift)
+            setShowModal(true);
+        }}catch(error){
+        }
     }
 
     return (
