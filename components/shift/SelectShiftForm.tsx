@@ -44,7 +44,22 @@ export const SelectShiftFrom: React.FC = () => {
         console.log(checkedUsers)
     }
     return (
+        
         <View>
+            {showSuccessAlert?
+            (<Alert mx="$2.5" action="success" variant="solid" >
+                <AlertIcon as={InfoIcon} mr="$3" />
+                <AlertText>
+                    Successfully submitted!
+                </AlertText>
+            </Alert>):""}
+            {showErrorAlert?
+            (<Alert mx="$2.5" action="error" variant="solid" >
+                <AlertIcon as={InfoIcon} mr="$3" />
+                <AlertText>
+                    Duplicate Shift, submitted failed!
+                </AlertText>
+            </Alert>):""}
             <Card margin={3}>
                 <Text color="$text500" lineHeight="$xs">
                     Date
@@ -99,20 +114,7 @@ export const SelectShiftFrom: React.FC = () => {
                     <ButtonIcon as={ArrowRightIcon} />
                 </Button>
             </Card>
-            {showSuccessAlert?
-            (<Alert mx="$2.5" action="success" variant="solid" >
-                <AlertIcon as={InfoIcon} mr="$3" />
-                <AlertText>
-                    Successfully submitted!
-                </AlertText>
-            </Alert>):""}
-            {showErrorAlert?
-            (<Alert mx="$2.5" action="error" variant="solid" >
-                <AlertIcon as={InfoIcon} mr="$3" />
-                <AlertText>
-                    Duplicate Shift, submitted failed!
-                </AlertText>
-            </Alert>):""}
+            
         </View>
     )
 }

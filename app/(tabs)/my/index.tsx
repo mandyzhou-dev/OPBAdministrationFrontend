@@ -1,9 +1,11 @@
-import { StyleSheet } from 'react-native';
+import { DeviceEventEmitter, StyleSheet } from 'react-native';
 import { View } from '@/components/Themed';
 import { useEffect, useState } from 'react';
 import * as UserService from '@/service/UserService';
 import {Login} from '@/components/Login';
 import {Profile} from '@/components/Profile page';
+import { router } from 'expo-router';
+import { ScrollView } from '@gluestack-ui/themed';
 
 export default function MyScreen() {
 
@@ -14,13 +16,21 @@ export default function MyScreen() {
             setShowLogin(false)
             console.log(items)
         }
+        else setShowLogin(true);
+        
     },[showLogin]);
     return (
-        <View style={styles.container}>
-            <View style={styles.separator} >
-                {showLogin?<Login onLogined={() => setShowLogin(false)}></Login>:<Profile></Profile>}
+        <ScrollView style={styles.container}>
+            <View style={styles.container}>
+                <View style={styles.separator} >
+                    {showLogin?<Login onLogined={() => {
+                        setShowLogin(false)
+                        DeviceEventEmitter.emit("userlogin", "logined")
+                        router.navigate("")
+                    }}></Login>:<Profile></Profile>}
+                </View>
             </View>
-        </View>
+        </ScrollView>
     );
 }
 
@@ -37,7 +47,7 @@ const styles = StyleSheet.create({
     separator: {
         marginVertical: 50,
         height: 0,
-        width: '90%',
+        width: '100%',
         //alignItems:'center'
     },
 });

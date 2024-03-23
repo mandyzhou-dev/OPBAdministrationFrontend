@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { Link, Tabs } from 'expo-router';
+import { Link, Tabs, router } from 'expo-router';
 import { Pressable } from 'react-native';
 
 import Colors from '@/constants/Colors';
@@ -17,14 +17,19 @@ function TabBarIcon(props: {
 
 export default function TabLayout() {
   const [showAssignment, setShowAssignment]= useState(false);
+  const [showSchedule,setShowSchedule] = useState(false);
   useEffect(()=>{
-    if(localStorage.getItem("user")){
-        setShowAssignment(true);
+    let user = JSON.parse(localStorage.getItem("user"))
+    if(user){
+      setShowSchedule(true)
+      if(user != null && user.roles=='Manager')
+        setShowAssignment(true)
     }
     else{
       setShowAssignment(false);
+      setShowSchedule(false);
     }
-  });
+  },);
   const colorScheme = useColorScheme();
 
   return (
@@ -39,6 +44,7 @@ export default function TabLayout() {
         name="index"
         options={{
           title: 'Schedule',
+          href:showSchedule?"":null,
           tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
           headerRight: () => (
             <Link href="/modal" asChild>
@@ -69,8 +75,8 @@ export default function TabLayout() {
         name="my"
         options={{
           title:'My',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
-
+          tabBarIcon: ({ color }) => <FontAwesome size={28} name="cog" color={color} />,
+          href:'my'
         }}
       />
     </Tabs>

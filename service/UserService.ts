@@ -12,3 +12,8 @@ export const login = async(username:String, password:String):Promise<Object>=>{
     localStorage.setItem("user", JSON.stringify(data));
     return data;
 }
+
+export const resetPassword = async(username:String, password:String):Promise<Object>=>{
+    const userRequest = new UserRequest()
+    return userRequest.resetPassword(username,password);
+}

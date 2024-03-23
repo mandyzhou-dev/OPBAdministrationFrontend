@@ -3,6 +3,7 @@ import { View } from '@/components/Themed';
 import { Image, ButtonText, Button, Text, Input, InputField, FormControl, VStack, Heading, InputSlot, InputIcon, EyeIcon, EyeOffIcon, Center, InfoIcon, HStack } from '@gluestack-ui/themed';
 import { useState } from 'react';
 import {Alert, AlertIcon, AlertText} from '@gluestack-ui/themed'
+import {Link, router} from 'expo-router'
 import * as UserService from '@/service/UserService';
 interface LoginProps {
     //setShowLogin:React.Dispatch<any>;
@@ -33,7 +34,7 @@ export const Login: React.FC<LoginProps> = ({ onLogined }) => {
     }
 
     return (
-        <View >
+        <View>
             <Center margin={50} >
                 <Image source={"../assets/images/brand.jpeg"} size='xs' />
                 <Text color='white' fontWeight='bold'>Welcome back.</Text>
@@ -56,7 +57,7 @@ export const Login: React.FC<LoginProps> = ({ onLogined }) => {
                     </Heading>
                     <VStack space="xs">
                         <Text color="$text500" lineHeight="$xs">
-                            Email
+                            Username/Email
                         </Text>
                         <Input>
                             <InputField value={username} onChangeText={(d) => setUsername(d)} type="text" placeholder='Enter your Email address' />
@@ -81,7 +82,9 @@ export const Login: React.FC<LoginProps> = ({ onLogined }) => {
                     <Button
                         ml="auto"
                         variant="link"
-                        onPress={login}
+                        onPress={() => {
+                            router.navigate("/register");
+                        }}
                         marginLeft={0}
                     >
                         <ButtonText >Register</ButtonText>

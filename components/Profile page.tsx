@@ -1,38 +1,91 @@
 import { StyleSheet } from 'react-native';
 import TextField from '@mui/material/TextField';
-import { Card, Center, Text, View } from '@gluestack-ui/themed';
+import { ButtonText, Card, Center, Text, View, Button,Pressable, HStack, VStack } from '@gluestack-ui/themed';
 import { User } from '@/model/User';
+import { ScrollView } from 'react-native';
+import { router } from 'expo-router';
+import moment from 'moment';
 
 export const Profile: React.FC = () => {
+        //password ，birthdate,roles,sin and documents
+    //They donot need to see their birthdate roles, sin , legalname and documents
+    //They donnot need to assign their roles .
     const user = JSON.parse(localStorage.getItem("user"));
 
     return (
-        <View >
-            <Center margin={3} >
-                <Text size="2xl" color="white" >Profile Page</Text>
-            </Center>
-            <Card margin={3}>
-                <TextField
-                    required
-                    id="outlined-required"
-                    label="Name"
-                    defaultValue={user.name}
-                />
-            </Card>
-            <Card margin={3}>
-            <TextField
-                    required
-                    id="outlined-required"
-                    label="roles"
-                    defaultValue={user.roles}
-                />
-            </Card>
-            <Card margin={3}>
-                <Text>
-                    Email
-                </Text>
-            </Card>
-        </View>
+            <VStack>
+                <Center margin={3} >
+                    <Text size="2xl" color="white" >{user.name}</Text>
+                </Center>
+                <Card margin={3}>
+                    <TextField
+                        required
+                        id="outlined-required"
+                        label="Username"
+                        defaultValue={user.username}
+                    />
+                </Card>
+                <Card margin={3}>
+                    <Pressable
+                        onPress={() => router.navigate("/setPassword?username=" + user.username)}
+                        p="$2"
+                        //bg="$primary500"
+                        $hover-bg="$primary400"
+                    >
+                        <Text>Set Password</Text>
+                    </Pressable>
+                </Card>
+                
+                <Card margin={3}>
+                    <TextField
+                            required
+                            id="outlined-required"
+                            label="Email"
+                            defaultValue={user.email}
+                        />
+                </Card>
+                <Card margin={3}>
+                    <TextField
+                            required
+                            id="outlined-required"
+                            label="Birthdate"
+                            defaultValue={moment(user.birthdate).format("YYYY/MM/DD")}
+                            
+                        />
+                </Card>
+                <Card margin={3}>
+                    <TextField
+                            required
+                            id="outlined-required"
+                            label="PhoneNumber"
+                            defaultValue={user.phoneNumber}
+                        />
+                </Card>
+
+                <Card margin={3}>
+                    <TextField
+                            required
+                            id="outlined-required"
+                            label="Address"
+                            defaultValue={user.address}
+                        />
+                </Card>
+                <Button
+                    ml="auto"
+                    variant="link"
+                    onPress={() => {
+                        localStorage.removeItem('user');
+                        //should router to my,but some bugs that:log in cannot fetch the name
+                        window.location.reload();
+
+                        //router.navigate("/my")
+                    }
+                    }
+                    marginLeft={0}
+                >
+                    <ButtonText color='white'>Log out</ButtonText>
+                </Button>
+            </VStack>
     );
 }
 

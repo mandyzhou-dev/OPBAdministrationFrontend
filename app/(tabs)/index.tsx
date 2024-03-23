@@ -1,18 +1,28 @@
-import { StyleSheet } from 'react-native';
+import { DeviceEventEmitter, StyleSheet } from 'react-native';
 
 import EditScreenInfo from '@/components/EditScreenInfo';
 import { Text, View } from '@/components/Themed';
 import { ScheduleTable } from '@/components/shift/ScheduleTable';
-import { useFocusEffect } from 'expo-router';
-import React from 'react';
+import { router, useFocusEffect } from 'expo-router';
+import React, { useEffect } from 'react';
 
 export default function TabOneScreen() {
 
   const [refreshCount, setRefreshCount] = React.useState(0)
-  
+  let listener = null;
+  useEffect(() =>{
+    
+
+  })
+
   useFocusEffect(
+    
     React.useCallback(() =>{
       setRefreshCount(refreshCount+1)
+      let user = JSON.parse(localStorage.getItem("user"))
+      if(user == null){
+        router.navigate('my')
+      }
     },[])
   )
   

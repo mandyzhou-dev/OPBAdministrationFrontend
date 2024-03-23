@@ -8,7 +8,7 @@ export class UserRequest{
 
     getByRole = async (role: String):Promise<User[]> =>{
         try{
-            const response:AxiosResponse = await axios.get('http://localhost:8080/presentor/user/getUserByRoleName',{
+            const response:AxiosResponse = await axios.get('http://localhost:8080/api/presentor/user/getUserByRoleName',{
                 params:{
                     role: role
                 }
@@ -21,10 +21,21 @@ export class UserRequest{
     login = async(username:String, password:String):Promise<User> =>{
         try{
             
-            const response:AxiosResponse = await axios.post('http://localhost:8080/login',{
+            const response:AxiosResponse = await axios.post('http://localhost:8080/api/user/login',{
                     username: username,
                     password:password,   
             });
+            return response.data;
+        }catch(e){
+            throw new Error("Post Failure"+(e as Error).message)
+        }
+    }
+
+    resetPassword = async(username:String,password:String):Promise<Object>=>{
+        try{
+            const response:AxiosResponse = await axios.post('http://localhost:8080/api/user/'+username+'/password',
+                password
+            );
             return response.data;
         }catch(e){
             throw new Error("Post Failure"+(e as Error).message)

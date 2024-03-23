@@ -1,9 +1,10 @@
 import React, { useEffect } from "react";
-import {Text, VStack, Box, HStack, Center, Button, ButtonIcon, ArrowLeftIcon, ArrowRightIcon} from "@gluestack-ui/themed"
-import { View, ScrollView } from "react-native";
+import {Text, VStack, Box, HStack, Center, Button, ButtonIcon, ArrowLeftIcon, ArrowRightIcon, ButtonText, RefreshControl, RepeatIcon} from "@gluestack-ui/themed"
+import { View, ScrollView, DeviceEventEmitter } from "react-native";
 import { ShiftCell } from "./ShiftCell";
-import { getScheduleThisWeek } from "@/service/ShiftService";
+import { getScheduleThisWeek, getUserScheduleThisWeek } from "@/service/ShiftService";
 import { Schedule } from "@/model/Schedule";
+import { router } from "expo-router";
 
 
 export const ScheduleTable:React.FC = () => {
@@ -11,19 +12,41 @@ export const ScheduleTable:React.FC = () => {
     const [shiftList, setShiftList] = React.useState<Schedule[]>([])
     const [currentDate, setCurrentDate] = React.useState(new Date())
     const [refreshCount, setRefreshCount] = React.useState(0)
-
+    let listener
+    
     useEffect(() => {
-        console.log("reload")
-        getScheduleThisWeek(currentDate).then(
-            (data) => {
-                console.log(JSON.stringify(data))
-                setShiftList(data)
-            }
-        ).catch(
-            (error) => {
-                console.log((error as Error).message)
-            }
-        )
+        let user = JSON.parse(localStorage.getItem('user'));
+        if(user == null){
+            listener = DeviceEventEmitter.addListener('userlogin', () =>{
+                setRefreshCount(refreshCount + 1)
+            })
+            return ;
+        }
+        if(user.roles=='Manager'){
+            getScheduleThisWeek(currentDate).then(
+                (data) => {
+                    console.log(JSON.stringify(data))
+                    setShiftList(data)
+                }
+            ).catch(
+                (error) => {
+                    console.log((error as Error).message)
+                }
+            )
+        }
+        else{
+            getUserScheduleThisWeek(user.username,currentDate).then(
+                (data) => {
+                    console.log(JSON.stringify(data))
+                    setShiftList(data)
+                }
+            ).catch(
+                (error) => {
+                    console.log((error as Error).message)
+                }
+            )
+        }
+
     }, [currentDate, refreshCount])
 
     const reload=()=>{
@@ -55,6 +78,7 @@ export const ScheduleTable:React.FC = () => {
                 <Button width={"$1/7"} variant="link" onPress={()=>{onClickNextWeek()}}>
                 <ButtonIcon as={ArrowRightIcon} color="blue"/>
                 </Button>
+                
             </HStack>
             
             <ScrollView horizontal={true} >
@@ -76,6 +100,11 @@ export const ScheduleTable:React.FC = () => {
                     })}
                 </HStack>
             </ScrollView>
+
+            <Button width={"$1/6"}  onPress={()=>{reload()}} margin={10}>
+                    
+                    <ButtonIcon as={RepeatIcon}/>
+                </Button>
             
         </View>
     )
