@@ -5,18 +5,18 @@ import { Text, View } from '@/components/Themed';
 import { ScheduleTable } from '@/components/shift/ScheduleTable';
 import { router, useFocusEffect } from 'expo-router';
 import React, { useEffect } from 'react';
+import { Card, ScrollView } from '@gluestack-ui/themed';
+import { Statistic } from '@/components/statistics/WorkTimeStatisticItem';
+import { Statistics } from '@/components/statistics/WorkTimeStatisticList';
 
 export default function TabOneScreen() {
 
   const [refreshCount, setRefreshCount] = React.useState(0)
   let listener = null;
   useEffect(() =>{
-    
-
   })
 
   useFocusEffect(
-    
     React.useCallback(() =>{
       setRefreshCount(refreshCount+1)
       let user = JSON.parse(localStorage.getItem("user"))
@@ -27,10 +27,14 @@ export default function TabOneScreen() {
   )
   
   return (
-    <View style={styles.container}>
+    <ScrollView >
+        <View style={styles.container}>
       <Text style={styles.title}>Schedule</Text>
       <ScheduleTable ></ScheduleTable>
+      
     </View>
+    </ScrollView>
+    
   );
 }
 

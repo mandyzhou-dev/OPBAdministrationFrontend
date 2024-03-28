@@ -45,7 +45,7 @@ export default function TabLayout() {
         options={{
           title: 'Schedule',
           href:showSchedule?"":null,
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          tabBarIcon: ({ color }) => <TabBarIcon name="calendar" color={color} />,
           headerRight: () => (
             <Link href="/modal" asChild>
               <Pressable>
@@ -68,7 +68,7 @@ export default function TabLayout() {
         options={{
           title: 'Assignment',
           href:showAssignment?"two":null,
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          tabBarIcon: ({ color }) => <TabBarIcon name="edit" color={color} />,
         }}
       />
       <Tabs.Screen

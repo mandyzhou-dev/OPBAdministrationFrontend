@@ -5,6 +5,7 @@ import { ShiftCell } from "./ShiftCell";
 import { getScheduleThisWeek, getUserScheduleThisWeek } from "@/service/ShiftService";
 import { Schedule } from "@/model/Schedule";
 import { router } from "expo-router";
+import { Statistics, WorkTimeStatisticList } from "../statistics/WorkTimeStatisticList";
 
 
 export const ScheduleTable:React.FC = () => {
@@ -12,6 +13,7 @@ export const ScheduleTable:React.FC = () => {
     const [shiftList, setShiftList] = React.useState<Schedule[]>([])
     const [currentDate, setCurrentDate] = React.useState(new Date())
     const [refreshCount, setRefreshCount] = React.useState(0)
+    const [showStatistic, setShowStatistic] = React.useState(false);
     let listener
     
     useEffect(() => {
@@ -23,9 +25,9 @@ export const ScheduleTable:React.FC = () => {
             return ;
         }
         if(user.roles=='Manager'){
+            setShowStatistic(true);
             getScheduleThisWeek(currentDate).then(
                 (data) => {
-                    console.log(JSON.stringify(data))
                     setShiftList(data)
                 }
             ).catch(
@@ -37,7 +39,7 @@ export const ScheduleTable:React.FC = () => {
         else{
             getUserScheduleThisWeek(user.username,currentDate).then(
                 (data) => {
-                    console.log(JSON.stringify(data))
+                    //console.log(JSON.stringify(data))
                     setShiftList(data)
                 }
             ).catch(
@@ -65,7 +67,14 @@ export const ScheduleTable:React.FC = () => {
         newDate.setDate(newDate.getDate()-7);
         setCurrentDate(newDate)
     }
-
+    const calculate=()=>{
+        let end = shiftList[6]?.date;
+        end?.setHours(23);
+        end?.setMinutes(59,59);
+        return(
+            <WorkTimeStatisticList start={shiftList[0]?.date} end={end}></WorkTimeStatisticList>
+        )
+    }
     return (
         <View>
             <HStack margin={"$1"}>
@@ -104,7 +113,8 @@ export const ScheduleTable:React.FC = () => {
             <Button width={"$1/6"}  onPress={()=>{reload()}} margin={10}>
                     
                     <ButtonIcon as={RepeatIcon}/>
-                </Button>
+            </Button>
+            {showStatistic?(calculate()):""}
             
         </View>
     )

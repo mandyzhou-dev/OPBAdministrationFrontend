@@ -4,17 +4,17 @@ import EditScreenInfo from '@/components/EditScreenInfo';
 import { Text, View } from '@/components/Themed';
 import { SelectShiftFrom } from '@/components/shift/SelectShiftForm';
 import { useEffect, useState } from 'react';
+import { ScrollView } from '@gluestack-ui/themed';
 
 export default function TabTwoScreen() {
 
     
   return (
-    <View style={styles.container}>
-      <View style={styles.separator}>
+    <ScrollView style={styles.container}>
+        <View style={styles.container}>     
             <SelectShiftFrom></SelectShiftFrom>
-      </View>
-      
     </View>
+    </ScrollView>
   );
 }
 
