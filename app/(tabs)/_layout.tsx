@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Link, Tabs, router } from 'expo-router';
 import { Pressable } from 'react-native';
-
+import { Entypo } from '@expo/vector-icons';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import { useClientOnlyValue } from '@/components/useClientOnlyValue';
@@ -39,6 +39,7 @@ export default function TabLayout() {
         // Disable the static render of the header on web
         // to prevent a hydration error in React Navigation v6.
         headerShown: useClientOnlyValue(false, true),
+        tabBarLabelPosition:'below-icon'
       }}>
       <Tabs.Screen
         name="index"
@@ -71,7 +72,17 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => <TabBarIcon name="edit" color={color} />,
         }}
       />
+      
       <Tabs.Screen
+        name="application"
+        options={{
+          title:'Application',
+          tabBarIcon: ({ color }) => <Entypo size={28} name="documents" color={color} />,
+          href:'application'
+        }}
+      />
+
+<Tabs.Screen
         name="my"
         options={{
           title:'My',
@@ -80,5 +91,6 @@ export default function TabLayout() {
         }}
       />
     </Tabs>
+    
   );
 }

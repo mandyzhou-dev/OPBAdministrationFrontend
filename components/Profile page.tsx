@@ -29,8 +29,9 @@ export const Profile: React.FC = () => {
                     <Pressable
                         onPress={() => router.navigate("/setPassword?username=" + user.username)}
                         p="$2"
+                        bg="$white"
                         //bg="$primary500"
-                        $hover-bg="$primary400"
+                        $hover-bg="$light200"
                     >
                         <Text>Set Password</Text>
                     </Pressable>

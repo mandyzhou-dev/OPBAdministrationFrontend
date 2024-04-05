@@ -16,7 +16,7 @@ export const WorkTimeStatisticList: React.FC<StatisticListProps> = ({start,end})
         if(start != undefined && end != undefined){
             getStatisticByGroupAndDate("groupname",start,end).then(
                 (data) => {
-                    console.log(JSON.stringify(data))
+                    //console.log(JSON.stringify(data))
                     setStatisticList(data);
                 }
             ).catch(
