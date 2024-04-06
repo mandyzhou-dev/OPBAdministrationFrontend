@@ -18,10 +18,12 @@ function TabBarIcon(props: {
 export default function TabLayout() {
   const [showAssignment, setShowAssignment]= useState(false);
   const [showSchedule,setShowSchedule] = useState(false);
+  const [showApplication,setShowApplication] = useState(false);
   useEffect(()=>{
     let user = JSON.parse(localStorage.getItem("user"))
     if(user){
       setShowSchedule(true)
+      setShowApplication(true)
       if(user != null && user.roles=='Manager')
         setShowAssignment(true)
     }
@@ -77,8 +79,8 @@ export default function TabLayout() {
         name="application"
         options={{
           title:'Application',
+          href:showApplication?"application":null,
           tabBarIcon: ({ color }) => <Entypo size={28} name="documents" color={color} />,
-          href:'application'
         }}
       />
 

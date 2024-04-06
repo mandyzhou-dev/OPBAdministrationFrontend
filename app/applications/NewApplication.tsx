@@ -1,8 +1,8 @@
 
 import { RequiredFormControl } from "@/components/FreeStyle/RequiredFormControl";
 import { LeaveApplicationRequest } from "@/request/LeaveApplicationRequest";
-import { InputField, Input, ButtonText, Button, FormControl, FormControlLabel, FormControlLabelText, Text, Card, Textarea, TextareaInput, ScrollView } from "@gluestack-ui/themed";
-import moment from "moment";
+import { InputField, Input, ButtonText, Button, FormControl, FormControlLabel, FormControlLabelText, Text, Card, Textarea, TextareaInput, ScrollView, Alert, AlertIcon, AlertText, InfoIcon } from "@gluestack-ui/themed";
+import moment, { duration } from "moment";
 import React from "react";
 
 
@@ -16,7 +16,12 @@ export default function NewApplication() {
     const [durationValue, setDurationValue] = React.useState("oneday");
     const [dateValue, setDateValue] = React.useState("");
     const [timeValue,setTimeValue] = React.useState("");
-
+    const [rangeStartDate,setRangeStartDate] = React.useState("");
+    const [rangeEndDate,setRangeEndDate] = React.useState("")
+    const [rangeStartIsRequired,setRangeStartIsRequired] = React.useState(false);
+    const [rangeEndIsRequired,setRangeEndIsRequired] = React.useState(false);
+    const [showSuccessAlert,setShowSuccessAlert] = React.useState(false);
+    const [showErrorAlert,setShowErrorAlert] = React.useState(false);
 
     const submit = () => {
         if (!leaveTypeValue) {
@@ -27,14 +32,28 @@ export default function NewApplication() {
             setCommentIsRequired(true);
             return;
         }
-        if(!dateValue){
-            setDateIsRequired(true);
-            return;
+        if(durationValue=="oneday"){
+            if(!dateValue){
+                setDateIsRequired(true);
+                return;
+            }
+            if(!timeValue){
+                setTimeIsRequired(true);
+                return;
+            }
         }
-        if(!timeValue){
-            setTimeIsRequired(true);
-            return;
+
+        if(durationValue=="range"){
+            if(!rangeStartDate){
+                setRangeStartIsRequired(true);
+                return;
+            }
+            if(!rangeEndDate){
+                setRangeEndIsRequired(true);
+                return;
+            }
         }
+        
         // console.log(leaveTypeValue);
         // console.log(commentValue);
         // console.log(durationValue);
@@ -48,12 +67,20 @@ export default function NewApplication() {
             alert("Submit Failure!")
             return;
         }   
-        
+        let start,end;
         let username = JSON.parse(localStorage.getItem("user")).username
-        let starttime = timeValue.split('-')[0];
-        let endtime = timeValue.split('-')[1];
-        let start = moment(dateValue+' '+starttime,"YYYY-MM-DD hh:mm").format();
-        let end = moment(dateValue+' '+endtime,"YYYY-MM-DD hh:mm").format();
+        if(durationValue=="oneday"){
+            let starttime = timeValue.split('-')[0];
+            let endtime = timeValue.split('-')[1];
+            start = moment(dateValue+' '+starttime,"YYYY-MM-DD HH:mm").format();
+            end = moment(dateValue+' '+endtime,"YYYY-MM-DD HH:mm").format();
+        }
+        if(durationValue=="range"){
+            console.log(rangeStartDate+' 00:00')
+            start = moment(rangeStartDate+' 00:00',"YYYY-MM-DD HH:mm").format();
+            end = moment(rangeEndDate+' 23:59',"YYYY-MM-DD HH:mm").format();
+        }
+        
         let result = {
             applicant: username,
             start: start,
@@ -63,13 +90,39 @@ export default function NewApplication() {
         }
         console.log(result);
         const leaveApplicationRequest = new LeaveApplicationRequest;
-        leaveApplicationRequest.putLeaveApplication(result);
+        leaveApplicationRequest.putLeaveApplication(result).then(()=>{
+            setShowSuccessAlert(true)
+            setTimeout(()=>{setShowSuccessAlert(false)},1000)}
+        ).catch(
+            (error)=>{
+                setShowErrorAlert(true);
+                setTimeout(()=>{setShowErrorAlert(false)},1000)
+                
+            }
+        );
 
 
 
     }
     return (
         <ScrollView>
+            {showSuccessAlert?
+            (<Alert mx="$2.5" action="success" variant="solid" >
+                <AlertIcon as={InfoIcon} mr="$3" />
+                <AlertText>
+                    Successfully submitted!
+                </AlertText>
+            </Alert>):""}
+            {
+                showErrorAlert?
+                (
+                    <Alert mx="$2.5" action="error" variant="solid" >
+                <AlertIcon as={InfoIcon} mr="$3" />
+                <AlertText>
+                    Failed!
+                </AlertText>
+            </Alert>
+                ):""}
             <RequiredFormControl isRequired={leaveTypeIsRequired}
                 isInvalid={leaveTypeIsRequired}
                 title="Leave Type"
@@ -104,7 +157,10 @@ export default function NewApplication() {
                 <Card>
                     <FormControl isRequired={dateIsRequired} isInvalid={dateIsRequired}>
                         <FormControlLabel>
-                            Day
+                            <FormControlLabelText>
+                                Day
+                            </FormControlLabelText>
+                            
                         </FormControlLabel>
                         <Input
                             size="md"
@@ -114,19 +170,48 @@ export default function NewApplication() {
                     </FormControl>
                     <FormControl isRequired={timeIsRequired} isInvalid={timeIsRequired}>
                         <FormControlLabel>
-                            Time
+                            <FormControlLabelText>
+                                Time
+                            </FormControlLabelText>
+                            
                         </FormControlLabel>
                         <Input
                             size="md"
 
                         >
-                            <InputField placeholder="hh:mm-hh:mm" onChangeText={(value)=>{setTimeValue(value)}}/>
+                            <InputField placeholder="HH:mm-HH:mm" onChangeText={(value)=>{setTimeValue(value)}}/>
                         </Input>
                     </FormControl>
 
                 </Card>
                 :
-                <Card>b</Card>
+                <Card>
+                    <FormControl isRequired={rangeStartIsRequired} isInvalid={rangeStartIsRequired}>
+                        <FormControlLabel>
+                            <FormControlLabelText>
+                                Start Date
+                            </FormControlLabelText>
+                        </FormControlLabel>
+                        <Input
+                            size="md"
+                        >
+                            <InputField placeholder="YYYY-MM-DD" onChangeText={(value)=>{setRangeStartDate(value)}} />
+                        </Input>
+                    </FormControl>
+                    <FormControl isRequired={rangeEndIsRequired} isInvalid={rangeEndIsRequired}>
+                        <FormControlLabel>
+                            <FormControlLabelText>
+                                End Date
+                            </FormControlLabelText>
+                        </FormControlLabel>
+                        <Input
+                            size="md"
+
+                        >
+                            <InputField placeholder="YYYY-MM-DD" onChangeText={(value)=>{setRangeEndDate(value)}}/>
+                        </Input>
+                    </FormControl>
+                </Card>
             }
 
             <Card>

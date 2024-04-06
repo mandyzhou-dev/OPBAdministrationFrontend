@@ -1,14 +1,16 @@
-import { BadgeText, Text, Card, Input, InputField, ScrollView, HStack, Icon, CircleIcon, BadgeIcon, InfoIcon, VStack, Button, Tooltip, TooltipContent, TooltipText } from "@gluestack-ui/themed"
+import {CheckIcon, Textarea,TextareaInput,BadgeText, Text, Card, Input, InputField, ScrollView, HStack, Icon, CircleIcon, BadgeIcon, InfoIcon, VStack, Button, Tooltip, TooltipContent, TooltipText, Heading, CloseIcon } from "@gluestack-ui/themed"
 interface ApplicationCardforEProps{
     leaveType:string,
-    leaveTime:string
+    start:string,
+    end:string,
+    status:string
 }
-export const ApplicationCardforE: React.FC<ApplicationCardforEProps> = ({leaveType,leaveTime}) => {
+export const ApplicationCardforE: React.FC<ApplicationCardforEProps> = ({leaveType,start,end,status,rejectReason}) => {
     return(
         <Card margin={10} width={360}>
                     <HStack margin={3}>
                         <VStack w={"10%"}>
-                            <BadgeIcon as={CircleIcon} color={(leaveType=="Sick Leave")?"green":"$red500"} />
+                            <BadgeIcon as={CircleIcon} color={(leaveType=="SICK")?"green":"$red500"} />
                         </VStack>
                         <VStack w={"85%"}>
                             <BadgeText >{leaveType}</BadgeText>
@@ -33,19 +35,43 @@ export const ApplicationCardforE: React.FC<ApplicationCardforEProps> = ({leaveTy
                     <HStack margin={3}>
                         <VStack w={"85%"}>
                             <Text>
-                                {leaveTime}
+                                {start}
                             </Text>
                         </VStack >
                         <VStack w={"25%"}>
                             <Text>
-                                one day
+                                
                             </Text>
                         </VStack>
                     </HStack>
-
+                    <HStack margin={3}>
+                        <VStack w={"85%"}>
+                            <Text>
+                                {end}
+                            </Text>
+                        </VStack >
+                        <VStack w={"25%"}>
+                            <Text>
+                                
+                            </Text>
+                        </VStack>
+                    </HStack>
                     <Text margin={3}>
-                        Approved by Admin
+                        {status}
+                        <BadgeIcon as={(status=="approved")?CheckIcon:CloseIcon} />
                     </Text>
+                    <VStack>
+                <Heading>
+                    Comment
+                </Heading>
+                <Textarea
+                    size="md"
+                    isReadOnly
+                    w="$64"
+                >
+                    <TextareaInput value={rejectReason} />
+                </Textarea>
+            </VStack>
                     <HStack margin={3}>
                         <VStack w={"50%"}>
 
