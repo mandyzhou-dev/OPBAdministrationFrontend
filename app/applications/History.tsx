@@ -41,7 +41,8 @@ export default function History(){
                                     end={moment(application.end).format("YYYY-MM-DD HH:mm")}
                                     reason={application.reason} 
                                     rejectReason={application.rejectReason}
-                                    status={application.status}/>
+                                    status={application.status}
+                                    note={application.note}/>
                             </div>
                         )
                     })

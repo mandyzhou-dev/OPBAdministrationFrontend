@@ -158,20 +158,20 @@ export default function NewApplication() {
                     <FormControl isRequired={dateIsRequired} isInvalid={dateIsRequired}>
                         <FormControlLabel>
                             <FormControlLabelText>
-                                Day
+                                Day(Format:YYYYMMDD)
                             </FormControlLabelText>
                             
                         </FormControlLabel>
                         <Input
                             size="md"
                         >
-                            <InputField placeholder="YYYY-MM-DD" onChangeText={(value)=>{setDateValue(value)}} />
+                            <InputField placeholder="YYYYMMDD" onChangeText={(value)=>{setDateValue(value)}} />
                         </Input>
                     </FormControl>
                     <FormControl isRequired={timeIsRequired} isInvalid={timeIsRequired}>
                         <FormControlLabel>
                             <FormControlLabelText>
-                                Time
+                                Time(Format:HHmm-HHmm)
                             </FormControlLabelText>
                             
                         </FormControlLabel>
@@ -179,7 +179,7 @@ export default function NewApplication() {
                             size="md"
 
                         >
-                            <InputField placeholder="HH:mm-HH:mm" onChangeText={(value)=>{setTimeValue(value)}}/>
+                            <InputField placeholder="HHmm-HHmm" onChangeText={(value)=>{setTimeValue(value)}}/>
                         </Input>
                     </FormControl>
 
@@ -189,26 +189,26 @@ export default function NewApplication() {
                     <FormControl isRequired={rangeStartIsRequired} isInvalid={rangeStartIsRequired}>
                         <FormControlLabel>
                             <FormControlLabelText>
-                                Start Date
+                                Start Date(Format:YYYYMMDD)
                             </FormControlLabelText>
                         </FormControlLabel>
                         <Input
                             size="md"
                         >
-                            <InputField placeholder="YYYY-MM-DD" onChangeText={(value)=>{setRangeStartDate(value)}} />
+                            <InputField placeholder="YYYYMMDD" onChangeText={(value)=>{setRangeStartDate(value)}} />
                         </Input>
                     </FormControl>
                     <FormControl isRequired={rangeEndIsRequired} isInvalid={rangeEndIsRequired}>
                         <FormControlLabel>
                             <FormControlLabelText>
-                                End Date
+                                End Date(Format:YYYYMMDD)
                             </FormControlLabelText>
                         </FormControlLabel>
                         <Input
                             size="md"
 
                         >
-                            <InputField placeholder="YYYY-MM-DD" onChangeText={(value)=>{setRangeEndDate(value)}}/>
+                            <InputField placeholder="YYYYMMDD" onChangeText={(value)=>{setRangeEndDate(value)}}/>
                         </Input>
                     </FormControl>
                 </Card>

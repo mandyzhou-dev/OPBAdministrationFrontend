@@ -9,6 +9,7 @@ export class LeaveApplication{
     status:string|undefined;
     rejectReason:string|undefined;
     reason: string|undefined;  
+    note:string|undefined;
     constructor () {
 
     }

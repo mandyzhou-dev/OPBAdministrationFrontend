@@ -1,17 +1,20 @@
 import { Heading, BadgeText, Text, Card, Input, InputField, ScrollView, HStack, Icon, CircleIcon, BadgeIcon, InfoIcon, VStack, Button, Tooltip, TooltipContent, TooltipText, Textarea, TextareaInput, CheckIcon, CloseIcon } from "@gluestack-ui/themed"
 import React from "react";
 import { useEffect } from "react";
+import { TextInput } from "react-native-paper";
+import { SettingsContext } from "react-native-paper/lib/typescript/core/settings";
 interface HistoryApplicationCardProps {
     name: string
     leaveType: string,
     start: string,
     end: string,
     reason: string,
-    rejectReason:string,
-    status:string
+    rejectReason: string,
+    status: string,
+    note:string
 }
-export const HistoryApplicationCard: React.FC<HistoryApplicationCardProps> = ({ name, leaveType, start, end, reason,rejectReason,status}) => {
-
+export const HistoryApplicationCard: React.FC<HistoryApplicationCardProps> = ({ name, leaveType, start, end, reason, rejectReason, status ,note}) => {
+    const [noteValue,setNoteValue] = React.useState('');
     return (
         <Card margin={10} width={360}>
             <Heading margin={3}>
@@ -21,9 +24,11 @@ export const HistoryApplicationCard: React.FC<HistoryApplicationCardProps> = ({ 
                 <VStack w={"10%"}>
                     <BadgeIcon as={CircleIcon} color={(leaveType == "SICK") ? "green" : "$red500"} />
                 </VStack>
+
                 <VStack w={"85%"}>
                     <BadgeText >{leaveType}</BadgeText>
                 </VStack>
+
                 <VStack w={"5%"}>
                     <Tooltip
                         placement="top"
@@ -41,6 +46,7 @@ export const HistoryApplicationCard: React.FC<HistoryApplicationCardProps> = ({ 
 
                 </VStack>
             </HStack>
+
             <HStack margin={3}>
                 <VStack w={"85%"}>
                     <Text>
@@ -65,10 +71,12 @@ export const HistoryApplicationCard: React.FC<HistoryApplicationCardProps> = ({ 
                     </Text>
                 </VStack>
             </HStack>
+
             <Text margin={3}>
-                        {status}
-                        <BadgeIcon as={(status=="approved")?CheckIcon:CloseIcon} />
-                    </Text>
+                {status}
+                <BadgeIcon as={(status == "approved") ? CheckIcon : CloseIcon} />
+            </Text>
+
             <VStack>
                 <Heading>
                     Comment
@@ -86,10 +94,12 @@ export const HistoryApplicationCard: React.FC<HistoryApplicationCardProps> = ({ 
                 <Text>
                     {rejectReason}
                 </Text>
+                
+                
             </VStack>
 
 
-                    
+
         </Card>
     )
 }
