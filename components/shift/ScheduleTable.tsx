@@ -4,8 +4,8 @@ import { View, ScrollView, DeviceEventEmitter } from "react-native";
 import { ShiftCell } from "./ShiftCell";
 import { getScheduleThisWeek, getUserScheduleThisWeek } from "@/service/ShiftService";
 import { Schedule } from "@/model/Schedule";
-import { router } from "expo-router";
-import { Statistics, WorkTimeStatisticList } from "../statistics/WorkTimeStatisticList";
+import { User } from "@/model/User"
+import { WorkTimeStatisticList } from "../statistics/WorkTimeStatisticList";
 
 
 export const ScheduleTable:React.FC = () => {
@@ -17,7 +17,7 @@ export const ScheduleTable:React.FC = () => {
     let listener
     
     useEffect(() => {
-        let user = JSON.parse(localStorage.getItem('user'));
+        let user = JSON.parse(localStorage.getItem('user') as string)
         if(user == null){
             listener = DeviceEventEmitter.addListener('userlogin', () =>{
                 setRefreshCount(refreshCount + 1)
@@ -37,7 +37,7 @@ export const ScheduleTable:React.FC = () => {
             )
         }
         else{
-            getUserScheduleThisWeek(user.username,currentDate).then(
+            getUserScheduleThisWeek(user.username ?? "",currentDate).then(
                 (data) => {
                     //console.log(JSON.stringify(data))
                     setShiftList(data)
@@ -78,13 +78,13 @@ export const ScheduleTable:React.FC = () => {
     return (
         <View>
             <HStack margin={"$1"}>
-                <Button width={"$1/7"} variant="link" onPress={()=>{onClickPreviousWeek()}}>
+                <Button variant="link" onPress={()=>{onClickPreviousWeek()}}>
                 <ButtonIcon as={ArrowLeftIcon} />
                 </Button>
                     <Center>
-                        <Text>{shiftList[0]==undefined?"":shiftList[0].date?.toDateString()}-{shiftList[6]==undefined?"":shiftList[6].date.toDateString()}</Text>
+                        <Text>{shiftList[0]==undefined?"":shiftList[0].date?.toDateString()}-{shiftList[6]==undefined?"":shiftList[6]?.date?.toDateString()}</Text>
                     </Center>
-                <Button width={"$1/7"} variant="link" onPress={()=>{onClickNextWeek()}}>
+                <Button variant="link" onPress={()=>{onClickNextWeek()}}>
                 <ButtonIcon as={ArrowRightIcon} color="blue"/>
                 </Button>
                 

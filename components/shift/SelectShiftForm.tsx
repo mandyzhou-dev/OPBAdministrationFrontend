@@ -1,13 +1,10 @@
 import { View } from "react-native"
 import { Alert, AlertIcon, AlertText,Button, Text, Card, Input, InputField, Checkbox, CheckboxLabel, CheckboxIndicator, CheckboxIcon, CheckIcon, HStack, ButtonText, ButtonIcon, ArrowRightIcon, CheckboxGroup, InfoIcon } from "@gluestack-ui/themed"
 import React, { useEffect } from "react"
-import DateTimePicker from '@react-native-community/datetimepicker';
 import { DatePickerInput } from "react-native-paper-dates";
-import { SafeAreaProvider } from "react-native-safe-area-context";
 import { getUserByRole } from "@/service/UserService";
 import { User } from "@/model/User";
 import { batchByDate } from "@/service/ShiftService";
-import { Shift } from "@/model/Shift";
 export const SelectShiftFrom: React.FC = () => {
     const [workDate, setWorkDate] = React.useState(new Date())
     const [userList, setUserList] = React.useState<User[]>([])
@@ -68,7 +65,7 @@ export const SelectShiftFrom: React.FC = () => {
                     locale="en"
                     label="WorkDate"
                     value={workDate}
-                    onChange={(d) => setWorkDate(d)}
+                    onChange={(d) => {if(d) setWorkDate(d)} }
                     inputMode="start"
                 />
 
@@ -86,7 +83,7 @@ export const SelectShiftFrom: React.FC = () => {
                         {userList.map((user) => {
                             return (<Checkbox
                                 key={user.username}
-                                value={user.username}
+                                value={user.username ?? "No Name!"}
                                 justifyContent={"space-between"}
                                 margin={10}>
                                 <CheckboxLabel>{user.name}</CheckboxLabel>

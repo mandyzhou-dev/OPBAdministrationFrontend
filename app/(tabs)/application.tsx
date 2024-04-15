@@ -1,14 +1,14 @@
 import { MenuItem } from "@/components/FreeStyle/MenuItem";
-import { GlobeIcon, HStack } from "@gluestack-ui/themed";
-import { Pressable, View, Text, Card, Icon } from "@gluestack-ui/themed";
+import { View } from "@gluestack-ui/themed";
 import { router } from "expo-router";
+import {User} from "@/model/User"
 import React, { useEffect } from "react";
 
 export default function ApplicationScreen() {
     const [showReview,setShowReview] = React.useState(false);
     const [showHistory,setShowHistory] = React.useState(false);
     useEffect(()=>{
-        let user = JSON.parse(localStorage.getItem("user"))
+        let user = localStorage.getItem("user") as User | null
         if(user!=null && user.roles=='Manager'){
             setShowHistory(true);
             setShowReview(true);

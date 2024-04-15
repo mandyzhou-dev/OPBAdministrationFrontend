@@ -6,6 +6,7 @@ import { Entypo } from '@expo/vector-icons';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import { useClientOnlyValue } from '@/components/useClientOnlyValue';
+import {User} from '@/model/User'
 
 // You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
 function TabBarIcon(props: {
@@ -20,7 +21,7 @@ export default function TabLayout() {
   const [showSchedule,setShowSchedule] = useState(false);
   const [showApplication,setShowApplication] = useState(false);
   useEffect(()=>{
-    let user = JSON.parse(localStorage.getItem("user"))
+    let user = JSON.parse(localStorage.getItem("user") as string)
     if(user){
       setShowSchedule(true)
       setShowApplication(true)
