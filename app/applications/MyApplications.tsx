@@ -21,7 +21,7 @@ export default function MyApplications() {
                 console.log((error as Error).message)
             }
         )
-    },[setApplicationList])
+    })
     return (
         <ScrollView>
             <Card>

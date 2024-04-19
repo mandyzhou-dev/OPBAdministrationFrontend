@@ -4,8 +4,10 @@ import { View, ScrollView, DeviceEventEmitter } from "react-native";
 import { ShiftCell } from "./ShiftCell";
 import { getScheduleThisWeek, getUserScheduleThisWeek } from "@/service/ShiftService";
 import { Schedule } from "@/model/Schedule";
-import { User } from "@/model/User"
-import { WorkTimeStatisticList } from "../statistics/WorkTimeStatisticList";
+import { router } from "expo-router";
+import { Statistics, WorkTimeStatisticList } from "../statistics/WorkTimeStatisticList";
+import { getAnnouncementByAfter } from "@/service/AnnouncementService";
+
 
 
 export const ScheduleTable:React.FC = () => {
@@ -14,6 +16,7 @@ export const ScheduleTable:React.FC = () => {
     const [currentDate, setCurrentDate] = React.useState(new Date())
     const [refreshCount, setRefreshCount] = React.useState(0)
     const [showStatistic, setShowStatistic] = React.useState(false);
+    
     let listener
     
     useEffect(() => {
@@ -49,6 +52,7 @@ export const ScheduleTable:React.FC = () => {
             )
         }
 
+
     }, [currentDate, refreshCount])
 
     const reload=()=>{
@@ -77,6 +81,7 @@ export const ScheduleTable:React.FC = () => {
     }
     return (
         <View>
+            
             <HStack margin={"$1"}>
                 <Button variant="link" onPress={()=>{onClickPreviousWeek()}}>
                 <ButtonIcon as={ArrowLeftIcon} />
