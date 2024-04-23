@@ -6,15 +6,16 @@ import { ScheduleTable } from '@/components/shift/ScheduleTable';
 import { router, useFocusEffect } from 'expo-router';
 import React, { useEffect } from 'react';
 import { Card, ScrollView } from '@gluestack-ui/themed';
-import { Statistic } from '@/components/statistics/WorkTimeStatisticItem';
-import { Statistics } from '@/components/statistics/WorkTimeStatisticList';
 import { Announcement } from "@/model/Announcement";
-import { getAnnouncementByAfter } from '@/service/AnnouncementService';
+import { getAnnouncementByAfter, getReadStatusByIdAndReader, getUnreadListByReader } from '@/service/AnnouncementService';
+import { UnreadModal } from '@/components/announcements/UnreadModal';
 export default function TabOneScreen() {
-  const [showCurrentAnnouncement,setShowCurrentAnnouncement] = React.useState<Announcement[]>([]);
+  //const [showCurrentAnnouncement,setShowCurrentAnnouncement] = React.useState<Announcement[]>([]);
   const [refreshCount, setRefreshCount] = React.useState(0)
+  const [showModal,setShowModal] = React.useState(false);
+  const [unreadList , setUnreadList] = React.useState<number[]>([]);
   let listener = null;
-  useEffect(() => {
+  /*useEffect(() => {
     getAnnouncementByAfter(new Date()).then(
       (data)=>{
           setShowCurrentAnnouncement(data);
@@ -24,8 +25,27 @@ export default function TabOneScreen() {
           console.log((error as Error).message)
       }
   )
-  },[])
+  },[])*/
 
+  useEffect(() => {
+    let user = JSON.parse(localStorage.getItem("user"));
+    getUnreadListByReader(user.username).then(
+      (data)=>{
+          setUnreadList(data);
+          console.log(data)
+          if(data.length==0){
+            setShowModal(false);
+          }
+          else{
+            setShowModal(true);
+          }
+      }
+  ).catch(
+      (error) => {
+          console.log((error as Error).message)
+      }
+  )
+  },[])
   useFocusEffect(
     React.useCallback(() => {
       setRefreshCount(refreshCount + 1)
@@ -36,18 +56,13 @@ export default function TabOneScreen() {
     }, [])
   )
         
-  return (
-    <ScrollView >
+  return ( 
+    <ScrollView>
       <View style={styles.container}>
         <Text style={styles.title}>Schedule</Text>
-        <Heading size="xs" color="rose50">
-          Latest announcement:{showCurrentAnnouncement[0] ? showCurrentAnnouncement[0].title : "loading"}
-        </Heading>
-        <Textarea>
-
-          {showCurrentAnnouncement[0] ? showCurrentAnnouncement[0].content : "loading"}
-        </Textarea>
+        
         <ScheduleTable ></ScheduleTable>
+        {showModal?<UnreadModal count={unreadList.length}></UnreadModal>:null}
 
       </View>
     </ScrollView>

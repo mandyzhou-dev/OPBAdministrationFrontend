@@ -23,3 +23,40 @@ export const putAnnouncement = async(id:number,announcement:Announcement):Promis
     const object = await announcementRequest.putAnnouncementById(id,announcement);
     return object;
 }
+export const getReadStatusByIdAndReader = async(id:number,reader:string):Promise<boolean>=>{
+    const announcementRequest = new AnnouncementRequest()
+    const announcementReadLogList = await announcementRequest.getReadLogByReader(reader);
+    let i:number;
+    let flag = false;
+    for(i =0;i<announcementReadLogList.length;++i){
+        if(announcementReadLogList[i].announcementId===id){
+            flag = true;
+        }
+    }
+    return flag;
+    
+}
+
+export const getUnreadListByReader = async(reader:string):Promise<number[]>=>{
+    const announcementRequest = new AnnouncementRequest;
+    const announcementReadLogList = await announcementRequest.getReadLogByReader(reader);
+    const announcementList = await announcementRequest.getAnnouncementByAfter(new Date());
+    let announcementIdList = new Array();
+    let i:number;
+    let j:number;
+    let flag=false;
+    for(i = 0;i<announcementList.length;++i){
+        for(j = 0; j<announcementReadLogList.length;++j){
+            if(announcementReadLogList[j].announcementId==announcementList[i].id){
+                flag = true;            
+            }
+        }
+        if(!flag) {
+            announcementIdList.push(announcementList[i].id);
+        }
+        flag = false;
+        
+    }
+    return announcementIdList;
+}
+

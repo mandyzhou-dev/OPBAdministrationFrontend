@@ -5,7 +5,8 @@ export class Announcement{
     content: string|undefined;
     expiryDate: Date|undefined;
     publisher:string|undefined;
+    isRead:boolean;
     constructor () {
-
+        this.isRead = true
     }
 }

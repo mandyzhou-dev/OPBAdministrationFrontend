@@ -1,5 +1,6 @@
 import { Announcement } from "@/model/Announcement";
-import axios, { AxiosResponse } from "axios";
+import { AnnouncementReadLog } from "@/model/AnnouncementReadLog";
+import axios, { Axios, AxiosResponse } from "axios";
 
 export class AnnouncementRequest{
     postAnnouncement = async(postAnnouncement:object):Promise<Announcement>=>{
@@ -46,6 +47,25 @@ export class AnnouncementRequest{
             return response.data;
         }catch(e){
             throw new Error("Put Failure"+(e as Error).message)
+        }
+    }
+
+    getReadLogByReader = async(reader:string):Promise<AnnouncementReadLog[]>=>{
+        try{
+            const response:AxiosResponse = await axios.get('http://localhost:8080/api/announcement/readLog',{params:{reader:reader}});
+            return response.data;
+        }catch(e){
+            throw new Error("Request Failure"+(e as Error).message)
+        }
+    }
+
+    addReadLog = async(announcementId:number,postAnnouncementReadLog:object):Promise<Object>=>{
+        try{
+            const response:AxiosResponse = await axios.post('http://localhost:8080/api/announcement/'+announcementId+'read',
+            postAnnouncementReadLog);
+            return response.data;
+        }catch(e){
+            throw new Error("Post Failure"+(e as Error).message)
         }
     }
 }
