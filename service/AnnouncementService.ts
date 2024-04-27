@@ -11,7 +11,11 @@ export const postAnnouncement = async(postAnnouncement:object):Promise<Announcem
     const announcement = await announcementRequest.postAnnouncement(postAnnouncement);
     return announcement;
 }
-
+export const getAnnouncementById = async(id:number):Promise<Announcement>=>{
+    const announcementRequest = new AnnouncementRequest()
+    const announcement = await announcementRequest.getAnnouncementById(id);
+    return announcement;
+}
 export const deleteAnnouncement = async(id:number):Promise<Object>=>{
     const announcementRequest = new AnnouncementRequest()
     const object = await announcementRequest.deleteAnnouncementById(id);

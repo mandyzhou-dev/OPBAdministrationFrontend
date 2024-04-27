@@ -144,6 +144,7 @@ export default function announcement(){
                     showOperation={showOP}
                     deleteAnnouncement={(id) => showDeleteModal(id)}
                     modifyAnnouncement={(id) => showModifyModal(announcement)}
+                    
                     showMore = {()=>showMoreModal(announcement)}
                   />
                   </Badge>
