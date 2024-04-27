@@ -61,7 +61,7 @@ export class AnnouncementRequest{
 
     addReadLog = async(announcementId:number,postAnnouncementReadLog:object):Promise<Object>=>{
         try{
-            const response:AxiosResponse = await axios.post('http://localhost:8080/api/announcement/'+announcementId+'read',
+            const response:AxiosResponse = await axios.post('http://localhost:8080/api/announcement/'+announcementId+'/read',
             postAnnouncementReadLog);
             return response.data;
         }catch(e){

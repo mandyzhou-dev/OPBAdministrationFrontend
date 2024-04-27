@@ -10,7 +10,7 @@ export default function ApplicationScreen() {
     const [showHistory,setShowHistory] = React.useState(false);
     const [showPostAnnouncement,setShowPostAnnouncement] = React.useState(false);
     useEffect(()=>{
-        let user = localStorage.getItem("user") as User | null
+        let user = JSON.parse(localStorage.getItem("user")as string)
         if(user!=null && user.roles=='Manager'){
             setShowHistory(true);
             setShowReview(true);

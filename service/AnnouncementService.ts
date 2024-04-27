@@ -59,4 +59,9 @@ export const getUnreadListByReader = async(reader:string):Promise<number[]>=>{
     }
     return announcementIdList;
 }
+export const readAnnouncement = async(announcementId:number,postAnnouncementReadLog:object):Promise<Object>=>{
+    const announcementRequest = new AnnouncementRequest;
+    const object = await announcementRequest.addReadLog(announcementId,postAnnouncementReadLog);
+    return object;
+}
 

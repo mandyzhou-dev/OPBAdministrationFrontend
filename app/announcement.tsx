@@ -7,6 +7,7 @@ import { AnnouncementCard } from '@/components/announcements/AnnouncementCard';
 import { DeviceEventEmitter } from 'react-native';
 import { ModifyModal } from '@/components/announcements/ModifyModal';
 import Badge from '@mui/material/Badge';
+import { MoreModal } from '@/components/announcements/MoreModal';
 
 export default function announcement(){
   const [announcementList, setAnnouncementList] = React.useState<Announcement[]>([]);
@@ -16,12 +17,37 @@ export default function announcement(){
   const [showAlertDialog, setShowAlertDialog] = React.useState(false)
   const [showModal, setShowModal] = React.useState(false)
   const [unreadList,setUnreadList] = React.useState<number>([])
+  const [showMore,setShowMore] = React.useState(false);
+  const [moreValue, setMoreValue] = React.useState<Announcement>(new Announcement());
   useEffect(() => {
     let user = JSON.parse(localStorage.getItem('user'));
     if (user.roles == 'Manager') {
       getAnnouncementByAfter(new Date(2023 - 12 - 12)).then(
-        (data) => {
-          setAnnouncementList(data);
+        (announcementList) => {
+          getUnreadListByReader(user.username).then(
+            (data)=>{
+              
+              let i:number;
+              let j:number;
+              for(i = 0;i<announcementList.length;++i){
+                announcementList[i].isRead = true;
+              }
+              for(i = 0;i<announcementList.length;++i){
+                for(j = 0;j<data.length;j++){
+                  if(announcementList[i].id == data[j]) announcementList[i].isRead = false;
+                }
+              }
+              
+              setAnnouncementList(announcementList);
+              
+              
+            }
+          ).catch(
+            (error)=>{
+              console.log((error as Error).message)
+            }
+          )
+          //setAnnouncementList(announcementList);
           setShowOP(true);
           //console.log(announcementList);
           //console.log(new Date());
@@ -88,6 +114,10 @@ export default function announcement(){
     console.log("announcement:" + value);
     setShowModal(true);
   }
+  const showMoreModal = (value:Announcement)=>{
+    setMoreValue(value);
+    setShowMore(true);
+  }
   const deleteCurrentAnnouncement = () => {
     deleteAnnouncement(value);
     setShowAlertDialog(false)
@@ -114,6 +144,7 @@ export default function announcement(){
                     showOperation={showOP}
                     deleteAnnouncement={(id) => showDeleteModal(id)}
                     modifyAnnouncement={(id) => showModifyModal(announcement)}
+                    showMore = {()=>showMoreModal(announcement)}
                   />
                   </Badge>
               </VStack>
@@ -129,6 +160,11 @@ export default function announcement(){
         showModal={showModal}
         setShowModal={setShowModal}
       />
+      <MoreModal 
+        announcement = {moreValue}
+        showModal = {showMore}
+        setShowModal = {setShowMore}
+        />
       <AlertDialog
         isOpen={showAlertDialog}
         onClose={() => {
