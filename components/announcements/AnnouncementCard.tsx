@@ -37,7 +37,7 @@ export const AnnouncementCard: React.FC<AnnouncementCardProps> = ({ announcement
                 </HStack>
                 {showOperation ? <HStack margin={3}>
                     <Button variant="solid" action="primary" w={"20%"} onPress={() => modifyAnnouncement(announcement.id ?? 0)}>
-                        <BadgeText >Modify</BadgeText>
+                        <BadgeText size="xs">Modify</BadgeText>
                     </Button>
                     <View w={"50%"}></View>
                     <Button variant="link" action="negative" w={"20%"} onPress={() => deleteAnnouncement(announcement.id ?? 0)}>

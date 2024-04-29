@@ -16,11 +16,10 @@ export default function announcement(){
   const [showOP, setShowOP] = React.useState(false);
   const [showAlertDialog, setShowAlertDialog] = React.useState(false)
   const [showModal, setShowModal] = React.useState(false)
-  const [unreadList,setUnreadList] = React.useState<number>([])
   const [showMore,setShowMore] = React.useState(false);
   const [moreValue, setMoreValue] = React.useState<Announcement>(new Announcement());
   useEffect(() => {
-    let user = JSON.parse(localStorage.getItem('user'));
+    let user = JSON.parse(localStorage.getItem('user') as string);
     if (user.roles == 'Manager') {
       getAnnouncementByAfter(new Date(2023 - 12 - 12)).then(
         (announcementList) => {

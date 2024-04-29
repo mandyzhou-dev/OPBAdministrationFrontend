@@ -21,7 +21,7 @@ export default function AnnouncementDetail() {
                 }
             )
 
-            let user = JSON.parse(localStorage.getItem('user'));
+            let user = JSON.parse(localStorage.getItem('user') as string);
 
             let announcementReadLog = {
                 reader: user.username
@@ -31,9 +31,9 @@ export default function AnnouncementDetail() {
 
     )
     return (
-        <Card margin={3}>
+        
             <ScrollView>
-
+<Card margin={3}>
                 <Heading >{announcement.title}</Heading>
                 <HStack marginBottom={3}>
                     <VStack w={"50%"}>
@@ -52,8 +52,8 @@ export default function AnnouncementDetail() {
                         {announcement.content}
                     </Text>
                 </VStack>
-
+                </Card>
             </ScrollView>
-        </Card>
+        
     )
 }

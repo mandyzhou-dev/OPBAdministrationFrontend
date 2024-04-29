@@ -51,7 +51,7 @@ export default function TabOneScreen() {
   useFocusEffect(
     React.useCallback(() => {
       setRefreshCount(refreshCount + 1)
-      let user = JSON.parse(localStorage.getItem("user"))
+      let user = JSON.parse(localStorage.getItem("user") as string)
       if (user == null) {
         router.navigate('my')
       }
