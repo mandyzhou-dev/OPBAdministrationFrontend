@@ -3,9 +3,11 @@ interface ApplicationCardforEProps{
     leaveType:string,
     start:string,
     end:string,
-    status:string
+    status:string,
+    reason:string,
+    rejectReason:string
 }
-export const ApplicationCardforE: React.FC<ApplicationCardforEProps> = ({leaveType,start,end,status,rejectReason}) => {
+export const ApplicationCardforE: React.FC<ApplicationCardforEProps> = ({leaveType,start,end,status,reason,rejectReason}) => {
     return(
         <Card margin={10} width={360}>
                     <HStack margin={3}>
@@ -69,8 +71,18 @@ export const ApplicationCardforE: React.FC<ApplicationCardforEProps> = ({leaveTy
                     isReadOnly
                     w="$64"
                 >
-                    <TextareaInput value={rejectReason} />
+                    <TextareaInput value={reason} />
                 </Textarea>
+                {rejectReason?<VStack><Heading>
+                    Reject Reason
+                </Heading><Textarea
+                    size="md"
+                    isReadOnly
+                    w="$64"
+                >
+                        <TextareaInput value={rejectReason} />
+                    </Textarea></VStack>:null}
+                
             </VStack>
                     <HStack margin={3}>
                         <VStack w={"50%"}>

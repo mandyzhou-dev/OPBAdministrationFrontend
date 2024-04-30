@@ -34,7 +34,11 @@ export class UserRequest{
     resetPassword = async(username:String,password:String):Promise<Object>=>{
         try{
             const response:AxiosResponse = await axios.post('http://localhost:8080/api/user/'+username+'/password',
-                password
+                password,{
+                    headers:{
+                        'Content-type':'text/plain'
+                    }
+                }
             );
             return response.data;
         }catch(e){

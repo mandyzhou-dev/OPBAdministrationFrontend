@@ -49,7 +49,11 @@ export class LeaveApplicationRequest{
     rejectReview = async(id:number,rejectReason:string):Promise<Object>=>{
         try{
             const response:AxiosResponse = await axios.post('http://localhost:8080/api/process/application/'+id+'/reject',
-            rejectReason)
+            rejectReason,{
+                headers:{
+                    'Content-type':'text/plain'
+                }
+            })
             return response.data
         }catch(e){
             throw new Error("Post Failure"+(e as Error).message)

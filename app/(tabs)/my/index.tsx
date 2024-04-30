@@ -12,7 +12,7 @@ export default function MyScreen() {
     const [showLogin, setShowLogin]=useState(true)
     useEffect(()=>{
         
-        const items = JSON.parse(localStorage.getItem('user'));
+        const items = JSON.parse(localStorage.getItem('user') as string);
 
         if(items){
             setShowLogin(false)

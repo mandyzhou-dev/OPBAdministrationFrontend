@@ -28,7 +28,7 @@ export default function TabOneScreen() {
   },[])*/
 
   useEffect(() => {
-    let user = JSON.parse(localStorage.getItem("user"));
+    let user = JSON.parse(localStorage.getItem("user") as string);
     if(user == undefined)
       return;
     getUnreadListByReader(user.username).then(

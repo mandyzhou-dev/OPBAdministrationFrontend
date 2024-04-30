@@ -17,7 +17,7 @@ export const HistoryApplicationCard: React.FC<HistoryApplicationCardProps> = ({ 
     const [noteValue,setNoteValue] = React.useState('');
     return (
         <Card margin={10} width={360}>
-            <Heading margin={3}>
+            <Heading margin={3} size="xl">
                 {name}
             </Heading>
             <HStack margin={3}>
@@ -78,17 +78,13 @@ export const HistoryApplicationCard: React.FC<HistoryApplicationCardProps> = ({ 
             </Text>
 
             <VStack>
-                <Heading>
+                <Heading size="md">
                     Comment
                 </Heading>
-                <Textarea
-                    size="md"
-                    isReadOnly
-                    w="$64"
-                >
-                    <TextareaInput value={reason} />
-                </Textarea>
-                <Heading>
+                <Text>
+                    {reason}
+                </Text>
+                <Heading size="md">
                     Reject Reason(If has)
                 </Heading>
                 <Text>

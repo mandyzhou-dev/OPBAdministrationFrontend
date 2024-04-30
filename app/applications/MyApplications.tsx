@@ -21,7 +21,7 @@ export default function MyApplications() {
                 console.log((error as Error).message)
             }
         )
-    })
+    },[setApplicationList])
     return (
         <ScrollView>
             <Card>
@@ -43,6 +43,7 @@ export default function MyApplications() {
                                 start={moment(application.start).format("YYYY-MM-DD HH:mm")}
                                 end={moment(application.end).format("YYYY-MM-DD HH:mm")}
                                 status={application.status} 
+                                reason={application.reason}
                                 rejectReason={application.rejectReason}/>
                         )
                     })
