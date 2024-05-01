@@ -23,3 +23,7 @@ export const getAllApplication = async():Promise<LeaveApplication[]>=>{
     const leaveApplicationRequest = new LeaveApplicationRequest()
     return leaveApplicationRequest.getAllApplications();
 }
+export const addNote = async(id:number, note:string):Promise<Object>=>{
+    const leaveApplicationRequest = new LeaveApplicationRequest()
+    return leaveApplicationRequest.addNote(id,note);
+}

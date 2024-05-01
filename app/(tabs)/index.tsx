@@ -9,6 +9,7 @@ import { Card, ScrollView } from '@gluestack-ui/themed';
 import { Announcement } from "@/model/Announcement";
 import { getAnnouncementByAfter, getReadStatusByIdAndReader, getUnreadListByReader } from '@/service/AnnouncementService';
 import { UnreadModal } from '@/components/announcements/UnreadModal';
+import { login } from '@/service/UserService';
 export default function TabOneScreen() {
   //const [showCurrentAnnouncement,setShowCurrentAnnouncement] = React.useState<Announcement[]>([]);
   const [refreshCount, setRefreshCount] = React.useState(0)
@@ -31,6 +32,15 @@ export default function TabOneScreen() {
     let user = JSON.parse(localStorage.getItem("user") as string);
     if(user == undefined)
       return;
+
+    /*alert(user.active)
+    alert(user.email)
+    if(user.active!==1){
+      alert(user.active)
+      localStorage.removeItem("user")
+      return;
+    }*/
+      
     getUnreadListByReader(user.username).then(
       (data)=>{
           setUnreadList(data);

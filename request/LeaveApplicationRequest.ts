@@ -60,4 +60,18 @@ export class LeaveApplicationRequest{
         }
     }
 
+    addNote = async(id:number, note:string):Promise<Object>=>{
+        try{
+            const response:AxiosResponse = await axios.put('http://localhost:8080/api/process/application/'+id+'/note',
+            note,{
+                headers:{
+                    'Content-type':'text/plain'
+                }
+            })
+            return response.data
+        }catch(e){
+            throw new Error("Put Failure"+(e as Error).message)
+        }
+    }
+
 }

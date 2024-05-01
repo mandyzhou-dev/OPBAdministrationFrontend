@@ -1,21 +1,18 @@
 import {CheckIcon, Textarea,TextareaInput,BadgeText, Text, Card, Input, InputField, ScrollView, HStack, Icon, CircleIcon, BadgeIcon, InfoIcon, VStack, Button, Tooltip, TooltipContent, TooltipText, Heading, CloseIcon } from "@gluestack-ui/themed"
+import { LeaveApplication } from "@/model/LeaveApplication";
+import moment from "moment"
 interface ApplicationCardforEProps{
-    leaveType:string,
-    start:string,
-    end:string,
-    status:string,
-    reason:string,
-    rejectReason:string
+    application:LeaveApplication
 }
-export const ApplicationCardforE: React.FC<ApplicationCardforEProps> = ({leaveType,start,end,status,reason,rejectReason}) => {
+export const ApplicationCardforE: React.FC<ApplicationCardforEProps> = ({application}) => {
     return(
         <Card margin={10} width={360}>
                     <HStack margin={3}>
                         <VStack w={"10%"}>
-                            <BadgeIcon as={CircleIcon} color={(leaveType=="SICK")?"green":"$red500"} />
+                            <BadgeIcon as={CircleIcon} color={(application.leaveType=="SICK")?"green":"$red500"} />
                         </VStack>
                         <VStack w={"85%"}>
-                            <BadgeText >{leaveType}</BadgeText>
+                            <BadgeText >{application.leaveType}</BadgeText>
                         </VStack>
                         <VStack w={"5%"}>
                             <Tooltip
@@ -37,7 +34,7 @@ export const ApplicationCardforE: React.FC<ApplicationCardforEProps> = ({leaveTy
                     <HStack margin={3}>
                         <VStack w={"85%"}>
                             <Text>
-                                {start}
+                                {moment(application.start).format("YYYY-MM-DD HH:mm")}
                             </Text>
                         </VStack >
                         <VStack w={"25%"}>
@@ -49,7 +46,7 @@ export const ApplicationCardforE: React.FC<ApplicationCardforEProps> = ({leaveTy
                     <HStack margin={3}>
                         <VStack w={"85%"}>
                             <Text>
-                                {end}
+                                {moment(application.end).format("YYYY-MM-DD HH:mm")}
                             </Text>
                         </VStack >
                         <VStack w={"25%"}>
@@ -59,29 +56,23 @@ export const ApplicationCardforE: React.FC<ApplicationCardforEProps> = ({leaveTy
                         </VStack>
                     </HStack>
                     <Text margin={3}>
-                        {status}
-                        <BadgeIcon as={(status=="approved")?CheckIcon:CloseIcon} />
+                        {application.status}
+                        <BadgeIcon as={(application.status=="approved")?CheckIcon:CloseIcon} />
                     </Text>
                     <VStack>
-                <Heading>
+                <Heading size="md">
                     Comment
                 </Heading>
-                <Textarea
-                    size="md"
-                    isReadOnly
-                    w="$64"
-                >
-                    <TextareaInput value={reason} />
-                </Textarea>
-                {rejectReason?<VStack><Heading>
+                <Text>
+                    {application.reason}
+                </Text>
+               
+                
+                
+          
+                {application.rejectReason?<VStack><Heading size="md">
                     Reject Reason
-                </Heading><Textarea
-                    size="md"
-                    isReadOnly
-                    w="$64"
-                >
-                        <TextareaInput value={rejectReason} />
-                    </Textarea></VStack>:null}
+                </Heading><Text>{application.rejectReason}</Text></VStack>:null}
                 
             </VStack>
                     <HStack margin={3}>

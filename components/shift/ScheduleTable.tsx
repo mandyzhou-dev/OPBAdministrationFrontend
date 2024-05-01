@@ -5,8 +5,7 @@ import { ShiftCell } from "./ShiftCell";
 import { getScheduleThisWeek, getUserScheduleThisWeek } from "@/service/ShiftService";
 import { Schedule } from "@/model/Schedule";
 import { router } from "expo-router";
-import { Statistics, WorkTimeStatisticList } from "../statistics/WorkTimeStatisticList";
-import { getAnnouncementByAfter } from "@/service/AnnouncementService";
+import {  WorkTimeStatisticList } from "../statistics/WorkTimeStatisticList";
 
 
 
@@ -29,6 +28,7 @@ export const ScheduleTable:React.FC = () => {
         }
         if(user.roles=='Manager'){
             setShowStatistic(true);
+        }
             getScheduleThisWeek(currentDate).then(
                 (data) => {
                     setShiftList(data)
@@ -38,19 +38,8 @@ export const ScheduleTable:React.FC = () => {
                     console.log((error as Error).message)
                 }
             )
-        }
-        else{
-            getUserScheduleThisWeek(user.username ?? "",currentDate).then(
-                (data) => {
-                    //console.log(JSON.stringify(data))
-                    setShiftList(data)
-                }
-            ).catch(
-                (error) => {
-                    console.log((error as Error).message)
-                }
-            )
-        }
+        
+        
 
 
     }, [currentDate, refreshCount])
