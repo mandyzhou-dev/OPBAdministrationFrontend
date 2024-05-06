@@ -11,7 +11,7 @@ export default function AnnouncementDetail() {
     const [announcement, setAnnouncement] = React.useState<Announcement>(new Announcement());
     useEffect(
         () => {
-            getAnnouncementById(parseInt(params.announcementId)).then(
+            getAnnouncementById(parseInt(params.announcementId as string)).then(
                 (data) => {
                     setAnnouncement(data);
                 }

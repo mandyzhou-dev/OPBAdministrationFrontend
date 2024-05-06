@@ -4,18 +4,18 @@ import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import React, { useEffect } from "react";
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import { postAnnouncement } from "@/service/AnnouncementService";
 
 export default function History() {
-    const [date, setDate] = React.useState(dayjs());
+    const [date, setDate] = React.useState<Dayjs | null>(dayjs());
     const [title,setTitle] = React.useState("");
     const [content,setContent] = React.useState("");
     const [showSuccessAlert,setShowSuccessAlert] = React.useState(false);
     const [showErrorAlert,setShowErrorAlert] = React.useState(false);
 
     const submit=()=>{
-        let username = JSON.parse(localStorage.getItem("user")).username
+        let username = JSON.parse(localStorage.getItem("user") as string).username
         let result = {
             title: title,
             content: content,

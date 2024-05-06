@@ -1,15 +1,11 @@
 import { DeviceEventEmitter, StyleSheet } from 'react-native';
-import { Textarea, Heading } from '@gluestack-ui/themed'
-import EditScreenInfo from '@/components/EditScreenInfo';
 import { Text, View } from '@/components/Themed';
 import { ScheduleTable } from '@/components/shift/ScheduleTable';
 import { router, useFocusEffect } from 'expo-router';
 import React, { useEffect } from 'react';
-import { Card, ScrollView } from '@gluestack-ui/themed';
-import { Announcement } from "@/model/Announcement";
-import { getAnnouncementByAfter, getReadStatusByIdAndReader, getUnreadListByReader } from '@/service/AnnouncementService';
+import { ScrollView } from '@gluestack-ui/themed';
+import {getUnreadListByReader } from '@/service/AnnouncementService';
 import { UnreadModal } from '@/components/announcements/UnreadModal';
-import { login } from '@/service/UserService';
 export default function TabOneScreen() {
   //const [showCurrentAnnouncement,setShowCurrentAnnouncement] = React.useState<Announcement[]>([]);
   const [refreshCount, setRefreshCount] = React.useState(0)
