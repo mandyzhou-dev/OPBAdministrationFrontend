@@ -1,5 +1,5 @@
 import { View } from "@/components/Themed";
-import { ScrollView, Heading ,Divider, VStack,Card} from "@gluestack-ui/themed";
+import { ScrollView, Heading ,Divider, VStack,Card, Button, ButtonText} from "@gluestack-ui/themed";
 import { StyleSheet } from 'react-native';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
@@ -11,6 +11,21 @@ import { WorkTimeStatisticList } from "@/components/statistics/WorkTimeStatistic
 export default function statistics() {
     const [startDate,setStartDate] = React.useState<Dayjs|null>(dayjs())
     const [endDate,setEndDate] = React.useState<Dayjs|null>(dayjs())
+    const calculate=()=>{
+        let end = endDate?.toDate();
+        end?.setHours(23);
+        end?.setMinutes(59,59);
+
+        let start = startDate?.toDate();
+        start?.setHours(0);
+        start?.setMinutes(0,0);
+        return(
+            <WorkTimeStatisticList
+            start={start}
+            end={end}
+            ></WorkTimeStatisticList>
+        )
+    }
 
     return (
         <ScrollView>
@@ -24,7 +39,7 @@ export default function statistics() {
                     {<DatePicker
                     label="FROM"
                         value={startDate}
-                        onChange={(newValue) => setStartDate(newValue)}
+                        onChange={(newValue)=>setStartDate(newValue)}
                     />}
                 </LocalizationProvider>
                 </Card>
@@ -34,16 +49,14 @@ export default function statistics() {
                     {<DatePicker
                     label="TO"
                         value={endDate}
-                        onChange={(newValue) => setEndDate(newValue)}
+                        onChange={(newValue) => {
+                            setEndDate(newValue);
+                        }}
                     />}
                 </LocalizationProvider>
                 </Card>
-
-                <WorkTimeStatisticList
-                start={startDate?.toDate()}
-                end={endDate?.toDate()}
-                ></WorkTimeStatisticList>
-            </View>
+                {calculate()}
+              </View>
         </ScrollView>
     )
 }

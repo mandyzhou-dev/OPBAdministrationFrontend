@@ -61,11 +61,14 @@ export const ScheduleTable:React.FC = () => {
         setCurrentDate(newDate)
     }
     const calculate=()=>{
+        let start = shiftList[0]?.date
+        start?.setHours(0);
+        start?.setMinutes(0,0);
         let end = shiftList[6]?.date;
         end?.setHours(23);
         end?.setMinutes(59,59);
         return(
-            <WorkTimeStatisticList start={shiftList[0]?.date} end={end}></WorkTimeStatisticList>
+            <WorkTimeStatisticList start={start} end={end}></WorkTimeStatisticList>
         )
     }
     return (

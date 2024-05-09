@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { ScrollView, Card, Box, HStack, Pressable, Link, LinkText, VStack } from '@gluestack-ui/themed';
+import { ScrollView, Card, Box, HStack, Pressable, Link, LinkText, VStack,Text} from '@gluestack-ui/themed';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { router } from 'expo-router';
 export default function TabTwoScreen() {
@@ -19,9 +19,7 @@ export default function TabTwoScreen() {
 
           </Card>
         </Pressable>
-        <Link href="../tasks/assignment" ml={40} mt={-20}>
-            <LinkText> Make a shift</LinkText>
-        </Link>
+        <Text ml={40} mt={-20}>Make shifts</Text>
 
         </VStack>
         
@@ -36,9 +34,10 @@ export default function TabTwoScreen() {
 
           </Card>
         </Pressable>
-        <Link href="../tasks/statistics" ml={40} mt={-20}>
-            <LinkText> Statistics</LinkText>
-        </Link>
+        
+          <Text ml={40} mt={-20}>Statistics</Text>
+        
+
         </VStack>
         
       </HStack>
