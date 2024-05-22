@@ -74,4 +74,13 @@ export class LeaveApplicationRequest{
         }
     }
 
+    deleteApplication = async(id:number):Promise<Object>=>{
+        try{
+            const response:AxiosResponse = await axios.delete('http://localhost:8080/api/process/application/'+id,)
+            return response.data;
+        }catch(e){
+            throw new Error("Delete Failure"+(e as Error).message)
+        }
+    }
+
 }

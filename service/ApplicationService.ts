@@ -27,3 +27,7 @@ export const addNote = async(id:number, note:string):Promise<Object>=>{
     const leaveApplicationRequest = new LeaveApplicationRequest()
     return leaveApplicationRequest.addNote(id,note);
 }
+export const deleteApplication = async(id:number):Promise<Object>=>{
+    const leaveApplicationRequest = new LeaveApplicationRequest();
+    return leaveApplicationRequest.deleteApplication(id);
+}

@@ -27,7 +27,7 @@ export default function AnnouncementDetail() {
                 reader: user.username
             }
             readAnnouncement(announcement.id ?? 0, announcementReadLog);
-        }
+        },[setAnnouncement]
 
     )
     return (

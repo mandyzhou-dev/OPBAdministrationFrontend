@@ -125,7 +125,7 @@ export default function announcement(){
 
 
   if (announcementList.length === 0) {
-    return (<div>loading</div>)
+    return (<Text>loading</Text>)
   }
 
   return (

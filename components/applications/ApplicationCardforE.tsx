@@ -3,8 +3,9 @@ import { LeaveApplication } from "@/model/LeaveApplication";
 import moment from "moment"
 interface ApplicationCardforEProps{
     application:LeaveApplication
+    deleteApplication: (application:LeaveApplication)=>void
 }
-export const ApplicationCardforE: React.FC<ApplicationCardforEProps> = ({application}) => {
+export const ApplicationCardforE: React.FC<ApplicationCardforEProps> = ({application,deleteApplication}) => {
     return(
         <Card margin={10} width={360}>
                     <HStack margin={3}>
@@ -76,12 +77,12 @@ export const ApplicationCardforE: React.FC<ApplicationCardforEProps> = ({applica
                 
             </VStack>
                     <HStack margin={3}>
-                        <VStack w={"50%"}>
+                        <VStack w={"40%"}>
 
                         </VStack>
-                        <VStack w={"50%"}>
-                            <Button variant="link" action="negative">
-                                <BadgeText >Cancel Request</BadgeText>
+                        <VStack w={"60%"}>
+                            <Button variant="link" action="negative" onPress={()=>deleteApplication(application)}>
+                                <BadgeText >Delete Application</BadgeText>
                             </Button>
                         </VStack>
                     </HStack>
