@@ -1,16 +1,18 @@
 import { View } from "react-native"
-import { Alert, AlertIcon, AlertText,Button, Text, Card, Input, InputField, Checkbox, CheckboxLabel, CheckboxIndicator, CheckboxIcon, CheckIcon, HStack, ButtonText, ButtonIcon, ArrowRightIcon, CheckboxGroup, InfoIcon } from "@gluestack-ui/themed"
+import { Alert, AlertIcon, AlertText,Button, Text, Card, Input, InputField, Checkbox, CheckboxLabel, CheckboxIndicator, CheckboxIcon, CheckIcon, HStack, ButtonText, ButtonIcon, ArrowRightIcon, CheckboxGroup, InfoIcon, BadgeIcon, CircleIcon } from "@gluestack-ui/themed"
 import React, { useEffect } from "react"
 import { DatePickerInput } from "react-native-paper-dates";
 import { getUserByRole } from "@/service/UserService";
 import { User } from "@/model/User";
 import { batchByDate } from "@/service/ShiftService";
+import { getPreferredEmployeesBydate } from "@/service/ShiftBoardService";
 export const SelectShiftFrom: React.FC = () => {
     const [workDate, setWorkDate] = React.useState(new Date())
     const [userList, setUserList] = React.useState<User[]>([])
     const [checkedUsers, setCheckedUsers] = React.useState<string[]>([])
     const [showSuccessAlert,setShowSuccessAlert] = React.useState(false)
     const [showErrorAlert,setShowErrorAlert] = React.useState(false)
+    const [preferredWorkers,setPreferredWorkers] = React.useState<string[]>([])
     useEffect(() => {
         getUserByRole("tester").then(
             (data) => {
@@ -22,8 +24,31 @@ export const SelectShiftFrom: React.FC = () => {
                 console.log((error as Error).message)
             }
         )
+        getPreferredEmployeesBydate(workDate).then(
+            (data)=>{
+                
+                setPreferredWorkers(data)
+            }
+        ).catch(
+            (error) => {
+                console.log((error as Error).message)
+            }
+        )
+       
     }, [])
-
+    const freeTodayByUsername=(username:string)=>{
+        console.log("hello")
+        console.log("function: " + preferredWorkers);
+        for (let worker of preferredWorkers){
+            console.log("workder: " + worker)
+            console.log("username: " + username)
+            if(worker===username) {
+                console.log(username + "equals")
+                return true;
+            }
+        }
+        return false;
+    }
     const submitShift = () => {
         batchByDate(workDate, checkedUsers).then((obj)=>{
             setShowSuccessAlert(true)
@@ -65,7 +90,23 @@ export const SelectShiftFrom: React.FC = () => {
                     locale="en"
                     label="WorkDate"
                     value={workDate}
-                    onChange={(d) => {if(d) setWorkDate(d)} }
+                    onChange={(d) => {
+                            if(d){
+                                setWorkDate(d)
+                                getPreferredEmployeesBydate(d).then(
+                                    (data)=>{
+                                        console.log("data: " + data)
+                                        setPreferredWorkers(data)
+                                    }
+                                ).catch(
+                                    (error) => {
+                                        console.log((error as Error).message)
+                                    }
+                                )
+                            }  
+                        }
+                        
+                    }
                     inputMode="start"
                 />
 
@@ -90,6 +131,7 @@ export const SelectShiftFrom: React.FC = () => {
                                 <CheckboxIndicator>
                                     <CheckboxIcon as={CheckIcon} />
                                 </CheckboxIndicator>
+                                { (freeTodayByUsername(user.username??"No Name!"))?<BadgeIcon as={CircleIcon} color="green"/>:null}
                             </Checkbox>)
                         })}
                     </CheckboxGroup>
