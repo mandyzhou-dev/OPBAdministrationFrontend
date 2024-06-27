@@ -68,13 +68,10 @@ export default function TabOneScreen() {
     <ScrollView>
       <View style={styles.container}>
         <Text style={styles.title}>Schedule</Text>
-        
         <ScheduleTable ></ScheduleTable>
         {showModal?<UnreadModal count={unreadList.length}></UnreadModal>:null}
-
       </View>
     </ScrollView>
-
   );
 }
 

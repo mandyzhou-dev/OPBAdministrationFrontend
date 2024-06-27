@@ -68,7 +68,7 @@ export default function NewApplication() {
             return;
         }   
         let start,end;
-        let username = JSON.parse(localStorage.getItem("user")).username
+        let username = JSON.parse(localStorage.getItem("user") as string).username
         if(durationValue=="oneday"){
             let starttime = timeValue.split('-')[0];
             let endtime = timeValue.split('-')[1];
@@ -112,7 +112,7 @@ export default function NewApplication() {
                 <AlertText>
                     Successfully submitted!
                 </AlertText>
-            </Alert>):""}
+            </Alert>):null}
             {
                 showErrorAlert?
                 (
@@ -122,7 +122,7 @@ export default function NewApplication() {
                     Failed!
                 </AlertText>
             </Alert>
-                ):""}
+                ):null}
             <RequiredFormControl isRequired={leaveTypeIsRequired}
                 isInvalid={leaveTypeIsRequired}
                 title="Leave Type"

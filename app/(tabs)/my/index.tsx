@@ -3,7 +3,7 @@ import { View } from '@/components/Themed';
 import { useEffect, useState } from 'react';
 import * as UserService from '@/service/UserService';
 import {Login} from '@/components/Login';
-import {Profile} from '@/components/Profile page';
+import {Profile} from '@/components/Profile';
 import { router } from 'expo-router';
 import { ScrollView } from '@gluestack-ui/themed';
 

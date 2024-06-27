@@ -1,5 +1,5 @@
 import { View } from "react-native"
-import { Alert, AlertIcon, AlertText,Button, Text, Card, Input, InputField, Checkbox, CheckboxLabel, CheckboxIndicator, CheckboxIcon, CheckIcon, HStack, ButtonText, ButtonIcon, ArrowRightIcon, CheckboxGroup, InfoIcon, BadgeIcon, CircleIcon } from "@gluestack-ui/themed"
+import { Alert, AlertIcon, AlertText, Button, Text, Card, Input, InputField, Checkbox, CheckboxLabel, CheckboxIndicator, CheckboxIcon, CheckIcon, HStack, ButtonText, ButtonIcon, ArrowRightIcon, CheckboxGroup, InfoIcon, BadgeIcon, CircleIcon } from "@gluestack-ui/themed"
 import React, { useEffect } from "react"
 import { DatePickerInput } from "react-native-paper-dates";
 import { getUserByRole } from "@/service/UserService";
@@ -10,9 +10,9 @@ export const SelectShiftFrom: React.FC = () => {
     const [workDate, setWorkDate] = React.useState(new Date())
     const [userList, setUserList] = React.useState<User[]>([])
     const [checkedUsers, setCheckedUsers] = React.useState<string[]>([])
-    const [showSuccessAlert,setShowSuccessAlert] = React.useState(false)
-    const [showErrorAlert,setShowErrorAlert] = React.useState(false)
-    const [preferredWorkers,setPreferredWorkers] = React.useState<string[]>([])
+    const [showSuccessAlert, setShowSuccessAlert] = React.useState(false)
+    const [showErrorAlert, setShowErrorAlert] = React.useState(false)
+    const [preferredWorkers, setPreferredWorkers] = React.useState<string[]>([])
     useEffect(() => {
         getUserByRole("tester").then(
             (data) => {
@@ -25,8 +25,8 @@ export const SelectShiftFrom: React.FC = () => {
             }
         )
         getPreferredEmployeesBydate(workDate).then(
-            (data)=>{
-                
+            (data) => {
+
                 setPreferredWorkers(data)
             }
         ).catch(
@@ -34,15 +34,15 @@ export const SelectShiftFrom: React.FC = () => {
                 console.log((error as Error).message)
             }
         )
-       
+
     }, [])
-    const freeTodayByUsername=(username:string)=>{
+    const freeTodayByUsername = (username: string) => {
         console.log("hello")
         console.log("function: " + preferredWorkers);
-        for (let worker of preferredWorkers){
+        for (let worker of preferredWorkers) {
             console.log("workder: " + worker)
             console.log("username: " + username)
-            if(worker===username) {
+            if (worker === username) {
                 console.log(username + "equals")
                 return true;
             }
@@ -50,15 +50,15 @@ export const SelectShiftFrom: React.FC = () => {
         return false;
     }
     const submitShift = () => {
-        batchByDate(workDate, checkedUsers).then((obj)=>{
+        batchByDate(workDate, checkedUsers).then((obj) => {
             setShowSuccessAlert(true)
-            setTimeout(()=>{setShowSuccessAlert(false)},1000)
+            setTimeout(() => { setShowSuccessAlert(false) }, 1000)
         }
         ).catch(
-            (error)=>{
+            (error) => {
                 setShowErrorAlert(true);
-                setTimeout(()=>{setShowErrorAlert(false)},1000)
-                
+                setTimeout(() => { setShowErrorAlert(false) }, 1000)
+
             }
         )
 
@@ -66,22 +66,21 @@ export const SelectShiftFrom: React.FC = () => {
         console.log(checkedUsers)
     }
     return (
-        
         <View>
-            {showSuccessAlert?
-            (<Alert mx="$2.5" action="success" variant="solid" >
-                <AlertIcon as={InfoIcon} mr="$3" />
-                <AlertText>
-                    Successfully submitted!
-                </AlertText>
-            </Alert>):""}
-            {showErrorAlert?
-            (<Alert mx="$2.5" action="error" variant="solid" >
-                <AlertIcon as={InfoIcon} mr="$3" />
-                <AlertText>
-                    Duplicate Shift, submitted failed!
-                </AlertText>
-            </Alert>):""}
+            {showSuccessAlert ?
+                (<Alert mx="$2.5" action="success" variant="solid" >
+                    <AlertIcon as={InfoIcon} mr="$3" />
+                    <AlertText>
+                        Successfully submitted!
+                    </AlertText>
+                </Alert>) : null}
+            {showErrorAlert ?
+                (<Alert mx="$2.5" action="error" variant="solid" >
+                    <AlertIcon as={InfoIcon} mr="$3" />
+                    <AlertText>
+                        Duplicate Shift, submitted failed!
+                    </AlertText>
+                </Alert>) : null}
             <Card margin={3}>
                 <Text color="$text500" lineHeight="$xs">
                     Date
@@ -91,30 +90,24 @@ export const SelectShiftFrom: React.FC = () => {
                     label="WorkDate"
                     value={workDate}
                     onChange={(d) => {
-                            if(d){
-                                setWorkDate(d)
-                                getPreferredEmployeesBydate(d).then(
-                                    (data)=>{
-                                        console.log("data: " + data)
-                                        setPreferredWorkers(data)
-                                    }
-                                ).catch(
-                                    (error) => {
-                                        console.log((error as Error).message)
-                                    }
-                                )
-                            }  
+                        if (d) {
+                            setWorkDate(d)
+                            getPreferredEmployeesBydate(d).then(
+                                (data) => {
+                                    console.log("data: " + data)
+                                    setPreferredWorkers(data)
+                                }
+                            ).catch(
+                                (error) => {
+                                    console.log((error as Error).message)
+                                }
+                            )
                         }
-                        
+                    }
                     }
                     inputMode="start"
                 />
-
-            </Card>
-
-
-
-
+                </Card>
             <Card margin={3}>
                 <HStack>
                     <Text color="$text500" lineHeight="$xs">
@@ -131,14 +124,12 @@ export const SelectShiftFrom: React.FC = () => {
                                 <CheckboxIndicator>
                                     <CheckboxIcon as={CheckIcon} />
                                 </CheckboxIndicator>
-                                { (freeTodayByUsername(user.username??"No Name!"))?<BadgeIcon as={CircleIcon} color="green"/>:null}
+                                {(freeTodayByUsername(user.username ?? "No Name!")) ? <BadgeIcon as={CircleIcon} color="green" /> : null}
                             </Checkbox>)
                         })}
                     </CheckboxGroup>
-
                 </HStack>
-            </Card>
-
+                </Card>
             <Card margin={3}>
                 <Button
                     onPress={() => { submitShift() }}
@@ -149,11 +140,10 @@ export const SelectShiftFrom: React.FC = () => {
                     isFocusVisible={false}
                     width={"$20"}
                 >
-                    <ButtonText>Submit </ButtonText>
+                    <ButtonText>Submit</ButtonText>
                     <ButtonIcon as={ArrowRightIcon} />
                 </Button>
-            </Card>
-            
+                    </Card>
         </View>
     )
 }

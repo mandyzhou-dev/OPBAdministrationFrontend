@@ -73,7 +73,6 @@ export const ScheduleTable:React.FC = () => {
     }
     return (
         <View>
-            
             <HStack margin={"$1"}>
                 <Button variant="link" onPress={()=>{onClickPreviousWeek()}}>
                 <ButtonIcon as={ArrowLeftIcon} />
@@ -84,15 +83,11 @@ export const ScheduleTable:React.FC = () => {
                 <Button variant="link" onPress={()=>{onClickNextWeek()}}>
                 <ButtonIcon as={ArrowRightIcon} color="blue"/>
                 </Button>
-                
             </HStack>
-            
             <ScrollView horizontal={true} >
-                
                 <HStack space="md" style={{minWidth: 500}}>
-                    { shiftList.map((schedule) =>{
+                    {shiftList.map((schedule) =>{
                         return (
-                            
                             <VStack key={schedule.day} space="md" rounded="$md" shadowRadius="$1"style={{minHeight: 300}}>
                                 <Center  bg="$primary400" style={{minWidth: 200, minHeight: 50}}>
                                     <Text color="$white">{schedule.day}</Text>
@@ -106,13 +101,10 @@ export const ScheduleTable:React.FC = () => {
                     })}
                 </HStack>
             </ScrollView>
-
             <Button width={"$1/6"}  onPress={()=>{reload()}} margin={10}>
-                    
-                    <ButtonIcon as={RepeatIcon}/>
+                <ButtonIcon as={RepeatIcon}/>
             </Button>
-            {showStatistic?(calculate()):""}
-            
+            {showStatistic?(calculate()):null}
         </View>
     )
 }

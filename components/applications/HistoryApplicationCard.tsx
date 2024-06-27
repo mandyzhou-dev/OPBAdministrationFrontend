@@ -128,7 +128,7 @@ export const HistoryApplicationCard: React.FC<HistoryApplicationCardProps> = ({ 
                     <Button action="positive" margin={3} onPress={handle}>
                         <ButtonText>OK</ButtonText>
                         </Button>
-                </HStack> : ""}
+                </HStack> : null}
 
 
             </VStack>

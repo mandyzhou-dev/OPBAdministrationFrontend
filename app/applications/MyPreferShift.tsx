@@ -57,13 +57,13 @@ export default function MyPreferShift() {
     
     return (
         <ScrollView>
-             {showSuccessAlert?
+            {showSuccessAlert?
             (<Alert mx="$2.5" action="success" variant="solid" >
                 <AlertIcon as={InfoIcon} mr="$3" />
                 <AlertText>
                     Successfully postted!
                 </AlertText>
-            </Alert>):""}
+            </Alert>):null}
             {
                 showErrorAlert?
                 (
@@ -73,15 +73,12 @@ export default function MyPreferShift() {
                     Failed!
                 </AlertText>
             </Alert>
-                ):""}
-            
-            
+                ):null}
             <Card margin={3}>
                 <Heading>
                     Please select your prefer workdays next month.
                 </Heading>
                 <Flex vertical gap="small">
-                    
                     <DatePicker
                         multiple
                         onChange={onChange}
@@ -93,12 +90,11 @@ export default function MyPreferShift() {
                         maxDate={maxDate}
                     />
                 </Flex>
-                
             </Card>
             <Card>
             <Heading>
                     After selection, please remember to click the submit button
-                </Heading>
+            </Heading>
             <Button action="positive" margin={3} onPress={handle} w={"40%"}>
                     <ButtonText>
                         Submit
@@ -107,5 +103,4 @@ export default function MyPreferShift() {
             </Card>
         </ScrollView>
     )
-
 }

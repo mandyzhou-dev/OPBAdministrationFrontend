@@ -36,7 +36,7 @@ export const Login: React.FC<LoginProps> = ({ onLogined }) => {
     return (
         <View>
             <Center margin={50} >
-                <Image source={"../assets/images/brand.jpeg"} size='xs' />
+                <Image source={require('../assets/images/brand.jpeg')} size='md' alt="image"/>
                 <Text color='white' fontWeight='bold'>Welcome back.</Text>
                 <Text color='white' fontWeight='bold'>Sign in to your account.</Text>
             </Center>
@@ -105,7 +105,7 @@ export const Login: React.FC<LoginProps> = ({ onLogined }) => {
                     <AlertText>
                         Login failed!
                     </AlertText>
-                </Alert>) : ""}
+                </Alert>) : null}
         </View>
     )
 }

@@ -183,7 +183,7 @@ export default function announcement(){
             <Text size="sm">
               Are you sure you want to delete this announcement? This announcement will
               be permanently removed and cannot be undone.
-            </Text>ß
+            </Text>
           </AlertDialogBody>
           <AlertDialogFooter>
             <ButtonGroup space="lg">

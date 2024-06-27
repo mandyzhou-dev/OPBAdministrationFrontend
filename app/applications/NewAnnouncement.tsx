@@ -43,7 +43,7 @@ export default function History() {
                 <AlertText>
                     Successfully postted!
                 </AlertText>
-            </Alert>):""}
+            </Alert>):null}
             {
                 showErrorAlert?
                 (
@@ -53,7 +53,7 @@ export default function History() {
                     Failed!
                 </AlertText>
             </Alert>
-                ):""}
+                ):null}
             <Card margin={3}>
                 <Heading>Title:</Heading>
                 <Input

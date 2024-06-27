@@ -11,7 +11,7 @@ interface MoreModalProps {
 }
 export const MoreModal: React.FC<MoreModalProps> = ({ announcement, showModal, setShowModal }) => {
     const readCurrentAnnouncement=()=>{
-        let user = JSON.parse(localStorage.getItem('user'));
+        let user = JSON.parse(localStorage.getItem('user') as string);
 
         let announcementReadLog = {
             reader:user.username
