@@ -3,6 +3,7 @@ import moment from "moment";
 import React, { useEffect } from "react";
 import { Shift } from "@/model/Shift";
 import { deleteCurrentShift, modifyCurrentShift} from "@/service/ShiftService";
+import Moment from "moment"
 interface ShiftDetailModalProps {
     currentShift: Shift;
     showModal: boolean;
@@ -25,13 +26,14 @@ export const ShiftDetailModal: React.FC<ShiftDetailModalProps> = ({ currentShift
     }
     const modifyShift=()=>{
         setShowModal(false)
-        const start = new Date(currentShift.start)
-        start.setHours(startHour,startMinute)
-        currentShift.start = start
-
-        const end = new Date(currentShift.end)
-        end.setHours(endHour,endMinute)
-        currentShift.end = end
+        const start = moment(currentShift.start)
+        start.hour(startHour)
+        start.minute(startMinute)
+        currentShift.start = start.toDate()
+        const end = moment(currentShift.end)
+        end.hour(endHour)
+        end.minute(endMinute)
+        currentShift.end = end.toDate()
         currentShift.status = "active"
         modifyCurrentShift(currentShift)
     }

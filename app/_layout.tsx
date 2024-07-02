@@ -6,7 +6,7 @@ import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import { config } from "@gluestack-ui/config"
-
+import moment from 'moment-timezone'
 import { useColorScheme } from '@/components/useColorScheme';
 
 export {
@@ -48,7 +48,7 @@ export default function RootLayout() {
 
 function RootLayoutNav() {
   const colorScheme = useColorScheme();
-
+  moment.tz.setDefault("America/Vancouver")
   return (
     <GluestackUIProvider config={config}>
       <Stack>

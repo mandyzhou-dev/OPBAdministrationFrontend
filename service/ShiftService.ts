@@ -4,6 +4,7 @@ import {Schedule} from "@/model/Schedule"
 import {User} from "@/model/User"
 import { getFirstDayOfTheWeek } from "@/util/DateUtil";
 import { Shift } from "@/model/Shift";
+import moment from "moment-timezone";
 
 const day = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
 
@@ -57,7 +58,9 @@ export const getUserScheduleThisWeek = async (username:string, today: Date): Pro
 
 export const batchByDate = async(workDate:Date,usernameList:string[]):Promise<Object>=>{
     const shiftRequest = new ShiftRequest()
-    return shiftRequest.batchCreateByDate(workDate,usernameList)
+    const dateString = moment(workDate).format()
+    console.log("Debug Timezone: " + dateString);
+    return shiftRequest.batchCreateByDate(dateString,usernameList)
 }
 
 export const deleteCurrentShift = async(currentShift: Shift):Promise<Object>=>{

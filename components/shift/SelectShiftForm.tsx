@@ -107,7 +107,7 @@ export const SelectShiftFrom: React.FC = () => {
                     }
                     inputMode="start"
                 />
-                </Card>
+            </Card>
             <Card margin={3}>
                 <HStack>
                     <Text color="$text500" lineHeight="$xs">
@@ -116,6 +116,7 @@ export const SelectShiftFrom: React.FC = () => {
                     <CheckboxGroup value={checkedUsers} onChange={(d) => setCheckedUsers(d)}>
                         {userList.map((user) => {
                             return (<Checkbox
+                                aria-label={user.name}
                                 key={user.username}
                                 value={user.username ?? "No Name!"}
                                 justifyContent={"space-between"}
@@ -138,7 +139,6 @@ export const SelectShiftFrom: React.FC = () => {
                     action="primary"
                     isDisabled={false}
                     isFocusVisible={false}
-                    width={"$20"}
                 >
                     <ButtonText>Submit</ButtonText>
                     <ButtonIcon as={ArrowRightIcon} />
