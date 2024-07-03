@@ -4,11 +4,12 @@ import axios, { AxiosResponse } from "axios";
 axios.defaults.withCredentials=true;
 axios.defaults.headers.common['X-CSRF-TOKEN'] = "WksFJErk3XiDsnGYqi1olHqDJSWp1V4iCKUjeJZNmLkEGXYGaX8yE3qC6UuugkSskwBcpxvnCB2Z4DgPbJFGTPV_roA2KRUx"
 export class UserRequest{
-
+    
 
     getByRole = async (role: String):Promise<User[]> =>{
         try{
-            const response:AxiosResponse = await axios.get('http://localhost:8080/api/presentor/user/getUserByRoleName',{
+            console.log(process.env.EXPO_PUBLIC_API_URL)
+            const response:AxiosResponse = await axios.get(process.env.EXPO_PUBLIC_API_URL+'/api/presentor/user/getUserByRoleName',{
                 params:{
                     role: role
                 }
@@ -21,7 +22,7 @@ export class UserRequest{
     login = async(username:String, password:String):Promise<User> =>{
         try{
             
-            const response:AxiosResponse = await axios.post('http://localhost:8080/api/user/login',{
+            const response:AxiosResponse = await axios.post(process.env.EXPO_PUBLIC_API_URL+'/api/user/login',{
                     username: username,
                     password:password,   
             });
@@ -33,7 +34,7 @@ export class UserRequest{
 
     resetPassword = async(username:String,password:String):Promise<Object>=>{
         try{
-            const response:AxiosResponse = await axios.post('http://localhost:8080/api/user/'+username+'/password',
+            const response:AxiosResponse = await axios.post(process.env.EXPO_PUBLIC_API_URL+'/api/user/'+username+'/password',
                 password,{
                     headers:{
                         'Content-type':'text/plain'

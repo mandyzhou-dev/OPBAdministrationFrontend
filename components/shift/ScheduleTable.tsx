@@ -6,6 +6,7 @@ import { getScheduleThisWeek, getUserScheduleThisWeek } from "@/service/ShiftSer
 import { Schedule } from "@/model/Schedule";
 import { router } from "expo-router";
 import {  WorkTimeStatisticList } from "../statistics/WorkTimeStatisticList";
+import moment from "moment";
 
 
 
@@ -29,7 +30,7 @@ export const ScheduleTable:React.FC = () => {
         if(user.roles=='Manager'){
             setShowStatistic(true);
         }
-            getScheduleThisWeek(currentDate).then(
+            getScheduleThisWeek(moment(currentDate)).then(
                 (data) => {
                     setShiftList(data)
                 }
@@ -50,21 +51,21 @@ export const ScheduleTable:React.FC = () => {
 
     const onClickNextWeek=()=>{
         
-        const newDate=new Date(shiftList[6].date?shiftList[6].date:0)
+        const newDate=new Date(shiftList[6].date?shiftList[6].date.toDate():0)
         newDate.setDate(newDate.getDate()+1);
         setCurrentDate(newDate);
     }
 
     const onClickPreviousWeek=()=>{
-        const newDate = new Date(shiftList[0].date?shiftList[0].date:0)
+        const newDate = new Date(shiftList[0].date?shiftList[0].date.toDate():0)
         newDate.setDate(newDate.getDate()-7);
         setCurrentDate(newDate)
     }
     const calculate=()=>{
-        let start = shiftList[0]?.date
+        let start = shiftList[0]?.date.toDate()
         start?.setHours(0);
         start?.setMinutes(0,0);
-        let end = shiftList[6]?.date;
+        let end = shiftList[6]?.date.toDate();
         end?.setHours(23);
         end?.setMinutes(59,59);
         return(
@@ -78,7 +79,7 @@ export const ScheduleTable:React.FC = () => {
                 <ButtonIcon as={ArrowLeftIcon} />
                 </Button>
                     <Center>
-                        <Text>{shiftList[0]==undefined?"":shiftList[0].date?.toDateString()}-{shiftList[6]==undefined?"":shiftList[6]?.date?.toDateString()}</Text>
+                        <Text>{shiftList[0]==undefined?"":shiftList[0].date?.format('YYYY-MM-DD')}-{shiftList[6]==undefined?"":shiftList[6]?.date?.format('YYYY-MM-DD')}</Text>
                     </Center>
                 <Button variant="link" onPress={()=>{onClickNextWeek()}}>
                 <ButtonIcon as={ArrowRightIcon} color="blue"/>
@@ -91,7 +92,7 @@ export const ScheduleTable:React.FC = () => {
                             <VStack key={schedule.day} space="md" rounded="$md" shadowRadius="$1"style={{minHeight: 300}}>
                                 <Center  bg="$primary400" style={{minWidth: 200, minHeight: 50}}>
                                     <Text color="$white">{schedule.day}</Text>
-                                    <Text color="white">{schedule.date?.toDateString()}</Text>
+                                    <Text color="white">{schedule.date?.format('YYYY-MM-DD')}</Text>
                                 </Center>
                                 <VStack padding={10}>
                                     <ShiftCell workers={schedule.workers} shifts={schedule.shifts} onUpdated={reload}></ShiftCell>

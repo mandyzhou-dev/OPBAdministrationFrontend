@@ -6,6 +6,7 @@ import { getUserByRole } from "@/service/UserService";
 import { User } from "@/model/User";
 import { batchByDate } from "@/service/ShiftService";
 import { getPreferredEmployeesBydate } from "@/service/ShiftBoardService";
+import moment from "moment";
 export const SelectShiftFrom: React.FC = () => {
     const [workDate, setWorkDate] = React.useState(new Date())
     const [userList, setUserList] = React.useState<User[]>([])
@@ -50,7 +51,8 @@ export const SelectShiftFrom: React.FC = () => {
         return false;
     }
     const submitShift = () => {
-        batchByDate(workDate, checkedUsers).then((obj) => {
+        const workDateMoment = moment().year(workDate.getFullYear()).month(workDate.getMonth()).day(workDate.getDay()).hour(workDate.getHours()).minute(workDate.getMinutes()).second(workDate.getSeconds())
+        batchByDate(workDateMoment, checkedUsers).then((obj) => {
             setShowSuccessAlert(true)
             setTimeout(() => { setShowSuccessAlert(false) }, 1000)
         }
@@ -61,9 +63,6 @@ export const SelectShiftFrom: React.FC = () => {
 
             }
         )
-
-        console.log(workDate);
-        console.log(checkedUsers)
     }
     return (
         <View>

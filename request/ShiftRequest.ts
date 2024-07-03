@@ -1,6 +1,6 @@
 import { Shift } from '@/model/Shift';
 import axios, {AxiosResponse} from 'axios'
-import moment from 'moment';
+import moment, { Moment } from 'moment';
 import Cookies from 'universal-cookie'
 import { Header } from 'react-native/Libraries/NewAppScreen';
 
@@ -8,13 +8,13 @@ import { Header } from 'react-native/Libraries/NewAppScreen';
 export class ShiftRequest{
     
 
-    getByStartDateScope = async (start: Date, end:Date): Promise<Shift[]> => {
+    getByStartDateScope = async (start: Moment, end:Moment): Promise<Shift[]> => {
         try{
             
-            const response:AxiosResponse = await axios.get('http://localhost:8080/api/presentor/shift/getShiftByStartDateScope',{
+            const response:AxiosResponse = await axios.get(process.env.EXPO_PUBLIC_API_URL+'/api/presentor/shift/getShiftByStartDateScope',{
                 params:{
-                    start: start,
-                    end: end,
+                    start: start.format(),
+                    end: end.format(),
                 }
             });
             return response.data;
@@ -27,7 +27,7 @@ export class ShiftRequest{
     getByUsernameAndStartDateScope = async (username:string,start: Date, end:Date): Promise<Shift[]> => {
         try{
             
-            const response:AxiosResponse = await axios.get('http://localhost:8080/api/presentor/shift/'+username+'/getShiftByStartDateScope',{
+            const response:AxiosResponse = await axios.get(process.env.EXPO_PUBLIC_API_URL+'/api/presentor/shift/'+username+'/getShiftByStartDateScope',{
                 params:{
                     start: start,
                     end: end,
@@ -51,7 +51,7 @@ export class ShiftRequest{
             const cookies = new Cookies();
             cookies.set('JSESSIONID', JSON.parse(localStorage.getItem("user") as string).jsessionID)
             console.log(cookies.get('JSESSIONID'))
-            const response:AxiosResponse = await axios.put('http://localhost:8080/api/shift/shiftarrangement/batchCreateByDate',{
+            const response:AxiosResponse = await axios.put(process.env.EXPO_PUBLIC_API_URL+'/api/shift/shiftarrangement/batchCreateByDate',{
                     workDate: workDate,
                     usernames:usernameList,
             },config)
@@ -64,7 +64,7 @@ export class ShiftRequest{
     deleteCurrentShift = async (shift:Shift):Promise<Object>=>{
         try{
             
-            const response:AxiosResponse = await axios.put('http://localhost:8080/api/shift/shiftarrangement/deleteCurrentShift',
+            const response:AxiosResponse = await axios.put(process.env.EXPO_PUBLIC_API_URL+'/api/shift/shiftarrangement/deleteCurrentShift',
                 shift)
             return response.data
         }catch(e){
@@ -74,7 +74,7 @@ export class ShiftRequest{
 
     modifyCurrentShift = async(shift:Shift):Promise<Object>=>{
         try{
-            const response:AxiosResponse = await axios.put('http://localhost:8080/api/shift/shiftarrangement/modifyCurrentShift',
+            const response:AxiosResponse = await axios.put(process.env.EXPO_PUBLIC_API_URL+'/api/shift/shiftarrangement/modifyCurrentShift',
             shift)
             return response.data
         }catch(e){
