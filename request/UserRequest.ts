@@ -9,7 +9,7 @@ export class UserRequest{
     getByRole = async (role: String):Promise<User[]> =>{
         try{
             console.log(process.env.EXPO_PUBLIC_API_URL)
-            const response:AxiosResponse = await axios.get(process.env.EXPO_PUBLIC_API_URL+'/api/presentor/user/getUserByRoleName',{
+            const response:AxiosResponse = await axios.get(process.env.EXPO_PUBLIC_API_URL+'api/presentor/user/getUserByRoleName',{
                 params:{
                     role: role
                 }
@@ -22,7 +22,7 @@ export class UserRequest{
     login = async(username:String, password:String):Promise<User> =>{
         try{
             
-            const response:AxiosResponse = await axios.post(process.env.EXPO_PUBLIC_API_URL+'/api/user/login',{
+            const response:AxiosResponse = await axios.post(process.env.EXPO_PUBLIC_API_URL+'api/user/login',{
                     username: username,
                     password:password,   
             });
@@ -34,7 +34,7 @@ export class UserRequest{
 
     resetPassword = async(username:String,password:String):Promise<Object>=>{
         try{
-            const response:AxiosResponse = await axios.post(process.env.EXPO_PUBLIC_API_URL+'/api/user/'+username+'/password',
+            const response:AxiosResponse = await axios.post(process.env.EXPO_PUBLIC_API_URL+'api/user/'+username+'/password',
                 password,{
                     headers:{
                         'Content-type':'text/plain'

@@ -4,7 +4,7 @@ import axios, { Axios, AxiosResponse } from "axios";
 export class LeaveApplicationRequest{
     putLeaveApplication = async(putLeaveAplication:object):Promise<LeaveApplication>=>{
         try{
-            const response:AxiosResponse = await axios.put(process.env.EXPO_PUBLIC_API_URL+'/api/process/application/leave-application',
+            const response:AxiosResponse = await axios.put(process.env.EXPO_PUBLIC_API_URL+'api/process/application/leave-application',
             putLeaveAplication);
             return response.data;
         }catch(e){
@@ -15,7 +15,7 @@ export class LeaveApplicationRequest{
 
     getApplication = async(handler:string,applicant:string):Promise<LeaveApplication[]>=>{
         try{
-            const response:AxiosResponse = await axios.get(process.env.EXPO_PUBLIC_API_URL+'/api/process/application',
+            const response:AxiosResponse = await axios.get(process.env.EXPO_PUBLIC_API_URL+'api/process/application',
             {
                 params:{
                     handler:handler,
@@ -30,7 +30,7 @@ export class LeaveApplicationRequest{
 
     getAllApplications = async():Promise<LeaveApplication[]>=>{
         try{
-            const response:AxiosResponse = await axios.get(process.env.EXPO_PUBLIC_API_URL+'/api/process/application/getAllApplications');
+            const response:AxiosResponse = await axios.get(process.env.EXPO_PUBLIC_API_URL+'api/process/application/getAllApplications');
             return response.data;
         }catch(e){
             throw new Error("Request Failure" +(e as Error).message)
@@ -38,7 +38,7 @@ export class LeaveApplicationRequest{
     }
     permitReview = async(id:number):Promise<Object>=>{
         try{
-            const response:AxiosResponse = await axios.post(process.env.EXPO_PUBLIC_API_URL+'/api/process/application/'+id+'/permit',);
+            const response:AxiosResponse = await axios.post(process.env.EXPO_PUBLIC_API_URL+'api/process/application/'+id+'/permit',);
             return response.data;
         }catch(e){
             console.log(id);
@@ -48,7 +48,7 @@ export class LeaveApplicationRequest{
 
     rejectReview = async(id:number,rejectReason:string):Promise<Object>=>{
         try{
-            const response:AxiosResponse = await axios.post(process.env.EXPO_PUBLIC_API_URL+'/api/process/application/'+id+'/reject',
+            const response:AxiosResponse = await axios.post(process.env.EXPO_PUBLIC_API_URL+'api/process/application/'+id+'/reject',
             rejectReason,{
                 headers:{
                     'Content-type':'text/plain'
@@ -62,7 +62,7 @@ export class LeaveApplicationRequest{
 
     addNote = async(id:number, note:string):Promise<Object>=>{
         try{
-            const response:AxiosResponse = await axios.put(process.env.EXPO_PUBLIC_API_URL+'/api/process/application/'+id+'/note',
+            const response:AxiosResponse = await axios.put(process.env.EXPO_PUBLIC_API_URL+'api/process/application/'+id+'/note',
             note,{
                 headers:{
                     'Content-type':'text/plain'
@@ -76,7 +76,7 @@ export class LeaveApplicationRequest{
 
     deleteApplication = async(id:number):Promise<Object>=>{
         try{
-            const response:AxiosResponse = await axios.delete(process.env.EXPO_PUBLIC_API_URL+'/api/process/application/'+id,)
+            const response:AxiosResponse = await axios.delete(process.env.EXPO_PUBLIC_API_URL+'api/process/application/'+id,)
             return response.data;
         }catch(e){
             throw new Error("Delete Failure"+(e as Error).message)

@@ -4,7 +4,7 @@ import axios, { AxiosResponse } from "axios";
 export class ShiftBoardRequest{
     getPreferredEmployeesBydate = async(date:Date):Promise<string[]>=>{
         try{
-            const response:AxiosResponse = await axios.get(process.env.EXPO_PUBLIC_API_URL+'/api/shift/shiftboard/getBoardByDate',
+            const response:AxiosResponse = await axios.get(process.env.EXPO_PUBLIC_API_URL+'api/shift/shiftboard/getBoardByDate',
             {params:{date:date}});
             return response.data;
         }catch(e){
@@ -13,7 +13,7 @@ export class ShiftBoardRequest{
     }
     updatePreferWorkday = async(preferWorkdays:PreferWorkdays):Promise<Object>=>{
         try{
-            const response:AxiosResponse = await axios.put(process.env.EXPO_PUBLIC_API_URL+'/api/shift/shiftboard/updateBoard',preferWorkdays);
+            const response:AxiosResponse = await axios.put(process.env.EXPO_PUBLIC_API_URL+'api/shift/shiftboard/updateBoard',preferWorkdays);
             return response.data;
         }catch(e){
             throw new Error("Put Failure"+(e as Error).message)
@@ -22,7 +22,7 @@ export class ShiftBoardRequest{
 
     shiftToNextMonth = async():Promise<Object>=>{
         try{
-            const response:AxiosResponse = await axios.put(process.env.EXPO_PUBLIC_API_URL+'/api/shift/shiftboard/shiftToNextMonth');
+            const response:AxiosResponse = await axios.put(process.env.EXPO_PUBLIC_API_URL+'api/shift/shiftboard/shiftToNextMonth');
             return response.data;
         }catch(e){
             throw new Error("Put Failure"+(e as Error).message)
@@ -31,7 +31,7 @@ export class ShiftBoardRequest{
 
     getCurrentMonth = async():Promise<number>=>{
         try{
-            const response:AxiosResponse = await axios.get(process.env.EXPO_PUBLIC_API_URL+'/api/shift/shiftboard/getCurrentMonth');
+            const response:AxiosResponse = await axios.get(process.env.EXPO_PUBLIC_API_URL+'api/shift/shiftboard/getCurrentMonth');
             return response.data;
         }catch(e){
             throw new Error("Get Failure"+(e as Error).message)
@@ -40,7 +40,7 @@ export class ShiftBoardRequest{
 
     getPreferredDatesByUser = async(username:string):Promise<Date[]>=>{
         try{
-            const response:AxiosResponse = await axios.get(process.env.EXPO_PUBLIC_API_URL+'/api/shift/shiftboard/getBoardByUser',{params:{username:username}});
+            const response:AxiosResponse = await axios.get(process.env.EXPO_PUBLIC_API_URL+'api/shift/shiftboard/getBoardByUser',{params:{username:username}});
             return response.data;
         }catch(e){
             throw new Error("Get Failure"+(e as Error).message)
