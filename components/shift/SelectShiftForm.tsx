@@ -51,7 +51,7 @@ export const SelectShiftFrom: React.FC = () => {
         return false;
     }
     const submitShift = () => {
-        const workDateMoment = moment().year(workDate.getFullYear()).month(workDate.getMonth()).day(workDate.getDay()).hour(workDate.getHours()).minute(workDate.getMinutes()).second(workDate.getSeconds())
+        const workDateMoment = moment().year(workDate.getFullYear()).month(workDate.getMonth()).day(workDate.getDate()).hour(workDate.getHours()).minute(workDate.getMinutes()).second(workDate.getSeconds())
         batchByDate(workDateMoment, checkedUsers).then((obj) => {
             setShowSuccessAlert(true)
             setTimeout(() => { setShowSuccessAlert(false) }, 1000)
