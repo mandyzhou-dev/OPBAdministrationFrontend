@@ -1,11 +1,12 @@
 import { PreferWorkdays } from "@/model/PreferWorkdays";
 import axios, { AxiosResponse } from "axios";
+import { Moment } from "moment";
 
 export class ShiftBoardRequest{
-    getPreferredEmployeesBydate = async(date:Date):Promise<string[]>=>{
+    getPreferredEmployeesBydate = async(date:Moment):Promise<string[]>=>{
         try{
             const response:AxiosResponse = await axios.get(process.env.EXPO_PUBLIC_API_URL+'api/shift/shiftboard/getBoardByDate',
-            {params:{date:date}});
+            {params:{date:date.format()}});
             return response.data;
         }catch(e){
             throw new Error("Get Failure"+(e as Error).message)
