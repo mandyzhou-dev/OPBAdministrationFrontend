@@ -8,6 +8,7 @@ export class User{
     address!:string |undefined;
     birthdate!:Date |undefined;
     active!:number |undefined;
+
     constructor(username: string, name: string,roles:string,email:string,phoneNumber:string,address:string,birthdate:Date,active:number){
         this.username = username;
         this.name = name;

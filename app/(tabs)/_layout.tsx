@@ -75,7 +75,14 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => <TabBarIcon name="edit" color={color} />,
         }}
       />
-      
+      <Tabs.Screen
+        name="target"
+        options={{
+          title: 'KPI',
+          href:'target',
+          tabBarIcon: ({ color }) => <FontAwesome name="bar-chart" size={24} color={color} />,
+        }}
+      />
       <Tabs.Screen
         name="application"
         options={{
@@ -85,7 +92,7 @@ export default function TabLayout() {
         }}
       />
 
-<Tabs.Screen
+      <Tabs.Screen
         name="my"
         options={{
           title:'My',

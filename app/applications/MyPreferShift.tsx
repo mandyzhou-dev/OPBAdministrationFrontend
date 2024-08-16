@@ -35,6 +35,25 @@ export default function MyPreferShift() {
             }
         );
     }
+    function getCanadianHolidays() {
+        return [
+          dayjs("2024-01-01"), // New Year's Day
+          dayjs("2024-02-19"), //Family Day
+          dayjs("2024-03-29"), // Good Friday
+          dayjs("2024-05-20"), //Victoria Day
+          dayjs("2024-07-01"), // Canada Day
+          dayjs("2024-08-05"), //British Columbia Day
+          dayjs("2024-09-02"), // Labour Day 
+          dayjs("2024-09-30"), //National Day for Truth and Reconciliation
+          dayjs("2024-10-14"), // Thanksgiving 
+          dayjs("2024-11-11"), //Remembrance Day
+          dayjs("2024-12-25"), // Christmas Day
+        ];
+      }
+    function disabledDate(current: Dayjs) {
+        const holidays = getCanadianHolidays();
+        return holidays.some(holiday => current.isSame(holiday, 'day'));
+      }
     useEffect(()=>{
         let user = JSON.parse(localStorage.getItem("user") as string);
         if(user == undefined) return;
@@ -88,7 +107,7 @@ export default function MyPreferShift() {
                         allowClear={false}
                         minDate={minDate}
                         maxDate={maxDate}
-                    />
+                        disabledDate={disabledDate}/>
                 </Flex>
             </Card>
             <Card>
