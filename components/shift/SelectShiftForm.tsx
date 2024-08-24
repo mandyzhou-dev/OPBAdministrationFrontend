@@ -1,5 +1,5 @@
 import { View } from "react-native"
-import { Alert, AlertIcon, AlertText, Button, Text, Card, Input, InputField, Checkbox, CheckboxLabel, CheckboxIndicator, CheckboxIcon, CheckIcon, HStack, ButtonText, ButtonIcon, ArrowRightIcon, CheckboxGroup, InfoIcon, BadgeIcon, CircleIcon } from "@gluestack-ui/themed"
+import { Alert, AlertIcon, AlertText, Button, Text, Card, Input, InputField, Checkbox, CheckboxLabel, CheckboxIndicator, CheckboxIcon, CheckIcon, HStack, ButtonText, ButtonIcon, ArrowRightIcon, CheckboxGroup, InfoIcon, BadgeIcon, CircleIcon, RadioGroup, Radio, RadioLabel, RadioIndicator, RadioIcon } from "@gluestack-ui/themed"
 import React, { useEffect } from "react"
 import { DatePickerInput } from "react-native-paper-dates";
 import { getUserByRole } from "@/service/UserService";
@@ -11,6 +11,7 @@ export const SelectShiftFrom: React.FC = () => {
     const [workDate, setWorkDate] = React.useState(new Date())
     const [userList, setUserList] = React.useState<User[]>([])
     const [checkedUsers, setCheckedUsers] = React.useState<string[]>([])
+    const [checkedGroup,setCheckedGroup] = React.useState<string>('')
     const [showSuccessAlert, setShowSuccessAlert] = React.useState(false)
     const [showErrorAlert, setShowErrorAlert] = React.useState(false)
     const [preferredWorkers, setPreferredWorkers] = React.useState<string[]>([])
@@ -35,6 +36,7 @@ export const SelectShiftFrom: React.FC = () => {
                 console.log((error as Error).message)
             }
         )
+        
 
     }, [])
     const freeTodayByUsername = (username: string) => {
@@ -53,7 +55,7 @@ export const SelectShiftFrom: React.FC = () => {
     const submitShift = () => {
         console.log("getdate(): " + workDate.getDate())
         const workDateMoment = moment().year(workDate.getFullYear()).month(workDate.getMonth()).date(workDate.getDate()).hour(workDate.getHours()).minute(workDate.getMinutes()).second(workDate.getSeconds())
-        batchByDate(workDateMoment, checkedUsers).then((obj) => {
+        batchByDate(workDateMoment, checkedGroup,checkedUsers).then((obj) => {
             setShowSuccessAlert(true)
             setTimeout(() => { setShowSuccessAlert(false) }, 1000)
         }
@@ -110,9 +112,33 @@ export const SelectShiftFrom: React.FC = () => {
             </Card>
             <Card margin={3}>
                 <HStack>
+                    <Text color="$text500" lineHeight="$xs" mr={10}>
+                        Group:
+                    </Text>
+                    <RadioGroup value={checkedGroup} onChange={(d)=>setCheckedGroup(d)}>
+                    <HStack space="2xl">
+                        <Radio value="surrey" size="md">
+                            <RadioIndicator>
+                                <RadioIcon as={CircleIcon} />
+                            </RadioIndicator>
+                            <RadioLabel>SRY</RadioLabel>
+                        </Radio>
+                        <Radio value="coquitlam" size="md">
+                            <RadioIndicator>
+                                <RadioIcon as={CircleIcon} />
+                            </RadioIndicator>
+                            <RadioLabel>COQ</RadioLabel>
+                        </Radio>
+                        </HStack>
+                    </RadioGroup>
+                </HStack>
+            </Card>
+            <Card margin={3}>
+                <HStack>
                     <Text color="$text500" lineHeight="$xs">
                         Assignment:
                     </Text>
+
                     <CheckboxGroup value={checkedUsers} onChange={(d) => setCheckedUsers(d)}>
                         {userList.map((user) => {
                             return (<Checkbox
@@ -130,7 +156,7 @@ export const SelectShiftFrom: React.FC = () => {
                         })}
                     </CheckboxGroup>
                 </HStack>
-                </Card>
+            </Card>
             <Card margin={3}>
                 <Button
                     onPress={() => { submitShift() }}
@@ -143,7 +169,7 @@ export const SelectShiftFrom: React.FC = () => {
                     <ButtonText>Submit</ButtonText>
                     <ButtonIcon as={ArrowRightIcon} />
                 </Button>
-                    </Card>
+            </Card>
         </View>
     )
 }

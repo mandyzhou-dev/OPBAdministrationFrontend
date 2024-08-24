@@ -3,6 +3,8 @@ import axios, {AxiosResponse} from 'axios'
 import moment, { Moment } from 'moment';
 import Cookies from 'universal-cookie'
 import { Header } from 'react-native/Libraries/NewAppScreen';
+import dayjs, { Dayjs } from 'dayjs';
+import { kpi } from '@/model/KPI';
 
 //axios.defaults.withCredentials=true;
 export class ShiftRequest{
@@ -40,7 +42,7 @@ export class ShiftRequest{
         
     }
 
-    batchCreateByDate = async (workDate: string, usernameList:string[]):Promise<Object> => {
+    batchCreateByDate = async (workDate: string, group: string, usernameList:string[]):Promise<Object> => {
         
         try{
             const config = {
@@ -53,6 +55,7 @@ export class ShiftRequest{
             console.log(cookies.get('JSESSIONID'))
             const response:AxiosResponse = await axios.put(process.env.EXPO_PUBLIC_API_URL+'api/shift/shiftarrangement/batchCreateByDate',{
                     workDate: workDate,
+                    group: group,
                     usernames:usernameList,
             },config)
             return response.data
@@ -82,6 +85,19 @@ export class ShiftRequest{
         }
     }
 
+    getKPIByDateAndGroup = async(group:string, date:Dayjs):Promise<kpi>=>{
+        try{
+            const response:AxiosResponse = await axios.get(process.env.EXPO_PUBLIC_API_URL+'api/shift/kpi',{
+                params:{
+                    group: group,
+                    date: date.format('YYYY-MM-DD'),
+                }
+            });
+            return response.data
+        }catch(e){
+            throw new Error("Get Failure"+(e as Error).message)
+        }
+    }
 }
 
 

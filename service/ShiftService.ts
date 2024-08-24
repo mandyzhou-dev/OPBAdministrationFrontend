@@ -5,6 +5,8 @@ import {User} from "@/model/User"
 import { getFirstDayOfTheWeek } from "@/util/DateUtil";
 import { Shift } from "@/model/Shift";
 import moment, { Moment } from "moment-timezone";
+import dayjs, { Dayjs } from "dayjs";
+import { kpi } from "@/model/KPI";
 
 const day = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
 
@@ -55,12 +57,12 @@ export const getUserScheduleThisWeek = async (username:string, today: Date): Pro
     return scheduleTable;
 }
 
-export const batchByDate = async(workDate:Moment,usernameList:string[]):Promise<Object>=>{
+export const batchByDate = async(workDate:Moment,group:string,usernameList:string[]):Promise<Object>=>{
     const shiftRequest = new ShiftRequest()
     console.log("Workdate " + workDate);
     const dateString = workDate.format()
     console.log("Debug Timezone: " + dateString);
-    return shiftRequest.batchCreateByDate(dateString,usernameList)
+    return shiftRequest.batchCreateByDate(dateString,group, usernameList)
 }
 
 export const deleteCurrentShift = async(currentShift: Shift):Promise<Object>=>{
@@ -71,4 +73,8 @@ export const deleteCurrentShift = async(currentShift: Shift):Promise<Object>=>{
 export const modifyCurrentShift = async(currentShift:Shift):Promise<Object>=>{
     const shiftRequest = new ShiftRequest();
     return shiftRequest.modifyCurrentShift(currentShift)
+}
+export const getKPIByDateAndGroup = async(group:string,date:Dayjs):Promise<kpi>=>{
+    const shiftRequest = new ShiftRequest();
+    return shiftRequest.getKPIByDateAndGroup(group,date);
 }

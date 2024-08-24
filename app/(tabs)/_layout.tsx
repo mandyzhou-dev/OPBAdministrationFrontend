@@ -20,17 +20,24 @@ export default function TabLayout() {
   const [showAssignment, setShowAssignment]= useState(false);
   const [showSchedule,setShowSchedule] = useState(false);
   const [showApplication,setShowApplication] = useState(false);
+  const [showKPI,setShowKPI] = useState(false);
   useEffect(()=>{
+    console.log(showKPI)
     let user = JSON.parse(localStorage.getItem("user") as string)
     if(user){
       setShowSchedule(true)
       setShowApplication(true)
-      if(user != null && user.roles=='Manager')
-        setShowAssignment(true)
+      
+      if(user != null && user.roles=='Manager'){
+        setShowAssignment(true);
+        setShowKPI(true)
+
+      }
     }
     else{
       setShowAssignment(false);
       setShowSchedule(false);
+      setShowKPI(false)
     }
   },);
   const colorScheme = useColorScheme();
@@ -79,7 +86,7 @@ export default function TabLayout() {
         name="target"
         options={{
           title: 'KPI',
-          href:'target',
+          href:showKPI?"target":null,
           tabBarIcon: ({ color }) => <FontAwesome name="bar-chart" size={24} color={color} />,
         }}
       />
