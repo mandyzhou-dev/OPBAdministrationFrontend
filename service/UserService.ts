@@ -17,3 +17,7 @@ export const resetPassword = async(username:String, password:String):Promise<Obj
     const userRequest = new UserRequest()
     return userRequest.resetPassword(username,password);
 }
+export const checkValidation = async(username:String):Promise<Object>=>{
+    const userRequest = new UserRequest()
+    return userRequest.checkValidation(username);
+}

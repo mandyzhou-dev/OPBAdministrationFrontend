@@ -4,13 +4,15 @@ import { ScheduleTable } from '@/components/shift/ScheduleTable';
 import { router, useFocusEffect } from 'expo-router';
 import React, { useEffect } from 'react';
 import { ScrollView } from '@gluestack-ui/themed';
-import {getUnreadListByReader } from '@/service/AnnouncementService';
+import { getUnreadListByReader } from '@/service/AnnouncementService';
 import { UnreadModal } from '@/components/announcements/UnreadModal';
+import { checkValidation } from '@/service/UserService';
 export default function TabOneScreen() {
   //const [showCurrentAnnouncement,setShowCurrentAnnouncement] = React.useState<Announcement[]>([]);
   const [refreshCount, setRefreshCount] = React.useState(0)
-  const [showModal,setShowModal] = React.useState(false);
-  const [unreadList , setUnreadList] = React.useState<number[]>([]);
+  const [showModal, setShowModal] = React.useState(false);
+  const [unreadList, setUnreadList] = React.useState<number[]>([]);
+
   let listener = null;
   /*useEffect(() => {
     getAnnouncementByAfter(new Date()).then(
@@ -25,10 +27,21 @@ export default function TabOneScreen() {
   },[])*/
 
   useEffect(() => {
-    let user = JSON.parse(localStorage.getItem("user") as string);
-    if(user == undefined)
-      return;
 
+    let user = JSON.parse(localStorage.getItem("user") as string);
+    if (user == undefined)
+      return;
+    checkValidation(user.username).then(
+      (data) => {
+        if (data == false) {
+          alert("You have been removed from the group")
+          localStorage.removeItem("user");
+          router.navigate('my')
+          return;
+        }
+
+      }
+    )
     /*alert(user.active)
     alert(user.email)
     if(user.active!==1){
@@ -38,41 +51,41 @@ export default function TabOneScreen() {
     }*/
       
     getUnreadListByReader(user.username).then(
-      (data)=>{
-          setUnreadList(data);
-          console.log(data)
-          if(data.length==0){
-            setShowModal(false);
-          }
-          else{
-            setShowModal(true);
-          }
+    (data) => {
+      setUnreadList(data);
+      console.log(data)
+      if (data.length == 0) {
+        setShowModal(false);
       }
+      else {
+        setShowModal(true);
+      }
+    }
   ).catch(
-      (error) => {
-          console.log((error as Error).message)
-      }
+    (error) => {
+      console.log((error as Error).message)
+    }
   )
-  },[])
-  useFocusEffect(
-    React.useCallback(() => {
-      setRefreshCount(refreshCount + 1)
-      let user = JSON.parse(localStorage.getItem("user") as string)
-      if (user == null) {
-        router.navigate('my')
-      }
-    }, [])
-  )
-        
-  return ( 
-    <ScrollView>
-      <View style={styles.container}>
-        <Text style={styles.title}>Schedule</Text>
-        <ScheduleTable ></ScheduleTable>
-        {showModal?<UnreadModal count={unreadList.length}></UnreadModal>:null}
-      </View>
-    </ScrollView>
-  );
+  }, [])
+useFocusEffect(
+  React.useCallback(() => {
+    setRefreshCount(refreshCount + 1)
+    let user = JSON.parse(localStorage.getItem("user") as string)
+    if (user == null) {
+      router.navigate('my')
+    }
+  }, [])
+)
+
+return (
+  <ScrollView>
+    <View style={styles.container}>
+      <Text style={styles.title}>Schedule</Text>
+      <ScheduleTable ></ScheduleTable>
+      {showModal ? <UnreadModal count={unreadList.length}></UnreadModal> : null}
+    </View>
+  </ScrollView>
+);
 }
 
 const styles = StyleSheet.create({
