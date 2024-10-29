@@ -29,23 +29,19 @@ export const getScheduleThisWeek = async (today: Moment): Promise<Schedule[]> =>
             scheduleTable[newDate.day()].shifts.set(shift.username,shift);
         }
     })
-   
     return scheduleTable;
 }
 
-export const getUserScheduleThisWeek = async (username:string, today: Date): Promise<Schedule[]> => {
+export const getUserScheduleThisWeek = async (username:string, today: Moment): Promise<Schedule[]> => {
     const shiftRequest = new ShiftRequest()
-    let sunday = getFirstDayOfTheWeek(today)
-    let saturday = new Date(sunday);
-    saturday.setDate(saturday.getDate() + 6)
-    sunday.setHours(0); sunday.setMinutes(0); sunday.setSeconds(0)
-    saturday.setHours(23); saturday.setMinutes(59); saturday.setSeconds(59)
+    let sunday = moment(today).startOf('week')
+    let saturday = moment(today).endOf('week');
     const shiftArray = await shiftRequest.getByUsernameAndStartDateScope(username, sunday, saturday)
     console.log(JSON.stringify(shiftArray))
     let scheduleTable:Schedule[] = Array.from({length: 7}, () => new Schedule())
     scheduleTable.forEach((schedule, index) => {schedule.day = day[index];
-        let tempDate = new Date(sunday)
-        schedule.date = new Date(tempDate.setDate(sunday.getDate()+index))})
+        let tempDate = moment(sunday)
+        schedule.date = moment(tempDate.date(sunday.date()+index))})
     shiftArray.forEach((shift) => {
         if(shift.start != undefined){
             let newDate = new Date(shift.start)
@@ -53,7 +49,6 @@ export const getUserScheduleThisWeek = async (username:string, today: Date): Pro
             scheduleTable[newDate.getDay()].shifts.set(shift.username,shift);
         }
     })
-   
     return scheduleTable;
 }
 

@@ -26,13 +26,13 @@ export class ShiftRequest{
         
     }
 
-    getByUsernameAndStartDateScope = async (username:string,start: Date, end:Date): Promise<Shift[]> => {
+    getByUsernameAndStartDateScope = async (username:string,start: Moment, end:Moment): Promise<Shift[]> => {
         try{
             
             const response:AxiosResponse = await axios.get(process.env.EXPO_PUBLIC_API_URL+'api/presentor/shift/'+username+'/getShiftByStartDateScope',{
                 params:{
-                    start: start,
-                    end: end,
+                    start: start.format(),
+                    end: end.format(),
                 }
             });
             return response.data;
