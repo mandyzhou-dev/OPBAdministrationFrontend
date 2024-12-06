@@ -30,7 +30,7 @@ export class LeaveApplicationRequest{
 
     getAllApplications = async():Promise<LeaveApplication[]>=>{
         try{
-            const response:AxiosResponse = await axios.get(process.env.EXPO_PUBLIC_API_URL+'api/process/application/getAllApplications');
+            const response:AxiosResponse = await axios.get(process.env.EXPO_PUBLIC_API_URL+'api/process/application');
             return response.data;
         }catch(e){
             throw new Error("Request Failure" +(e as Error).message)

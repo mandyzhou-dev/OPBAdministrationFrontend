@@ -17,8 +17,9 @@ export default function ReviewApplications() {
         setCurrentApplication(application);
         setShowModal(true);
     }
+    let listener = null;
     useEffect(() => {
-        let user = JSON.parse(localStorage.getItem("user"));
+        let user = JSON.parse(localStorage.getItem("user") as string);
         if (user == null) {
             listener = DeviceEventEmitter.addListener('userlogin', () => {
                 setRefreshCount(refreshCount + 1)
@@ -54,13 +55,14 @@ export default function ReviewApplications() {
                                     end={moment(application.end).format("YYYY-MM-DD HH:mm")}
                                     reason={application.reason} 
                                     onClick={()=>callModals(application)}/>
-                                <ReviewModal currentApplication={currentApplication} showModal={showModal} setShowModal={setShowModal} onClose={()=>{setShowModal(false);onUpdated()}}>
-
-                                </ReviewModal>
+                                
                             </div>
                         )
-                    })
+                    }
+                    )            
                 }
+                <ReviewModal currentApplication={currentApplication} showModal={showModal} setShowModal={setShowModal} onClose={()=>{setShowModal(false);onUpdated()}}>
+                </ReviewModal>
             </HStack>
 
         </ScrollView>

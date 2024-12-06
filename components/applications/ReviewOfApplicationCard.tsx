@@ -2,11 +2,11 @@ import { Heading, BadgeText, Text, Card, Input, InputField, ScrollView, HStack, 
 import React from "react";
 import { useEffect } from "react";
 interface ReviewOfApplicationCardProps {
-    name: string
-    leaveType: string,
+    name: string|undefined,
+    leaveType: string|undefined,
     start: string,
     end: string,
-    reason: string,
+    reason: string|undefined,
     onClick:Function
 }
 export const ReviewOfApplicationCard: React.FC<ReviewOfApplicationCardProps> = ({ name, leaveType, start, end, reason,onClick }) => {

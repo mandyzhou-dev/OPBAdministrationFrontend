@@ -20,15 +20,18 @@ export const ShiftCell: React.FC<ShiftCellProps> = ({ workers, shifts,onUpdated 
 
 
 
-    const callModals=(currentShift:Shift)=>{
+    const callModals=(currentShift:Shift | undefined)=>{
         console.log("cliked")
-        try{
-            const items = JSON.parse(localStorage.getItem("user")).roles;
-            if(items=="Manager") {
-            setCurrentShift(currentShift)
-            setShowModal(true);
-        }}catch(error){
+        if(currentShift != undefined){
+            try{
+                const items = JSON.parse(localStorage.getItem("user") as string).roles;
+                if(items=="Manager") {
+                setCurrentShift(currentShift)
+                setShowModal(true);
+            }}catch(error){
+            }
         }
+        
     }
 
     return (
@@ -36,7 +39,7 @@ export const ShiftCell: React.FC<ShiftCellProps> = ({ workers, shifts,onUpdated 
             <VStack space="md">
                 {workers.map((worker) => {
                     return (
-                        <div key={worker.username} onClick={()=>callModals(shifts.get(worker.username))}>
+                        <div key={worker.username} onClick={()=>callModals(shifts.get(worker.username??"")) }>
                             <Badge key={worker.username} size="md" variant="solid" action="success" h={"$10"} >
                                 <VStack >
                                     <HStack>
@@ -51,8 +54,6 @@ export const ShiftCell: React.FC<ShiftCellProps> = ({ workers, shifts,onUpdated 
                                 </ShiftDetailModal>
                             </Badge>
                         </div>
-
-
                     )
                 })}
             </VStack>
