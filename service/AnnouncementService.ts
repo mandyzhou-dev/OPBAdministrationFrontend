@@ -1,8 +1,8 @@
 import { AnnouncementRequest } from "@/request/AnnouncementRequest";
 import { Announcement } from "@/model/Announcement";
-export const getAnnouncementByAfter = async (expireAfter:Date): Promise<Announcement[]> => {
+export const getAnnouncementByAfter = async (expireAfter:Date, username: string): Promise<Announcement[]> => {
     const announcementRequest = new AnnouncementRequest()
-    const announcements = await announcementRequest.getAnnouncementByAfter(expireAfter);
+    const announcements = await announcementRequest.getAnnouncementByAfter(expireAfter, username);
     return announcements;
 }
 
@@ -44,7 +44,7 @@ export const getReadStatusByIdAndReader = async(id:number,reader:string):Promise
 export const getUnreadListByReader = async(reader:string):Promise<number[]>=>{
     const announcementRequest = new AnnouncementRequest;
     const announcementReadLogList = await announcementRequest.getReadLogByReader(reader);
-    const announcementList = await announcementRequest.getAnnouncementByAfter(new Date());
+    const announcementList = await announcementRequest.getAnnouncementByAfter(new Date(),reader);
     let announcementIdList = new Array();
     let i:number;
     let j:number;

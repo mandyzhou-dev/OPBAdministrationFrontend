@@ -42,7 +42,7 @@ export class ShiftRequest{
         
     }
 
-    batchCreateByDate = async (workDate: string, group: string, usernameList:string[]):Promise<Object> => {
+    batchCreateByDate = async (workDate: string, usernameList:string[]):Promise<Object> => {
         
         try{
             const config = {
@@ -55,7 +55,6 @@ export class ShiftRequest{
             console.log(cookies.get('JSESSIONID'))
             const response:AxiosResponse = await axios.put(process.env.EXPO_PUBLIC_API_URL+'api/shift/shiftarrangement/batchCreateByDate',{
                     workDate: workDate,
-                    group: group,
                     usernames:usernameList,
             },config)
             return response.data

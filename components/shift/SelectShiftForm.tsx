@@ -55,7 +55,7 @@ export const SelectShiftFrom: React.FC = () => {
     const submitShift = () => {
         console.log("getdate(): " + workDate.getDate())
         const workDateMoment = moment().year(workDate.getFullYear()).month(workDate.getMonth()).date(workDate.getDate()).hour(workDate.getHours()).minute(workDate.getMinutes()).second(workDate.getSeconds())
-        batchByDate(workDateMoment, checkedGroup,checkedUsers).then((obj) => {
+        batchByDate(workDateMoment,checkedUsers).then((obj) => {
             setShowSuccessAlert(true)
             setTimeout(() => { setShowSuccessAlert(false) }, 1000)
         }
@@ -110,6 +110,7 @@ export const SelectShiftFrom: React.FC = () => {
                     inputMode="start"
                 />
             </Card>
+            {/*
             <Card margin={3}>
                 <HStack>
                     <Text color="$text500" lineHeight="$xs" mr={10}>
@@ -133,6 +134,7 @@ export const SelectShiftFrom: React.FC = () => {
                     </RadioGroup>
                 </HStack>
             </Card>
+            */}
             <Card margin={3}>
                 <HStack>
                     <Text color="$text500" lineHeight="$xs">
