@@ -92,7 +92,7 @@ export default function History() {
             </RadioIndicator>
             <RadioLabel>coquitlam</RadioLabel>
         </Radio>
-        <Radio value="public" size="md">  {/* 新增的all选项 */}
+        <Radio value="public" size="md">  {/* add ‘public’ option */}
             <RadioIndicator>
                 <RadioIcon as={CircleIcon} />
             </RadioIndicator>

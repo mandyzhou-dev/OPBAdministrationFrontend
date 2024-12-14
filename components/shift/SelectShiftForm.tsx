@@ -11,7 +11,8 @@ export const SelectShiftFrom: React.FC = () => {
     const [workDate, setWorkDate] = React.useState(new Date())
     const [userList, setUserList] = React.useState<User[]>([])
     const [checkedUsers, setCheckedUsers] = React.useState<string[]>([])
-    const [checkedGroup,setCheckedGroup] = React.useState<string>('')
+    //set the currently unuesed checkedGroup as ‘default’. It is not used in the current version 
+    const [checkedGroup,setCheckedGroup] = React.useState<string>('default')
     const [showSuccessAlert, setShowSuccessAlert] = React.useState(false)
     const [showErrorAlert, setShowErrorAlert] = React.useState(false)
     const [preferredWorkers, setPreferredWorkers] = React.useState<string[]>([])
@@ -55,7 +56,8 @@ export const SelectShiftFrom: React.FC = () => {
     const submitShift = () => {
         console.log("getdate(): " + workDate.getDate())
         const workDateMoment = moment().year(workDate.getFullYear()).month(workDate.getMonth()).date(workDate.getDate()).hour(workDate.getHours()).minute(workDate.getMinutes()).second(workDate.getSeconds())
-        batchByDate(workDateMoment,checkedUsers).then((obj) => {
+        //TODO: checkedGroup is not uesed，just save it position for future 
+        batchByDate(workDateMoment,checkedGroup,checkedUsers).then((obj) => {
             setShowSuccessAlert(true)
             setTimeout(() => { setShowSuccessAlert(false) }, 1000)
         }
@@ -110,8 +112,14 @@ export const SelectShiftFrom: React.FC = () => {
                     inputMode="start"
                 />
             </Card>
-            {/*
-            <Card margin={3}>
+            {/* 
+                The following code segment has been commented out because the group selection feature is not needed in the current version.
+                It may be re-enabled in a future feature update.
+                Component Description:
+                - A card component for selecting groups ("surrey" or "coquitlam").
+                - Once selected, the checkedGroup state will update to reflect the user's choice.
+            
+                <Card margin={3}>
                 <HStack>
                     <Text color="$text500" lineHeight="$xs" mr={10}>
                         Group:
