@@ -1,4 +1,4 @@
-import { InfoIcon,Alert, AlertIcon, AlertText,Card, Heading, Input, InputField, HStack, ScrollView, Text, Textarea,TextareaInput,Button,ButtonText} from "@gluestack-ui/themed";
+import { InfoIcon,Alert, AlertIcon, AlertText,Card, Heading, Input, InputField, HStack, ScrollView, Text, Textarea,TextareaInput,Button,ButtonText, RadioGroup, Radio, RadioIndicator, RadioIcon, CircleIcon, RadioLabel} from "@gluestack-ui/themed";
 import moment from "moment";
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
@@ -11,6 +11,9 @@ export default function History() {
     const [date, setDate] = React.useState<Dayjs | null>(dayjs());
     const [title,setTitle] = React.useState("");
     const [content,setContent] = React.useState("");
+    //new
+    const [groupName, setGroupName] = React.useState("");
+
     const [showSuccessAlert,setShowSuccessAlert] = React.useState(false);
     const [showErrorAlert,setShowErrorAlert] = React.useState(false);
 
@@ -20,6 +23,7 @@ export default function History() {
             title: title,
             content: content,
             expiryDate:date,
+            groupName:groupName,
             publisher:username
         }
         console.log(result);
@@ -71,6 +75,32 @@ export default function History() {
                         onChange={(newValue) => setDate(newValue)}
                     />}
                 </LocalizationProvider>
+                </Card>
+                <Card margin={3}>
+                <Heading>Visibility:</Heading>
+                <RadioGroup value={groupName} onChange={(d) => setGroupName(d)}>
+    <HStack space="2xl">
+        <Radio value="surrey" size="md">
+            <RadioIndicator>
+                <RadioIcon as={CircleIcon} />
+            </RadioIndicator>
+            <RadioLabel>surrey</RadioLabel>
+        </Radio>
+        <Radio value="coquitlam" size="md">
+            <RadioIndicator>
+                <RadioIcon as={CircleIcon} />
+            </RadioIndicator>
+            <RadioLabel>coquitlam</RadioLabel>
+        </Radio>
+        <Radio value="public" size="md">  {/* add ‘public’ option */}
+            <RadioIndicator>
+                <RadioIcon as={CircleIcon} />
+            </RadioIndicator>
+            <RadioLabel>public</RadioLabel>
+        </Radio>
+    </HStack>
+</RadioGroup>
+
                 
             </Card>
             <Card margin={3} height="100%">

@@ -14,10 +14,11 @@ export class AnnouncementRequest{
     
     }
 
-    getAnnouncementByAfter = async(expireAfter:Date):Promise<Announcement[]>=>{
+    getAnnouncementByAfter = async (expireAfter: Date, username: string): Promise<Announcement[]> => {
+
         try{
             const response:AxiosResponse = await axios.get(process.env.EXPO_PUBLIC_API_URL+'api/announcement',
-            {params:{expireAfter:expireAfter}});
+            {params:{expireAfter:expireAfter,username: username}});
             return response.data;
         }catch(e){
             throw new Error("Request Failure"+(e as Error).message)

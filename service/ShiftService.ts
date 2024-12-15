@@ -52,12 +52,12 @@ export const getUserScheduleThisWeek = async (username:string, today: Moment): P
     return scheduleTable;
 }
 
-export const batchByDate = async(workDate:Moment,group:string,usernameList:string[]):Promise<Object>=>{
+export const batchByDate = async(workDate: Moment, group: string, usernameList: string[]):Promise<Object>=>{
     const shiftRequest = new ShiftRequest()
     console.log("Workdate " + workDate);
     const dateString = workDate.format()
     console.log("Debug Timezone: " + dateString);
-    return shiftRequest.batchCreateByDate(dateString,group, usernameList)
+    return shiftRequest.batchCreateByDate(dateString,group,usernameList)
 }
 
 export const deleteCurrentShift = async(currentShift: Shift):Promise<Object>=>{

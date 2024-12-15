@@ -21,7 +21,7 @@ export default function announcement(){
   useEffect(() => {
     let user = JSON.parse(localStorage.getItem('user') as string);
     if (user.roles == 'Manager') {
-      getAnnouncementByAfter(new Date(2023 - 12 - 12)).then(
+      getAnnouncementByAfter(new Date(2023 - 12 - 12),user.username).then(
         (announcementList) => {
           getUnreadListByReader(user.username).then(
             (data)=>{
@@ -58,7 +58,7 @@ export default function announcement(){
       )
     }
     else {
-      getAnnouncementByAfter(new Date()).then(
+      getAnnouncementByAfter(new Date(),user.username).then(
         (announcementList) => {
           //set has delay. So transfer it to getunread first and then render it(set it).
           //setAnnouncementList(data);
