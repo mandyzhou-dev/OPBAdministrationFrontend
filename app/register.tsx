@@ -31,6 +31,9 @@ export default function Register() {
     const submit=()=>{
         const address = `${streetAddress}, ${city}, ${province} ${postalCode}`;
         const legalName = `${firstName}${middleName ? ` ${middleName}` : ''} ${lastName}`;
+
+        let formattedBirthdate = birthdate.replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3");
+
         let registerInfo = {
             username:username,
             name:nickname,
@@ -38,7 +41,7 @@ export default function Register() {
             email:email,
             phoneNumber:phoneNo,
             address:address,
-            birthdate:moment(birthdate,"YYYY-MM-DD").format(),
+            birthdate:formattedBirthdate,
             sinno:sinno,
             password:password
         }
