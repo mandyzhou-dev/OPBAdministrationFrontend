@@ -26,7 +26,7 @@ export default function AnnouncementDetail() {
             let announcementReadLog = {
                 reader: user.username
             }
-            readAnnouncement(announcement.id ?? 0, announcementReadLog);
+            readAnnouncement(parseInt(params.announcementId as string) ?? 0, announcementReadLog);
         },[setAnnouncement]
 
     )
