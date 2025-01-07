@@ -29,6 +29,8 @@ export default function ApplicationScreen() {
             {showHistory?<MenuItem text="History" onPress={()=>{router.navigate("/applications/History")}}></MenuItem>:null}
             <Divider my="$2.5" />
             {showPostAnnouncement?<MenuItem text="Post new announcement" onPress={()=>{router.navigate("/applications/NewAnnouncement")}}></MenuItem>:null}
+            <MenuItem text="Regulations" onPress={()=>{router.navigate("/applications/Regulations")}}></MenuItem>
+            <Divider my="$2.5" />
             <MenuItem text="Select my prefer workdate" onPress={()=>{router.navigate("/applications/MyPreferShift")}}></MenuItem>
         </View>
     )
