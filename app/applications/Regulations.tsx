@@ -5,7 +5,7 @@ import {
   VStack,
   Button,
   HStack,
-  Input,
+  Text,
 } from "@gluestack-ui/themed";
 import { useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
@@ -105,13 +105,24 @@ export default function RegulationDetail() {
           </VStack>
         )}
 
-        <HStack justifyContent="flex-end" marginTop={10}>
-          {isEditing ? (
-            <Button onPress={handleSave}>Save</Button>
-          ) : (
-            isManager && <Button onPress={() => setIsEditing(true)}>Modify</Button>
-          )}
-        </HStack>
+<HStack justifyContent="flex-end" marginTop={10}>
+  {isEditing ? (
+    <Button onPress={handleSave}>
+      <Text style={{ color: "#fff", fontSize: 14, fontWeight: "bold" }}>
+        Save
+      </Text>
+    </Button>
+  ) : (
+    isManager && (
+      <Button onPress={() => setIsEditing(true)}>
+        <Text style={{ color: "#fff", fontSize: 14, fontWeight: "bold" }}>
+          Modify
+        </Text>
+      </Button>
+    )
+  )}
+</HStack>
+
       </Card>
     </ScrollView>
   );
