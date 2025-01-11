@@ -1,4 +1,4 @@
-import { getKPIByDateAndGroup } from "@/service/ShiftService";
+import { getBiweekKPIByGroup, getKPIByDateAndGroup } from "@/service/ShiftService";
 import { getRate, updateRate } from "@/service/RateService";
 import { Button, Card, HStack, Heading, Input, ScrollView, Text, View } from "@gluestack-ui/themed";
 import dayjs from "dayjs";
@@ -10,6 +10,12 @@ export default function Target() {
     const [rate, setRate] = useState(0); 
     const [newRate, setNewRate] = useState(""); 
     const [showRate, setShowRate] = useState(false); 
+
+    const [biweekData, setBiweekData] = useState({
+        target: 0,
+        startDateTime: "",
+        endDateTime: "",
+    }); 
 
     useEffect(() => {
         const user = JSON.parse(localStorage.getItem("user") as string);
@@ -33,6 +39,18 @@ export default function Target() {
             })
             .catch((error) => {
                 console.log("Get Rate Error:", (error as Error).message);
+            });
+
+        getBiweekKPIByGroup("surrey")
+            .then((data) => {
+                setBiweekData({
+                    target: data.target ?? 0,
+                    startDateTime: data.startDateTime ?? "",
+                    endDateTime: data.endDateTime ?? "",
+                });
+            })
+            .catch((error) => {
+                console.log("Get Biweek KPI Error:", (error as Error).message);
             });
     }, []);
 
@@ -65,6 +83,18 @@ export default function Target() {
                     .catch((error) => {
                         console.log("Get KPI Error:", (error as Error).message);
                     });
+
+                getBiweekKPIByGroup("surrey")
+                    .then((data) => {
+                        setBiweekData({
+                            target: data.target ?? 0,
+                            startDateTime: data.startDateTime ?? "",
+                            endDateTime: data.endDateTime ?? "",
+                        });
+                    })
+                    .catch((error) => {
+                        console.log("Get Biweek KPI Error:", (error as Error).message);
+                    });
             })
             .catch((error) => {
                 console.log("Update Rate Error:", (error as Error).message);
@@ -74,8 +104,26 @@ export default function Target() {
 
     return (
         <ScrollView>
+             {/* Biweek KPI Card */}
+             <Card mr={3} mt={5}>
+                <Heading>Biweek KPI</Heading>
+                <HStack>
+                    <Text>
+                        {dayjs(biweekData.startDateTime.split("T")[0]).format("MMM DD")} -{" "}
+                        {dayjs(biweekData.endDateTime.split("T")[0]).format("MMM DD")}
+                    </Text>
+                </HStack>
+                <HStack w="20%">
+                    <Text size="6xl">{biweekData.target}</Text>
+                    <View style={{ position: "absolute", right: 0, bottom: 0 }}>
+                        <Text>units</Text>
+                    </View>
+                </HStack>
+            </Card>
+
+
             {/* TV Target Card */}
-            <Card mr={3}>
+            <Card mr={3} mt={5}>
                 <Heading>TV Target today</Heading>
                 <HStack w="20%">
                     <Text size="6xl">{TVNumber}</Text>

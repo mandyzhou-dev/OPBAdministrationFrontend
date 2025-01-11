@@ -69,7 +69,13 @@ export const modifyCurrentShift = async(currentShift:Shift):Promise<Object>=>{
     const shiftRequest = new ShiftRequest();
     return shiftRequest.modifyCurrentShift(currentShift)
 }
+
 export const getKPIByDateAndGroup = async(group:string,date:Dayjs):Promise<kpi>=>{
     const shiftRequest = new ShiftRequest();
     return shiftRequest.getKPIByDateAndGroup(group,date);
+}
+
+export const getBiweekKPIByGroup = async (group: string): Promise<kpi> => {
+    const shiftRequest = new ShiftRequest();
+    return shiftRequest.getBiweekKPIByGroup(group);
 }

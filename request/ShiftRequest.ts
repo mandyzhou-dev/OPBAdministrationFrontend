@@ -98,6 +98,19 @@ export class ShiftRequest{
             throw new Error("Get Failure"+(e as Error).message)
         }
     }
+
+    getBiweekKPIByGroup = async (group: string): Promise<kpi> => {
+        try {
+            const response: AxiosResponse = await axios.get(process.env.EXPO_PUBLIC_API_URL + 'api/shift/kpi/biweek', {
+                params: {
+                    group: group,
+                }
+            });
+            return response.data;
+        } catch (e) {
+            throw new Error("Get Failure" + (e as Error).message)
+        }
+    }
 }
 
 

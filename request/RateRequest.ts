@@ -6,7 +6,7 @@ export class RateRequest {
             const response: AxiosResponse = await axios.get(process.env.EXPO_PUBLIC_API_URL + 'api/shift/kpi-rate');
             return response.data;
         } catch (e) {
-            throw new Error("Get Rate Failure: " + (e as Error).message);
+            throw new Error("Request Failure: " + (e as Error).message);
         }
     };
 
@@ -15,7 +15,7 @@ export class RateRequest {
             const response: AxiosResponse = await axios.put(`${process.env.EXPO_PUBLIC_API_URL}api/shift/kpi-rate?rate=${rate}`);
             return response.data;
         } catch (e) {
-            throw new Error("Update Rate Failure: " + (e as Error).message);
+            throw new Error("Put Failure: " + (e as Error).message);
         }
     };
 }
