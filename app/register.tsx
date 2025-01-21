@@ -113,7 +113,14 @@ export default function Register() {
                     margin={10}
                     width={"$1/6"}
                     action="positive"
-                    onPress={() => { sendCode(email) }}
+                    onPress={() => { 
+                        if (!email) {
+                            alert("Please enter your email before sending the verification code.");
+                            return; 
+                        }
+                        sendCode(email);
+                        alert(`Verification code has been sent to ' ${email} '`);
+                     }}
                 >Send code</Button>
                 <Input>
                     <InputField
@@ -271,15 +278,6 @@ export default function Register() {
                 </Input>
 
             </Card>
-
-            <Button
-                margin={10}
-                width={"$1/6"}
-                action="positive"
-                onPress={() => { submit()}}
-            >
-                <ButtonText>Done</ButtonText>
-            </Button>
             {showSuccessAlert?
             (<Alert mx="$2.5" action="success" variant="solid" >
                 <AlertIcon as={InfoIcon} mr="$3" />
@@ -293,10 +291,19 @@ export default function Register() {
                     <Alert mx="$2.5" action="error" variant="solid" >
                 <AlertIcon as={InfoIcon} mr="$3" />
                 <AlertText>
-                    Failed!
+                    User already exists or verify code is wrong!
                 </AlertText>
             </Alert>
                 ):null}
+            <Button
+                margin={10}
+                width={"$1/6"}
+                action="positive"
+                onPress={() => { submit()}}
+            >
+                <ButtonText>Done</ButtonText>
+            </Button>
+
 
         </ScrollView>
 
