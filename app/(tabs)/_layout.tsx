@@ -86,7 +86,7 @@ export default function TabLayout() {
         name="target"
         options={{
           title: 'KPI',
-          href:showKPI?"target":null,
+          href:"target",
           tabBarIcon: ({ color }) => <FontAwesome name="bar-chart" size={24} color={color} />,
         }}
       />
