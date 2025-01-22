@@ -10,10 +10,10 @@ import { kpi } from '@/model/KPI';
 export class ShiftRequest{
     
 
-    getByStartDateScope = async (start: Moment, end:Moment): Promise<Shift[]> => {
+    getByStartDateScope = async (username:string,start: Moment, end:Moment): Promise<Shift[]> => {
         try{
             
-            const response:AxiosResponse = await axios.get(process.env.EXPO_PUBLIC_API_URL+'api/presentor/shift/getShiftByStartDateScope',{
+            const response:AxiosResponse = await axios.get(process.env.EXPO_PUBLIC_API_URL+'api/presentor/shift/'+username+'/getShiftByStartDateScopeAndGroup',{
                 params:{
                     start: start.format(),
                     end: end.format(),
