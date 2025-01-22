@@ -18,6 +18,20 @@ export const ShiftDetailModal: React.FC<ShiftDetailModalProps> = ({ currentShift
     const [endHour,setEndHour] = React.useState(0)
     const [endMinute,setEndMinute] =React.useState(0)
     const ref = React.useRef(null)
+
+    React.useEffect(() => {
+        if (currentShift && currentShift.start && currentShift.end) {
+            const initialStartHour = moment(currentShift.start).hour();
+            const initialStartMinute = moment(currentShift.start).minute();
+            const initialEndHour = moment(currentShift.end).hour();
+            const initialEndMinute = moment(currentShift.end).minute();
+    
+            setStartHour(initialStartHour);
+            setStartMinute(initialStartMinute);
+            setEndHour(initialEndHour);
+            setEndMinute(initialEndMinute);
+        }
+    }, [currentShift]);
     const deleteShift=()=>{
         setShowAlertDialog(false)
         deleteCurrentShift(currentShift)
