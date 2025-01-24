@@ -57,10 +57,10 @@ export const Login: React.FC<LoginProps> = ({ onLogined }) => {
                     </Heading>
                     <VStack space="xs">
                         <Text color="$text500" lineHeight="$xs">
-                            Username/Email
+                            Username
                         </Text>
                         <Input>
-                            <InputField value={username} onChangeText={(d) => setUsername(d)} type="text" placeholder='Enter your Email address' />
+                            <InputField value={username} onChangeText={(d) => setUsername(d)} type="text" placeholder='Enter your username' />
                         </Input>
                     </VStack>
                     <VStack space="xs">

@@ -121,7 +121,8 @@ export default function Register() {
                         sendCode(email);
                         alert(`Verification code has been sent to ' ${email} '`);
                      }}
-                >Send code</Button>
+                ><ButtonText>Send code</ButtonText>
+                </Button>
                 <Input>
                     <InputField
                         value={verificationCode}
