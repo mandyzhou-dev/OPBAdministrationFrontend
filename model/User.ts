@@ -8,8 +8,9 @@ export class User{
     address!:string |undefined;
     birthdate!:Date |undefined;
     active!:number |undefined;
+    groupName!:string|undefined;
 
-    constructor(username: string, name: string,roles:string,email:string,phoneNumber:string,address:string,birthdate:Date,active:number){
+    constructor(username: string, name: string,roles:string,email:string,phoneNumber:string,address:string,birthdate:Date,active:number,groupName:string){
         this.username = username;
         this.name = name;
         this.roles = roles;
@@ -18,5 +19,6 @@ export class User{
         this.address = address;
         this.birthdate = birthdate;
         this.active = active;
+        this.groupName = groupName;
     }
 }

@@ -27,6 +27,7 @@ export default function TabLayout() {
     if(user){
       setShowSchedule(true)
       setShowApplication(true)
+      setShowKPI(true)
       
       if(user != null && user.roles=='Manager'){
         setShowAssignment(true);

@@ -1,23 +1,39 @@
 import { Button, ButtonText, Text, View, Center, Card, InputField, Input, ScrollView, Alert, AlertIcon, InfoIcon, AlertText } from "@gluestack-ui/themed"
 import { Stack, router } from "expo-router"
 import { register, sendCode } from "@/service/UserService";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import dayjs, { Dayjs } from "dayjs";
 import moment from "moment";
+
 export default function Register() {
     const [username, setUsername] = useState('')
     const [nickname, setNickname] = useState('')
     const [email, setEmail] = useState('')
     const [verificationCode, setVerificationCode] = useState('')
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [middleName, setMiddleName] = useState('');
     const [legalName, setLegalName] = useState('')
     const [address, setAddress] = useState('')
     const [phoneNo, setPhoneNo] = useState('')
     const [birthdate,setBirthdate] = useState('')
     const [password,setPassword] = useState('')
     const [sinno,setSinno] = useState('')
+    const [streetAddress, setStreetAddress] = useState('');
+    const [city, setCity] = useState('');
+    const [province, setProvince] = useState('');
+    const [postalCode, setPostalCode] = useState('');
     const [showSuccessAlert,setShowSuccessAlert] = useState(false);
     const [showErrorAlert,setShowErrorAlert] = useState(false);
+
+
+
     const submit=()=>{
+        const address = `${streetAddress}, ${city}, ${province} ${postalCode}`;
+        const legalName = `${firstName}${middleName ? ` ${middleName}` : ''} ${lastName}`;
+
+        let formattedBirthdate = birthdate.replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3");
+
         let registerInfo = {
             username:username,
             name:nickname,
@@ -25,7 +41,7 @@ export default function Register() {
             email:email,
             phoneNumber:phoneNo,
             address:address,
-            birthdate:moment(birthdate,"YYYY-MM-DD").format(),
+            birthdate:formattedBirthdate,
             sinno:sinno,
             password:password
         }
@@ -97,8 +113,16 @@ export default function Register() {
                     margin={10}
                     width={"$1/6"}
                     action="positive"
-                    onPress={() => { sendCode(email) }}
-                >Send code</Button>
+                    onPress={() => { 
+                        if (!email) {
+                            alert("Please enter your email before sending the verification code.");
+                            return; 
+                        }
+                        sendCode(email);
+                        alert(`Verification code has been sent to ' ${email} '`);
+                     }}
+                ><ButtonText>Send code</ButtonText>
+                </Button>
                 <Input>
                     <InputField
                         value={verificationCode}
@@ -138,17 +162,41 @@ export default function Register() {
             </Card>
             <Card margin={3}>
                 <Text color="$text500" lineHeight="$xs">
-                    Legalname
+                    First Name
                 </Text>
                 <Input
                     isRequired>
                     <InputField
-                        value={legalName}
-                        onChangeText={(d) => setLegalName(d)}
-                        placeholder="Your name on your lagal ID"
+                        value={firstName}
+                        onChangeText={(d) => setFirstName(d)}
+                        placeholder="Your first name on your legal ID"
                     />
                 </Input>
-
+            </Card>
+            <Card margin={3}>
+                <Text color="$text500" lineHeight="$xs">
+                    Middle Name
+                </Text>
+                <Input>
+                    <InputField
+                        value={middleName}
+                        onChangeText={(d) => setMiddleName(d)}
+                        placeholder="Your middle name on your legal ID(optional)"
+                    />
+                </Input>
+            </Card>
+            <Card margin={3}>
+                <Text color="$text500" lineHeight="$xs">
+                    Last Name
+                </Text>
+                <Input
+                    isRequired>
+                    <InputField
+                        value={lastName}
+                        onChangeText={(d) => setLastName(d)}
+                        placeholder="Your last name on your legal ID"
+                    />
+                </Input>
             </Card>
             <Card margin={3}>
                 <Text color="$text500" lineHeight="$xs">
@@ -163,21 +211,60 @@ export default function Register() {
                     />
                 </Input>
 
-            </Card>
-            <Card margin={3}>
-                <Text color="$text500" lineHeight="$xs">
-                    Address
-                </Text>
-                <Input
-                    isRequired>
-                    <InputField
-                        value={address}
-                        onChangeText={(d) => setAddress(d)}
-                        placeholder="Your address"
-                    />
-                </Input>
+            </Card><Card margin={3}>
+    <Text color="$text500" lineHeight="$xs">
+        Street Address
+    </Text>
+    <Input 
+        isRequired>
+        <InputField
+            value={streetAddress}
+            onChangeText={(d) => setStreetAddress(d)}
+            placeholder="e.g., 1234 Elm St"
+        />
+    </Input>
+</Card>
+<Card margin={3}>
+    <Text color="$text500" lineHeight="$xs">
+        City
+    </Text>
+    <Input 
+        isRequired>
+        <InputField
+            value={city}
+            onChangeText={(d) => setCity(d)}
+            placeholder="e.g., Vancouver"
+        />
+    </Input>
+</Card>
+<Card margin={3}>
+    <Text color="$text500" lineHeight="$xs">
+        Province
+    </Text>
+    <Input 
+        isRequired>
+        <InputField
+            value={province}
+            onChangeText={(d) => setProvince(d)}
+            placeholder="e.g., BC"
+        />
+    </Input>
+</Card>
+<Card margin={3}>
+    <Text color="$text500" lineHeight="$xs">
+        Postal Code
+    </Text>
+    <Input 
+        isRequired>
+        <InputField
+            value={postalCode}
+            onChangeText={(d) => setPostalCode(d)}
+            placeholder="e.g., V6B 1A1"
+        />
+    </Input>
+</Card>
 
-            </Card>
+
             <Card margin={3}>
                 <Text color="$text500" lineHeight="$xs">
                     Phone Number
@@ -192,15 +279,6 @@ export default function Register() {
                 </Input>
 
             </Card>
-
-            <Button
-                margin={10}
-                width={"$1/6"}
-                action="positive"
-                onPress={() => { submit()}}
-            >
-                <ButtonText>Done</ButtonText>
-            </Button>
             {showSuccessAlert?
             (<Alert mx="$2.5" action="success" variant="solid" >
                 <AlertIcon as={InfoIcon} mr="$3" />
@@ -214,10 +292,19 @@ export default function Register() {
                     <Alert mx="$2.5" action="error" variant="solid" >
                 <AlertIcon as={InfoIcon} mr="$3" />
                 <AlertText>
-                    Failed!
+                    User already exists or verify code is wrong!
                 </AlertText>
             </Alert>
                 ):null}
+            <Button
+                margin={10}
+                width={"$1/6"}
+                action="positive"
+                onPress={() => { submit()}}
+            >
+                <ButtonText>Done</ButtonText>
+            </Button>
+
 
         </ScrollView>
 

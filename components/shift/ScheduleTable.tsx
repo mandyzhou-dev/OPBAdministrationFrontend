@@ -30,7 +30,7 @@ export const ScheduleTable:React.FC = () => {
         if(user.roles=='Manager'){
             setShowStatistic(true);
         }
-            getScheduleThisWeek(moment(currentDate)).then(
+            getScheduleThisWeek(user.username, moment(currentDate)).then(
                 (data) => {
                     setShiftList(data)
                 }

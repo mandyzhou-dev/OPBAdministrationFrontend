@@ -37,17 +37,17 @@ export default function MyPreferShift() {
     }
     function getCanadianHolidays() {
         return [
-          dayjs("2024-01-01"), // New Year's Day
-          dayjs("2024-02-19"), //Family Day
-          dayjs("2024-03-29"), // Good Friday
-          dayjs("2024-05-20"), //Victoria Day
-          dayjs("2024-07-01"), // Canada Day
-          dayjs("2024-08-05"), //British Columbia Day
-          dayjs("2024-09-02"), // Labour Day 
-          dayjs("2024-09-30"), //National Day for Truth and Reconciliation
-          dayjs("2024-10-14"), // Thanksgiving 
-          dayjs("2024-11-11"), //Remembrance Day
-          dayjs("2024-12-25"), // Christmas Day
+          dayjs("2025-01-01"), // New Year's Day
+          dayjs("2025-02-17"), //Family Day
+          dayjs("2025-04-18"), // Good Friday
+          dayjs("2025-05-19"), //Victoria Day
+          dayjs("2025-07-01"), // Canada Day
+          dayjs("2025-08-04"), //British Columbia Day
+          dayjs("2025-09-01"), // Labour Day 
+          dayjs("2025-09-30"), //National Day for Truth and Reconciliation
+          dayjs("2025-10-13"), // Thanksgiving 
+          dayjs("2025-11-11"), //Remembrance Day
+          dayjs("2025-12-25"), // Christmas Day
         ];
       }
     function disabledDate(current: Dayjs) {

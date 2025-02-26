@@ -10,10 +10,10 @@ import { kpi } from '@/model/KPI';
 export class ShiftRequest{
     
 
-    getByStartDateScope = async (start: Moment, end:Moment): Promise<Shift[]> => {
+    getByStartDateScope = async (username:string,start: Moment, end:Moment): Promise<Shift[]> => {
         try{
             
-            const response:AxiosResponse = await axios.get(process.env.EXPO_PUBLIC_API_URL+'api/presentor/shift/getShiftByStartDateScope',{
+            const response:AxiosResponse = await axios.get(process.env.EXPO_PUBLIC_API_URL+'api/presentor/shift/'+username+'/getShiftByStartDateScopeAndGroup',{
                 params:{
                     start: start.format(),
                     end: end.format(),
@@ -96,6 +96,19 @@ export class ShiftRequest{
             return response.data
         }catch(e){
             throw new Error("Get Failure"+(e as Error).message)
+        }
+    }
+
+    getBiweekKPIByGroup = async (group: string): Promise<kpi> => {
+        try {
+            const response: AxiosResponse = await axios.get(process.env.EXPO_PUBLIC_API_URL + 'api/shift/kpi/biweek', {
+                params: {
+                    group: group,
+                }
+            });
+            return response.data;
+        } catch (e) {
+            throw new Error("Get Failure" + (e as Error).message)
         }
     }
 }

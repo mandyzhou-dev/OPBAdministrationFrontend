@@ -10,13 +10,13 @@ import { kpi } from "@/model/KPI";
 
 const day = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
 
-export const getScheduleThisWeek = async (today: Moment): Promise<Schedule[]> => {
+export const getScheduleThisWeek = async (username: string, today: Moment): Promise<Schedule[]> => {
     const shiftRequest = new ShiftRequest()
     let sunday = moment(today).startOf('week')
     console.log("sunday:" + sunday.format('YYYY-MM-DD HH:mm:ss'))
     let saturday = moment(today).endOf('week')
     console.log("saturday:" + saturday.format('YYYY-MM-DD HH:mm:ss'))
-    const shiftArray = await shiftRequest.getByStartDateScope(sunday, saturday)
+    const shiftArray = await shiftRequest.getByStartDateScope(username, sunday, saturday)
     console.log(JSON.stringify(shiftArray))
     let scheduleTable:Schedule[] = Array.from({length: 7}, () => new Schedule())
     scheduleTable.forEach((schedule, index) => {schedule.day = day[index];
@@ -69,7 +69,13 @@ export const modifyCurrentShift = async(currentShift:Shift):Promise<Object>=>{
     const shiftRequest = new ShiftRequest();
     return shiftRequest.modifyCurrentShift(currentShift)
 }
+
 export const getKPIByDateAndGroup = async(group:string,date:Dayjs):Promise<kpi>=>{
     const shiftRequest = new ShiftRequest();
     return shiftRequest.getKPIByDateAndGroup(group,date);
+}
+
+export const getBiweekKPIByGroup = async (group: string): Promise<kpi> => {
+    const shiftRequest = new ShiftRequest();
+    return shiftRequest.getBiweekKPIByGroup(group);
 }
