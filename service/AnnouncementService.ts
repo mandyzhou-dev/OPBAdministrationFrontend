@@ -68,4 +68,3 @@ export const readAnnouncement = async(announcementId:number,postAnnouncementRead
     const object = await announcementRequest.addReadLog(announcementId,postAnnouncementReadLog);
     return object;
 }
-
