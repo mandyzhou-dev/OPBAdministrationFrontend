@@ -53,6 +53,7 @@
     "react-native-svg": "13.4.0",
     "react-native-web": "~0.19.6",
     "react-native-webview": "^13.12.5",
+    "recharts": "^2.15.1",
     "universal-cookie": "^7.1.0"
   },
   "devDependencies": {
