@@ -45,14 +45,17 @@ export default function Target() {
             .then((data) => {
                 setBiweekData({
                     target: data.target ?? 0,
-                    startDateTime: data.startDateTime ?? "",
-                    endDateTime: data.endDateTime ?? "",
+                    startDateTime: data.startDateTime ? new Date(data.startDateTime).toISOString()
+                        : "",
+                    endDateTime: data.endDateTime ? new Date(data.endDateTime).toISOString()
+                        : "",
                 });
             })
             .catch((error) => {
                 console.log("Get Biweek KPI Error:", (error as Error).message);
             });
-    }, []);
+    // Runs once on mount to prevent unnecessary re-renders
+    },[]);
 
     const handleRateUpdate = () => {
         const parsedRate = parseFloat(newRate);
@@ -88,8 +91,10 @@ export default function Target() {
                     .then((data) => {
                         setBiweekData({
                             target: data.target ?? 0,
-                            startDateTime: data.startDateTime ?? "",
-                            endDateTime: data.endDateTime ?? "",
+                            startDateTime: data.startDateTime ? new Date(data.startDateTime).toISOString()
+                                : "",
+                            endDateTime: data.endDateTime ? new Date(data.endDateTime).toISOString()
+                                : "",
                         });
                     })
                     .catch((error) => {
