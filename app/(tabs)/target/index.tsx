@@ -1,34 +1,26 @@
 import { getBiweekKPIByGroup, getKPIByDateAndGroup } from "@/service/ShiftService";
 import { getRate, updateRate } from "@/service/RateService";
-import { Button, ButtonText, Card, HStack, Heading, Input, ScrollView, Text, View } from "@gluestack-ui/themed";
+import { Button, Card, HStack, Heading, Input, ScrollView, Text, View } from "@gluestack-ui/themed";
 import dayjs from "dayjs";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { TextInput } from "react-native";
-import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from "recharts";
-
 
 export default function Target() {
     const [TVNumber, setTVNumber] = useState(0);
-    const [rate, setRate] = useState(0);
-    const [newRate, setNewRate] = useState("");
-    const [showRate, setShowRate] = useState(false);
-    const [biweeklyHistory, setBiweeklyHistory] = useState([
-        { biweek: "2024-W02", actual_kpi: 720, expected_kpi: 750 },
-        { biweek: "2024-W04", actual_kpi: 680, expected_kpi: 700 },
-        { biweek: "2024-W06", actual_kpi: 710, expected_kpi: 730 },
-        { biweek: "2024-W08", actual_kpi: 690, expected_kpi: 710 },
-        { biweek: "2024-W10", actual_kpi: 730, expected_kpi: 750 },
-    ]);
+    const [rate, setRate] = useState(0); 
+    const [newRate, setNewRate] = useState(""); 
+    const [showRate, setShowRate] = useState(false); 
+
     const [biweekData, setBiweekData] = useState({
         target: 0,
         startDateTime: "",
         endDateTime: "",
-    });
+    }); 
 
     useEffect(() => {
         const user = JSON.parse(localStorage.getItem("user") as string);
         if (user && user.roles === "Manager") {
-            setShowRate(true);
+            setShowRate(true); 
         } else {
             setShowRate(false);
         }
@@ -53,16 +45,14 @@ export default function Target() {
             .then((data) => {
                 setBiweekData({
                     target: data.target ?? 0,
-                    startDateTime: data.startDateTime ? new Date(data.startDateTime).toISOString()
-                        : "",
-                    endDateTime: data.endDateTime ? new Date(data.endDateTime).toISOString()
-                        : "",
+                    startDateTime: data.startDateTime ?? "",
+                    endDateTime: data.endDateTime ?? "",
                 });
             })
             .catch((error) => {
                 console.log("Get Biweek KPI Error:", (error as Error).message);
             });
-    });
+    }, []);
 
     const handleRateUpdate = () => {
         const parsedRate = parseFloat(newRate);
@@ -70,24 +60,24 @@ export default function Target() {
             console.log("Invalid rate value");
             return;
         }
-
+    
         updateRate(parsedRate)
             .then(() => {
                 console.log("Rate updated successfully");
-                setNewRate("");
+                setNewRate(""); 
 
                 getRate()
                     .then((rateValue) => {
-                        setRate(rateValue);
+                        setRate(rateValue); 
                         console.log("Rate refreshed:", rateValue);
                     })
                     .catch((error) => {
                         console.log("Get Rate Error:", (error as Error).message);
                     });
-
+    
                 getKPIByDateAndGroup("surrey", dayjs())
                     .then((data) => {
-                        setTVNumber(data.target ?? 0);
+                        setTVNumber(data.target ?? 0); 
                         console.log("KPI refreshed:", data.target);
                     })
                     .catch((error) => {
@@ -98,10 +88,8 @@ export default function Target() {
                     .then((data) => {
                         setBiweekData({
                             target: data.target ?? 0,
-                            startDateTime: data.startDateTime ? new Date(data.startDateTime).toISOString()
-                                : "",
-                            endDateTime: data.endDateTime ? new Date(data.endDateTime).toISOString()
-                                : "",
+                            startDateTime: data.startDateTime ?? "",
+                            endDateTime: data.endDateTime ?? "",
                         });
                     })
                     .catch((error) => {
@@ -112,12 +100,12 @@ export default function Target() {
                 console.log("Update Rate Error:", (error as Error).message);
             });
     };
-
+    
 
     return (
         <ScrollView>
-            {/* Biweek KPI Card */}
-            <Card mr={3} mt={5}>
+             {/* Biweek KPI Card */}
+             <Card mr={3} mt={5}>
                 <Heading>Biweek KPI</Heading>
                 <HStack>
                     <Text>
@@ -175,47 +163,6 @@ export default function Target() {
                             </Text>
                         </Button>
                     </View>
-                </Card>
-            )}
-            {/* 📊 Biweekly KPI LineChart */}
-            <Card mr={3} mt={5}>
-                <Heading>📊 Biweekly KPI Progress (Latest six months)</Heading>
-                <ResponsiveContainer width="100%" height={300}>
-                    <LineChart data={biweeklyHistory}>
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="biweek" />
-                        <YAxis />
-                        <Tooltip />
-                        <Legend />
-                        <Line type="monotone" dataKey="actual_kpi" stroke="#8884d8" name="Actual KPI" />
-                        <Line type="monotone" dataKey="expected_kpi" stroke="#82ca9d" name="Expected KPI" />
-                    </LineChart>
-                </ResponsiveContainer>
-            </Card>
-            {showRate && (
-                <Card mr={3} mt={5} p={4}>
-                    <Heading size="md" mb={3}>🔧 Edit Biweekly KPI (The whole year)</Heading>
-                    {biweeklyHistory.map((item) => (
-                        <HStack key={item.biweek} justifyContent="space-between" alignItems="center" p={2} borderBottomWidth={1} borderColor="gray.200">
-                            <Text fontWeight="bold" w="15%">{item.biweek}</Text>
-                            <Text w="20%" color="green.600">Expected: {item.expected_kpi}</Text>
-                            <Text w="20%" color="blue.600">Actual: {item.actual_kpi}</Text>
-
-                            <TextInput
-                                value={String(item.actual_kpi)}
-                                onChangeText={() => { }}
-                                style={{ borderWidth: 1, borderColor: "gray", padding: 5, borderRadius: 5, width: 80 }}
-                            />
-                            <Button
-                                margin={10}
-                                width={"$1/6"}
-                                action="positive"
-                                onPress={() => { }}
-                            >
-                                <ButtonText>Update</ButtonText>
-                            </Button>
-                        </HStack>
-                    ))}
                 </Card>
             )}
         </ScrollView>
