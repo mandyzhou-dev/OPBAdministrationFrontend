@@ -2,7 +2,7 @@ import { Card, Progress, ProgressFilledTrack, View ,Text, VStack} from "@gluesta
 import { WorkTimeStatisticItem } from "./WorkTimeStatisticItem"
 import React, { useEffect } from "react"
 import { WorkTimeStatistic } from "@/model/WorkTimeStatistic";
-import { getStatisticByGroupAndDate } from "@/service/StatisticService";
+import { getStatisticByDate } from "@/service/StatisticService";
 interface StatisticListProps {
     start: Date|undefined;
     end:Date|undefined;
@@ -14,7 +14,7 @@ export const WorkTimeStatisticList: React.FC<StatisticListProps> = ({start,end})
 
     useEffect(()=>{
         if(start != undefined && end != undefined){
-            getStatisticByGroupAndDate("groupname",start,end).then(
+            getStatisticByDate(start,end).then(
                 (data) => {
                     //console.log(JSON.stringify(data))
                     setStatisticList(data);

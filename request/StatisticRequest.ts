@@ -3,10 +3,10 @@ import axios, { AxiosResponse } from "axios";
 import moment,{ Moment } from "moment";
 
 export class StatisticRequest{
-    getByGroupAndDate = async (groupname:string,start: Moment, end:Moment): Promise<WorkTimeStatistic[]> => {
+    getByDate = async (start: Moment, end:Moment): Promise<WorkTimeStatistic[]> => {
         try{
             
-            const response:AxiosResponse = await axios.get(process.env.EXPO_PUBLIC_API_URL+'api/presentor/statistic/work-time-statistic/group/{groupname}',{
+            const response:AxiosResponse = await axios.get(process.env.EXPO_PUBLIC_API_URL+'api/presentor/statistic/work-time-statistic',{
                 params:{
                     start: start.format(),
                     end: end.format(),
