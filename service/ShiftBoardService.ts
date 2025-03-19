@@ -1,6 +1,6 @@
 import { PreferWorkdays } from "@/model/PreferWorkdays";
 import { ShiftBoardRequest } from "@/request/ShiftBoardRequest"
-import moment from "moment";
+import moment, { Moment } from "moment";
 
 
 export const updatePreferWorkdayOfCurrentMonth = async(preferWorkdays:PreferWorkdays):Promise<Object> => {
@@ -11,8 +11,8 @@ export const updatePreferWorkdayOfCurrentMonth = async(preferWorkdays:PreferWork
     return object;
 }
 
-export const getPreferredEmployeesBydate = async(date:Date):Promise<string[]>=>{
-    const dateMoment = moment().utc().year(date.getFullYear()).month(date.getMonth()).date(date.getDate()).hour(date.getHours()).minute(date.getMinutes()).second(date.getSeconds())
+export const getPreferredEmployeesBydate = async(date:Moment):Promise<string[]>=>{
+    const dateMoment = moment().utc().year(date.year()).month(date.month()).date(date.date()).hour(date.hour()).minute(date.minute()).second(date.second())
     const shiftBoardRequest = new ShiftBoardRequest()
     const preferredEmployees = shiftBoardRequest.getPreferredEmployeesBydate(dateMoment);
     return preferredEmployees;

@@ -7,8 +7,11 @@ import { User } from "@/model/User";
 import { batchByDate } from "@/service/ShiftService";
 import { getPreferredEmployeesBydate } from "@/service/ShiftBoardService";
 import moment from "moment";
+import { getStatutoryHolidays } from "@/service/StatutoryHolidayService";
+import dayjs from "dayjs";
+import { DatePicker, Flex } from "antd";
 export const SelectShiftFrom: React.FC = () => {
-    const [workDate, setWorkDate] = React.useState(new Date())
+    const [workDate, setWorkDate] = React.useState(dayjs())
     const [userList, setUserList] = React.useState<User[]>([])
     const [checkedUsers, setCheckedUsers] = React.useState<string[]>([])
     //set the currently unuesed checkedGroup as ‘default’. It is not used in the current version 
@@ -16,6 +19,7 @@ export const SelectShiftFrom: React.FC = () => {
     const [showSuccessAlert, setShowSuccessAlert] = React.useState(false)
     const [showErrorAlert, setShowErrorAlert] = React.useState(false)
     const [preferredWorkers, setPreferredWorkers] = React.useState<string[]>([])
+    const [statutoryHolidays,setStatutoryHolidays] = React.useState<dayjs.Dayjs[]>([])
     useEffect(() => {
         getUserByRole("tester").then(
             (data) => {
@@ -27,7 +31,7 @@ export const SelectShiftFrom: React.FC = () => {
                 console.log((error as Error).message)
             }
         )
-        getPreferredEmployeesBydate(workDate).then(
+        getPreferredEmployeesBydate(moment(workDate.toDate())).then(
             (data) => {
 
                 setPreferredWorkers(data)
@@ -37,9 +41,21 @@ export const SelectShiftFrom: React.FC = () => {
                 console.log((error as Error).message)
             }
         )
+        getStatutoryHolidays().then(
+            (data) => {
+                //console.log(JSON.stringify(data))
+                setStatutoryHolidays(data.map(date => dayjs(date)))
+            }).catch(
+                (error) => {
+                    console.log((error as Error).message)
+                }
+            )  
         
 
     }, [])
+    const isDisabled = (date: any) => {
+        return statutoryHolidays.some(holiday => holiday.isSame(date, "day"));
+    };
     const freeTodayByUsername = (username: string) => {
         console.log("hello")
         console.log("function: " + preferredWorkers);
@@ -54,8 +70,8 @@ export const SelectShiftFrom: React.FC = () => {
         return false;
     }
     const submitShift = () => {
-        console.log("getdate(): " + workDate.getDate())
-        const workDateMoment = moment().year(workDate.getFullYear()).month(workDate.getMonth()).date(workDate.getDate()).hour(workDate.getHours()).minute(workDate.getMinutes()).second(workDate.getSeconds())
+        //console.log("getdate(): " + workDate.getDate())
+        const workDateMoment = moment().year(workDate.year()).month(workDate.month()).date(workDate.date()).hour(workDate.hour()).minute(workDate.minute()).second(workDate.second())
         //TODO: checkedGroup is not uesed，just save it position for future 
         batchByDate(workDateMoment,checkedGroup,checkedUsers).then((obj) => {
             setShowSuccessAlert(true)
@@ -89,14 +105,13 @@ export const SelectShiftFrom: React.FC = () => {
                 <Text color="$text500" lineHeight="$xs">
                     Date
                 </Text>
-                <DatePickerInput
-                    locale="en"
-                    label="WorkDate"
+                <Flex vertical gap="small">
+                <DatePicker
                     value={workDate}
-                    onChange={(d) => {
+                    onChange={(d: dayjs.Dayjs | null): void => {
                         if (d) {
                             setWorkDate(d)
-                            getPreferredEmployeesBydate(d).then(
+                            getPreferredEmployeesBydate(moment(d.toDate())).then(
                                 (data) => {
                                     console.log("data: " + data)
                                     setPreferredWorkers(data)
@@ -109,8 +124,9 @@ export const SelectShiftFrom: React.FC = () => {
                         }
                     }
                     }
-                    inputMode="start"
+                    disabledDate={isDisabled}
                 />
+                </Flex>
             </Card>
             {/* 
                 The following code segment has been commented out because the group selection feature is not needed in the current version.
