@@ -1,5 +1,6 @@
 import { PreferWorkdays } from "@/model/PreferWorkdays";
 import { getBoardByUser, getCurrentMonth, updatePreferWorkday, updatePreferWorkdayOfCurrentMonth } from "@/service/ShiftBoardService";
+import { getStatutoryHolidays } from "@/service/StatutoryHolidayService";
 import { Alert, AlertIcon, AlertText, Button,ButtonText, Card, Heading, InfoIcon, ScrollView, Text } from "@gluestack-ui/themed";
 import type { DatePickerProps } from 'antd';
 import { DatePicker, Flex } from 'antd';
@@ -12,6 +13,7 @@ export default function MyPreferShift() {
     const [showErrorAlert,setShowErrorAlert] = React.useState(false);
     const [minDate,setMinDate] = React.useState<Dayjs>(dayjs().date(1));
     const [maxDate,setMaxDate] = React.useState<Dayjs>(dayjs().date(31))
+    const [statutoryHolidays,setStatutoryHolidays] = React.useState<dayjs.Dayjs[]>([])
     const onChange: DatePickerProps<Dayjs[]>['onChange'] = (date, dateString) => {
         console.log(date, dateString);
         setpreferDates(date)
@@ -35,24 +37,9 @@ export default function MyPreferShift() {
             }
         );
     }
-    function getCanadianHolidays() {
-        return [
-          dayjs("2025-01-01"), // New Year's Day
-          dayjs("2025-02-17"), //Family Day
-          dayjs("2025-04-18"), // Good Friday
-          dayjs("2025-05-19"), //Victoria Day
-          dayjs("2025-07-01"), // Canada Day
-          dayjs("2025-08-04"), //British Columbia Day
-          dayjs("2025-09-01"), // Labour Day 
-          dayjs("2025-09-30"), //National Day for Truth and Reconciliation
-          dayjs("2025-10-13"), // Thanksgiving 
-          dayjs("2025-11-11"), //Remembrance Day
-          dayjs("2025-12-25"), // Christmas Day
-        ];
-      }
+
     function disabledDate(current: Dayjs) {
-        const holidays = getCanadianHolidays();
-        return holidays.some(holiday => current.isSame(holiday, 'day'));
+        return statutoryHolidays.some(holiday => current.isSame(holiday, 'day'));
       }
     useEffect(()=>{
         let user = JSON.parse(localStorage.getItem("user") as string);
@@ -72,6 +59,14 @@ export default function MyPreferShift() {
             }
             
         )
+        getStatutoryHolidays().then(
+            (data) => {
+                setStatutoryHolidays(data.map(date => dayjs(date)))
+            }).catch(
+                (error) => {
+                    console.log((error as Error).message)
+                }
+            )  
     },[setpreferDates])
     
     return (
