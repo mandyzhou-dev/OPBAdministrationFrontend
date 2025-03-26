@@ -5,6 +5,7 @@ import dayjs from "dayjs";
 import React, { useEffect, useState } from "react";
 import { TextInput } from "react-native";
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from "recharts";
+import { getKPIRecordsByYear, updateKPIRecord } from "@/service/KPIRecordService";
 
 
 export default function Target() {
@@ -12,13 +13,12 @@ export default function Target() {
     const [rate, setRate] = useState(0);
     const [newRate, setNewRate] = useState("");
     const [showRate, setShowRate] = useState(false);
-    const [biweeklyHistory, setBiweeklyHistory] = useState([
-        { biweek: "2024-W02", actual_kpi: 720, expected_kpi: 750 },
-        { biweek: "2024-W04", actual_kpi: 680, expected_kpi: 700 },
-        { biweek: "2024-W06", actual_kpi: 710, expected_kpi: 730 },
-        { biweek: "2024-W08", actual_kpi: 690, expected_kpi: 710 },
-        { biweek: "2024-W10", actual_kpi: 730, expected_kpi: 750 },
-    ]);
+    const [tempActuals, setTempActuals] = useState<{ [key: number]: string }>({});
+    const [biweeklyHistory, setBiweeklyHistory] = useState<{ 
+        id: number,
+        biweek: string, 
+        actual_kpi: number, 
+        expected_kpi: number }[]>([]);
     const [biweekData, setBiweekData] = useState({
         target: 0,
         startDateTime: "",
@@ -32,6 +32,20 @@ export default function Target() {
         } else {
             setShowRate(false);
         }
+
+        getKPIRecordsByYear("2025")
+        .then((data) => {
+            const formattedData = data.map(item => ({
+                id: item.id ?? 0,
+                biweek: item.title ?? "",  
+                actual_kpi: item.actual ?? 0, 
+                expected_kpi: item.expected ?? 0 
+            }));
+            setBiweeklyHistory(formattedData);
+            setTempActuals(formattedData.reduce((acc, item) => (
+                { ...acc, [item.id]: String(item.actual_kpi) }), {})); 
+        })
+        .catch(error => console.log("Get KPI Records Error:", (error as Error).message));
 
         getKPIByDateAndGroup("surrey", dayjs())
             .then((data) => {
@@ -114,6 +128,41 @@ export default function Target() {
             });
     };
 
+    const handleActualChange = (id: number, newActual: string) => {
+        setTempActuals(prev => ({ ...prev, [id]: newActual })); 
+    };
+
+    const handleUpdateKPI = (id: number) => {
+        const recordToUpdate = biweeklyHistory.find(item => item.id === id);
+        if (!recordToUpdate) return;
+    
+        updateKPIRecord(recordToUpdate.id, {
+            id: recordToUpdate.id,
+            title: recordToUpdate.biweek,
+            expected: recordToUpdate.expected_kpi,
+            actual: Number(tempActuals[recordToUpdate.id]) || 0  
+        })
+        .then(() => {
+            console.log(`KPI ${recordToUpdate.biweek} updated successfully`);
+            
+            getKPIRecordsByYear("2025")
+                .then((data) => {
+                    const formattedData = data.map(item => ({
+                        id: item.id ?? 0,
+                        biweek: item.title ?? "",
+                        actual_kpi: item.actual ?? 0,
+                        expected_kpi: item.expected ?? 0
+                    }));
+                    setBiweeklyHistory(formattedData);
+                    setTempActuals(formattedData.reduce((acc, item) => (
+                        { ...acc, [item.id]: String(item.actual_kpi) }), {}));
+                })
+                .catch(error => console.log("Get KPI Records Error:", (error as Error).message));
+        })
+        .catch(error => console.log("Update KPI Error:", (error as Error).message));
+    };
+    
+
 
     return (
         <ScrollView>
@@ -182,7 +231,7 @@ export default function Target() {
             <Card mr={3} mt={5}>
                 <Heading>📊 Biweekly KPI Progress (Latest six months)</Heading>
                 <ResponsiveContainer width="100%" height={300}>
-                    <LineChart data={biweeklyHistory}>
+                <LineChart data={biweeklyHistory.slice(-6)}>
                         <CartesianGrid strokeDasharray="3 3" />
                         <XAxis dataKey="biweek" />
                         <YAxis />
@@ -196,22 +245,22 @@ export default function Target() {
             {showRate && (
                 <Card mr={3} mt={5} p={4}>
                     <Heading size="md" mb={3}>🔧 Edit Biweekly KPI (The whole year)</Heading>
-                    {biweeklyHistory.map((item) => (
+                    {biweeklyHistory.map((item, index) => (
                         <HStack key={item.biweek} justifyContent="space-between" alignItems="center" p={2} borderBottomWidth={1} borderColor="gray.200">
                             <Text fontWeight="bold" w="15%">{item.biweek}</Text>
                             <Text w="20%" color="green.600">Expected: {item.expected_kpi}</Text>
                             <Text w="20%" color="blue.600">Actual: {item.actual_kpi}</Text>
 
                             <TextInput
-                                value={String(item.actual_kpi)}
-                                onChangeText={() => { }}
+                                value={tempActuals[item.id] || ""}
+                                onChangeText={(text) => handleActualChange(item.id, text)}
                                 style={{ borderWidth: 1, borderColor: "gray", padding: 5, borderRadius: 5, width: 80 }}
                             />
                             <Button
                                 margin={10}
                                 width={"$1/6"}
                                 action="positive"
-                                onPress={() => { }}
+                                onPress={() => handleUpdateKPI(item.id)} 
                             >
                                 <ButtonText>Update</ButtonText>
                             </Button>
