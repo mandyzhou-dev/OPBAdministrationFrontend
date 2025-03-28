@@ -33,7 +33,7 @@ export default function Target() {
             setShowRate(false);
         }
 
-        getKPIRecordsByYear("2025")
+        getKPIRecordsByYear(new Date().getFullYear().toString())
         .then((data) => {
             const formattedData = data.map(item => ({
                 id: item.id ?? 0,
@@ -145,7 +145,7 @@ export default function Target() {
         .then(() => {
             console.log(`KPI ${recordToUpdate.biweek} updated successfully`);
             
-            getKPIRecordsByYear("2025")
+            getKPIRecordsByYear(new Date().getFullYear().toString())
                 .then((data) => {
                     const formattedData = data.map(item => ({
                         id: item.id ?? 0,
@@ -245,7 +245,7 @@ export default function Target() {
             {showRate && (
                 <Card mr={3} mt={5} p={4}>
                     <Heading size="md" mb={3}>🔧 Edit Biweekly KPI (The whole year)</Heading>
-                    {biweeklyHistory.map((item, index) => (
+                    {[...biweeklyHistory].reverse().map((item, index) => (
                         <HStack key={item.biweek} justifyContent="space-between" alignItems="center" p={2} borderBottomWidth={1} borderColor="gray.200">
                             <Text fontWeight="bold" w="15%">{item.biweek}</Text>
                             <Text w="20%" color="green.600">Expected: {item.expected_kpi}</Text>
