@@ -24,6 +24,7 @@ export default function ApplicationScreen() {
     return (
         <View>
             <MenuItem text="New Leave Application" onPress={()=>{router.navigate("/applications/NewApplication")}}></MenuItem>
+            <MenuItem text="Submit Resignation Applications" onPress={()=>{router.navigate("/applications/MyResignation")}}></MenuItem>
             <MenuItem text="My Applications" onPress={()=>{router.navigate("/applications/MyApplications")}}></MenuItem>
             {showReview?<MenuItem text="Review Applications" onPress={()=>{router.navigate("/applications/ReviewApplications")}}></MenuItem>:null}
             {showHistory?<MenuItem text="History" onPress={()=>{router.navigate("/applications/History")}}></MenuItem>:null}

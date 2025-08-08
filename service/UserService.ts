@@ -47,3 +47,7 @@ export const getEmployeeBasic = async():Promise<User[]>=>{
     const userRequest = new UserRequest();
     return userRequest.getEmployeeBasic();
 }
+export const verifyPassword = async(username:string,password:string):Promise<Object>=>{
+    const userRequest = new UserRequest()
+    return userRequest.verifyPassword(username,password);
+}
