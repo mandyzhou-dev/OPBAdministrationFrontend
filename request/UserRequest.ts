@@ -28,7 +28,18 @@ export class UserRequest{
         }catch(e){
             throw new Error("Request Failure"+(e as Error).message)
         }
+    }
 
+    verifyPassword = async(username:string,password:string):Promise<Boolean>=>{
+        try{
+            const response:AxiosResponse = await axios.post(process.env.EXPO_PUBLIC_API_URL+'api/user/verify_password',{
+                    username: username,
+                    password:password,   
+            });
+            return response.data;
+        }catch(e){
+            throw new Error("Post Failure"+(e as Error).message)
+        }
     }
 
     getByRole = async (role: string):Promise<User[]> =>{
