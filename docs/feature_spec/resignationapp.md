@@ -30,7 +30,7 @@ following fields:
 
 | No. | Field Name          | Description                                                              | Type         |
 |-----|---------------------|--------------------------------------------------------------------------|--------------|
-| 1   | Last Working Day    | Employee must select/enter their proposed last working day.              | Date picker  |
+| 1   | Last Working Day    | Employee must select/enter their proposed last working day. Must not be a past date; Must be within 2 months from current date              | Date picker  |
 | 2   | Reason for Leaving  | Optional field for employees to state their reason for resignation.      | Text input   |
 | 3   | Rule 1   | Access and Systems                 | Text     |
 | 4   | Rule 2   | Benefits                      | Text     |
