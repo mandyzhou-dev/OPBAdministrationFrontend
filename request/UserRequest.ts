@@ -33,8 +33,8 @@ export class UserRequest{
     verifyPassword = async(username:string,password:string):Promise<Boolean>=>{
         try{
             const response:AxiosResponse = await axios.post(process.env.EXPO_PUBLIC_API_URL+'api/user/verify_password',{
-                    username: username,
-                    password:password,   
+                    username:username,
+                    password:password
             });
             return response.data;
         }catch(e){

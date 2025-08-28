@@ -30,6 +30,7 @@ import {
     FormControlHelperText,
 } from "@gluestack-ui/themed"
 import Password from "antd/es/input/Password";
+import dayjs from "dayjs";
 
 import React from "react";
 import { useState } from "react";
@@ -56,20 +57,38 @@ export default function ResignationForm() {
             setPasswordIsRequired(true);
             return;
         }
-        //TODO: Check the validation of lastDay
-
-        if(localStorage.getItem("user") === null){
-            alert("Login again!")
+        //DONE: Check the validation of lastDay
+        // === Last day validation ===
+        const parsedDate = dayjs(lastDay, ["YYYYMMDD", "YYYY-MM-DD", "YYYY/MM/DD"], true);
+        if (!parsedDate.isValid()) {
+            alert("Invalid last working day. Please enter a valid date.");
             return;
-        }   
-        
+        }
+
+        const today = dayjs().startOf("day");
+        if (parsedDate.isBefore(today)) {
+            alert("Last working day cannot be in the past.");
+            return;
+        }
+
+        const twoMonthsLater = today.add(2, "month");
+        if (parsedDate.isAfter(twoMonthsLater)) {
+            alert("Last working day cannot be more than 2 months from today.");
+            return;
+        }
+        // === End validation ===
+        if (localStorage.getItem("user") === null) {
+            alert("Session expired. Please login again!")
+            return;
+        }
+
         setLastDayIsRequired(false);
         setPasswordIsRequired(false);
 
         let username = JSON.parse(localStorage.getItem("user") as string).username
         verifyPassword(username, password).then(
-            (data)=>{
-                if(data==false){
+            (data) => {
+                if (data == false) {
                     alert("Wrong password!");
                     return;
                 }
