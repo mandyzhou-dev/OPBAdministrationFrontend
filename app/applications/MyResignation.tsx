@@ -1,3 +1,4 @@
+import { newResignationApplication } from "@/service/ResignationApplicationService";
 import { verifyPassword } from "@/service/UserService";
 import {
     ScrollView,
@@ -17,7 +18,7 @@ import {
     Heading,
     Alert,
     AlertCircleIcon,
-    InputIcon, EyeIcon, EyeOffIcon, InputSlot
+    InputIcon, EyeIcon, EyeOffIcon, InputSlot, AlertIcon, AlertText, InfoIcon
 } from "@gluestack-ui/themed";
 import {
     FormControl,
@@ -42,6 +43,9 @@ export default function ResignationForm() {
     const [password, setPassword] = useState("");
     const [lastDayIsRequired, setLastDayIsRequired] = React.useState(false);
     const [passwordIsRequired, setPasswordIsRequired] = React.useState(false);
+
+    const [showSuccessAlert,setShowSuccessAlert] = React.useState(false);
+    const [showErrorAlert,setShowErrorAlert] = React.useState(false);
 
     const handleState = () => {
         setShowPassword((showState) => {
@@ -94,12 +98,46 @@ export default function ResignationForm() {
                 }
             }
         )
-        //TODO: Post this resignation
-        console.log("pass")
+        //Done: Post this resignation
+        let result = {
+            applicant: username,
+            lastWorkingDate: parsedDate.format("YYYY-MM-DD"),
+            reason: reason
+        }
+        newResignationApplication(result).then(
+            (data)=>{
+                console.log(data.id);
+                setShowSuccessAlert(true)
+            setTimeout(()=>{setShowSuccessAlert(false)},1000)}
+        ).catch(
+            (error)=>{
+                console.log(error)
+                setShowErrorAlert(true);
+                setTimeout(()=>{setShowErrorAlert(false)},1000)
+            }
+        )
+        
     };
 
     return (
         <ScrollView>
+            {showSuccessAlert?
+            (<Alert mx="$2.5" action="success" variant="solid" >
+                <AlertIcon as={InfoIcon} mr="$3" />
+                <AlertText>
+                    Successfully submitted!
+                </AlertText>
+            </Alert>):null}
+            {
+                showErrorAlert?
+                (
+                    <Alert mx="$2.5" action="error" variant="solid" >
+                <AlertIcon as={InfoIcon} mr="$3" />
+                <AlertText>
+                    Failed!
+                </AlertText>
+            </Alert>
+                ):null}
             <Card p="$4">
                 <FormControl isRequired={lastDayIsRequired} isInvalid={lastDayIsRequired}>
                     <FormControlLabel>
