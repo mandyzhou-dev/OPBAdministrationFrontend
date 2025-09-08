@@ -83,11 +83,11 @@ export class ShiftRequest{
         }
     }
 
-    getKPIByDateAndGroup = async(group:string, date:Dayjs):Promise<kpi>=>{
+    getKPIByDateAndGroup = async(groupName:string, date:Dayjs):Promise<kpi>=>{
         try{
-            const response:AxiosResponse = await axios.get(process.env.EXPO_PUBLIC_API_URL+'api/shift/kpi',{
+            const response:AxiosResponse = await axios.get(process.env.EXPO_PUBLIC_API_URL+'api/shift/kpi/groupName',{
                 params:{
-                    group: group,
+                    groupName: groupName,
                     date: date.format('YYYY-MM-DD'),
                 }
             });
@@ -97,11 +97,41 @@ export class ShiftRequest{
         }
     }
 
-    getBiweekKPIByGroup = async (group: string): Promise<kpi> => {
+    getKPIByUserAndGroupAndDate = async(username:string, groupName:string,date:Dayjs):Promise<kpi>=>{
+        //业务逻辑要算哪个组就传哪个组，目前业务需求是传surrey
+        try{
+            const response:AxiosResponse = await axios.get(process.env.EXPO_PUBLIC_API_URL+'api/shift/kpi/user',{
+                params:{
+                    username:username,
+                    groupName: groupName,
+                    date: date.format('YYYY-MM-DD'),
+                }
+            }); 
+            return response.data
+        }catch(e){
+            throw new Error("Get Failure"+(e as Error).message)
+        }
+    }
+
+    getBiweekKPIByGroup = async (groupName: string): Promise<kpi> => {
         try {
-            const response: AxiosResponse = await axios.get(process.env.EXPO_PUBLIC_API_URL + 'api/shift/kpi/biweek', {
+            const response: AxiosResponse = await axios.get(process.env.EXPO_PUBLIC_API_URL + 'api/shift/kpi/groupName/biweek', {
                 params: {
-                    group: group,
+                    groupName: groupName
+                }
+            });
+            return response.data;
+        } catch (e) {
+            throw new Error("Get Failure" + (e as Error).message)
+        }
+    }
+
+    getBiweekKPIByUserAndGroup = async(username: string,groupName: string):Promise<kpi>=>{
+        try {
+            const response: AxiosResponse = await axios.get(process.env.EXPO_PUBLIC_API_URL + 'api/shift/kpi/user/biweek', {
+                params: {
+                    username:username,
+                    groupName: groupName
                 }
             });
             return response.data;

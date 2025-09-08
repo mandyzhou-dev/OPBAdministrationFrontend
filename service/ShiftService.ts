@@ -79,3 +79,11 @@ export const getBiweekKPIByGroup = async (group: string): Promise<kpi> => {
     const shiftRequest = new ShiftRequest();
     return shiftRequest.getBiweekKPIByGroup(group);
 }
+export const getKPIByUserAndGroupAndDate = async(username: string,group:string,date:Dayjs):Promise<kpi>=>{
+    const shiftRequest = new ShiftRequest();
+    return shiftRequest.getKPIByUserAndGroupAndDate(username,group,date);
+}
+export const getBiweekKPIByUserAndGroup = async (username:string, group: string): Promise<kpi> => {
+    const shiftRequest = new ShiftRequest();
+    return shiftRequest.getBiweekKPIByUserAndGroup(username,group);
+}
