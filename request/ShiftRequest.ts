@@ -5,8 +5,6 @@ import Cookies from 'universal-cookie'
 import { Header } from 'react-native/Libraries/NewAppScreen';
 import dayjs, { Dayjs } from 'dayjs';
 import { kpi } from '@/model/KPI';
-
-//axios.defaults.withCredentials=true;
 export class ShiftRequest{
     
 

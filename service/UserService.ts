@@ -6,6 +6,11 @@ export const getUserByRole = async (role:string):Promise<User[]>=>{
     return userRequest.getByRole(role)
 }
 
+export const getUserByGroup = async(group:string):Promise<User[]>=>{
+    const userRequest = new UserRequest()
+    return userRequest.getUserByGroup(group);
+}
+
 export const login = async(username:string, password:string):Promise<Object>=>{
     const userRequest = new UserRequest()
     let data = await userRequest.login(username,password)
