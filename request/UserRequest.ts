@@ -17,6 +17,19 @@ export class UserRequest{
             throw new Error("Request Failure"+(e as Error).message)
         }
     }
+    getUserByGroup = async(group: string):Promise<User[]>=>{
+        try{
+            const response:AxiosResponse = await axios.get(process.env.EXPO_PUBLIC_API_URL+'api/presentor/user/getUserByGroupName',{
+                params:{
+                    group: group
+                }
+            });
+            return response.data;
+        }catch(e){
+            throw new Error("Request Failure"+(e as Error).message)
+        }
+
+    }
 
     getByRole = async (role: string):Promise<User[]> =>{
         try{
@@ -86,4 +99,13 @@ export class UserRequest{
             throw new Error("Post Failure"+(e as Error).message)
         }
     }
+    isInProbation =async(username:string):Promise<boolean>=>{
+        try{
+            const response:AxiosResponse = await axios.get(process.env.EXPO_PUBLIC_API_URL+'api/user/'+username+'/probation');
+            return response.data;
+        }catch(e){
+            throw new Error("Get Failure"+(e as Error).message)
+        }
+    }
+
 }

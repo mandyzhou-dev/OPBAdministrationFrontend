@@ -21,7 +21,6 @@ export const ShiftCell: React.FC<ShiftCellProps> = ({ workers, shifts,onUpdated 
 
 
     const callModals=(currentShift:Shift | undefined)=>{
-        console.log("cliked")
         if(currentShift != undefined){
             try{
                 const items = JSON.parse(localStorage.getItem("user") as string).roles;

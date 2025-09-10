@@ -1,14 +1,14 @@
 export class User{
-    username!: string | undefined;
-    name!: string | undefined;
-    roles!:string|undefined;
+    username!: string;
+    name!: string;
+    roles!:string;
     jsessionID:string | undefined;
-    email!:string |undefined;
-    phoneNumber!:string | undefined;
-    address!:string |undefined;
-    birthdate!:Date |undefined;
-    active!:number |undefined;
-    groupName!:string|undefined;
+    email:string |undefined;
+    phoneNumber:string | undefined;
+    address:string |undefined;
+    birthdate:Date |undefined;
+    active!:number;
+    groupName!:string;
 
     constructor(username: string, name: string,roles:string,email:string,phoneNumber:string,address:string,birthdate:Date,active:number,groupName:string){
         this.username = username;
