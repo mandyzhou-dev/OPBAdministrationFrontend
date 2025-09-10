@@ -16,7 +16,6 @@ export default function MyScreen() {
 
         if(items){
             setShowLogin(false)
-            console.log(items)
         }
         else setShowLogin(true);
         

@@ -14,17 +14,6 @@ export default function TabOneScreen() {
   const [unreadList, setUnreadList] = React.useState<number[]>([]);
 
   let listener = null;
-  /*useEffect(() => {
-    getAnnouncementByAfter(new Date()).then(
-      (data)=>{
-          setShowCurrentAnnouncement(data);
-      }
-  ).catch(
-      (error) => {
-          console.log((error as Error).message)
-      }
-  )
-  },[])*/
 
   useEffect(() => {
 
@@ -53,7 +42,7 @@ export default function TabOneScreen() {
     getUnreadListByReader(user.username).then(
     (data) => {
       setUnreadList(data);
-      console.log(data)
+      //console.log(data)
       if (data.length == 0) {
         setShowModal(false);
       }

@@ -37,3 +37,8 @@ export const register = async(registerInfo:RegisterInfo,code:string):Promise<Obj
     const userRequest = new UserRequest();
     return userRequest.register(registerInfo,code);
 }
+
+export const isInProbation = async(username:string):Promise<boolean>=>{
+    const userRequest = new UserRequest();
+    return userRequest.isInProbation(username);
+}

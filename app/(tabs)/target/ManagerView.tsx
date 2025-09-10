@@ -1,5 +1,5 @@
 import { getBiweekKPIByGroup, getKPIByDateAndGroup } from "@/service/ShiftService";
-import { getRate, updateRate } from "@/service/RateService";
+import { getTargetRate, updateTargetRate } from "@/service/RateService";
 import { Button, ButtonText, Card, HStack, Heading, Input, ScrollView, Text, View } from "@gluestack-ui/themed";
 import dayjs from "dayjs";
 import React, { useEffect, useState } from "react";
@@ -48,7 +48,7 @@ export default function ManagerView() {
                 console.log((error as Error).message);
             });
 
-        getRate()
+        getTargetRate()
             .then((rateValue) => {
                 setRate(rateValue);
             })
@@ -79,12 +79,12 @@ export default function ManagerView() {
             return;
         }
 
-        updateRate(parsedRate)
+        updateTargetRate(parsedRate)
             .then(() => {
                 console.log("Rate updated successfully");
                 setNewRate("");
 
-                getRate()
+                getTargetRate()
                     .then((rateValue) => {
                         setRate(rateValue);
                         console.log("Rate refreshed:", rateValue);
