@@ -26,6 +26,15 @@ export default function ManagerView() {
   });
   const [refreshFlag, setRefreshFlag] = useState(0);
 
+  const [role, setRole] = useState<String | null>(null);
+  useEffect(() => {
+    const userStr = localStorage.getItem("user");
+    if (userStr) {
+      const user = JSON.parse(userStr);
+      setRole(user.roles);
+    }
+  }, []);
+
   useEffect(() => {
 
     getKPIRecordsByYear(new Date().getFullYear().toString())
@@ -179,89 +188,91 @@ export default function ManagerView() {
           </View>
         </HStack>
       </Card>
+      {role === "Manager" && (<>
+        <Card mr={3} mt={5}>
+          <Heading>Rate</Heading>
 
-      <Card mr={3} mt={5}>
-        <Heading>Rate</Heading>
+          <Text style={{ fontSize: 18, fontWeight: "bold", marginVertical: 8 }}>
+            Target Rate:
+          </Text>
 
-        <Text style={{ fontSize: 18, fontWeight: "bold", marginVertical: 8 }}>
-          Target Rate:
-        </Text>
+          <TextInput
+            style={{
+              flex: 1,
+              borderWidth: 1,
+              borderColor: "#ccc",
+              borderRadius: 5,
+              padding: 10,
+              marginRight: 10,
+              fontSize: 16,
+            }}
+            placeholder={`${targetRate}`}
+            onSubmitEditing={(e) => handleTargetRate(e.nativeEvent.text)}
+            onBlur={(e) => handleTargetRate(e.nativeEvent.text)}
+            keyboardType="numeric"
+          />
 
-        <TextInput
-          style={{
-            flex: 1,
-            borderWidth: 1,
-            borderColor: "#ccc",
-            borderRadius: 5,
-            padding: 10,
-            marginRight: 10,
-            fontSize: 16,
-          }}
-          placeholder={`${targetRate}`}
-          onSubmitEditing={(e) => handleTargetRate(e.nativeEvent.text)}
-          onBlur={(e) => handleTargetRate(e.nativeEvent.text)}
-          keyboardType="numeric"
-        />
+          <Text style={{ fontSize: 18, fontWeight: "bold", marginVertical: 8 }}>
+            Bonus Rate:
+          </Text>
 
-<Text style={{ fontSize: 18, fontWeight: "bold", marginVertical: 8 }}>
-          Bonus Rate:
-        </Text>
+          <TextInput
+            style={{
+              flex: 1,
+              borderWidth: 1,
+              borderColor: "#ccc",
+              borderRadius: 5,
+              padding: 10,
+              marginRight: 10,
+              fontSize: 16,
+            }}
+            placeholder={`${bonusRate}`}
+            onSubmitEditing={(e) => handleBonusRate(e.nativeEvent.text)}
+            onBlur={(e) => handleBonusRate(e.nativeEvent.text)}
+            keyboardType="numeric"
+          />
+        </Card>
+        {/* 📊 Biweekly KPI LineChart */}
+        <Card mr={3} mt={5}>
+          <Heading>📊 Biweekly KPI Progress (Latest six months)</Heading>
+          <ResponsiveContainer width="100%" height={300}>
+            <LineChart data={biweeklyHistory.slice(-6)}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="biweek" />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Line type="monotone" dataKey="actual_kpi" stroke="#8884d8" name="Actual KPI" />
+              <Line type="monotone" dataKey="expected_kpi" stroke="#82ca9d" name="Expected KPI" />
+            </LineChart>
+          </ResponsiveContainer>
+        </Card>
+        <Card mr={3} mt={5} p={4}>
+          <Heading size="md" mb={3}>🔧 Edit Biweekly KPI (The whole year)</Heading>
+          {[...biweeklyHistory].reverse().map((item, index) => (
+            <HStack key={item.biweek} justifyContent="space-between" alignItems="center" p={2} borderBottomWidth={1} borderColor="gray.200">
+              <Text fontWeight="bold" w="15%">{item.biweek}</Text>
+              <Text w="20%" color="green.600">Expected: {item.expected_kpi}</Text>
+              <Text w="20%" color="blue.600">Actual: {item.actual_kpi}</Text>
 
-        <TextInput
-          style={{
-            flex: 1,
-            borderWidth: 1,
-            borderColor: "#ccc",
-            borderRadius: 5,
-            padding: 10,
-            marginRight: 10,
-            fontSize: 16,
-          }}
-          placeholder={`${bonusRate}`}
-          onSubmitEditing={(e) => handleBonusRate(e.nativeEvent.text)}
-          onBlur={(e) => handleBonusRate(e.nativeEvent.text)}
-          keyboardType="numeric"
-        />
-      </Card>
-      {/* 📊 Biweekly KPI LineChart */}
-      <Card mr={3} mt={5}>
-        <Heading>📊 Biweekly KPI Progress (Latest six months)</Heading>
-        <ResponsiveContainer width="100%" height={300}>
-          <LineChart data={biweeklyHistory.slice(-6)}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="biweek" />
-            <YAxis />
-            <Tooltip />
-            <Legend />
-            <Line type="monotone" dataKey="actual_kpi" stroke="#8884d8" name="Actual KPI" />
-            <Line type="monotone" dataKey="expected_kpi" stroke="#82ca9d" name="Expected KPI" />
-          </LineChart>
-        </ResponsiveContainer>
-      </Card>
-      <Card mr={3} mt={5} p={4}>
-        <Heading size="md" mb={3}>🔧 Edit Biweekly KPI (The whole year)</Heading>
-        {[...biweeklyHistory].reverse().map((item, index) => (
-          <HStack key={item.biweek} justifyContent="space-between" alignItems="center" p={2} borderBottomWidth={1} borderColor="gray.200">
-            <Text fontWeight="bold" w="15%">{item.biweek}</Text>
-            <Text w="20%" color="green.600">Expected: {item.expected_kpi}</Text>
-            <Text w="20%" color="blue.600">Actual: {item.actual_kpi}</Text>
+              <TextInput
+                value={tempActuals[item.id] || ""}
+                onChangeText={(text) => handleActualChange(item.id, text)}
+                style={{ borderWidth: 1, borderColor: "gray", padding: 5, borderRadius: 5, width: 80 }}
+              />
+              <Button
+                margin={10}
+                width={"$1/6"}
+                action="positive"
+                onPress={() => handleUpdateKPI(item.id)}
+              >
+                <ButtonText>Update</ButtonText>
+              </Button>
+            </HStack>
+          ))}
+        </Card>
+      </>)}
 
-            <TextInput
-              value={tempActuals[item.id] || ""}
-              onChangeText={(text) => handleActualChange(item.id, text)}
-              style={{ borderWidth: 1, borderColor: "gray", padding: 5, borderRadius: 5, width: 80 }}
-            />
-            <Button
-              margin={10}
-              width={"$1/6"}
-              action="positive"
-              onPress={() => handleUpdateKPI(item.id)}
-            >
-              <ButtonText>Update</ButtonText>
-            </Button>
-          </HStack>
-        ))}
-      </Card>
     </ScrollView>
   );
 }

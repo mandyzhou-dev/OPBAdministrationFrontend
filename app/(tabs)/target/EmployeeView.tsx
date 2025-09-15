@@ -108,6 +108,9 @@ export function EmployeeView({ username }: EmployeeViewProps) {
                         <Text>units</Text>
                     </View>
                 </HStack>
+                <Text style={{ marginTop: 8, fontSize: 12, color: "gray" }}>
+                    Bonus eligibility requires a minimum of 6 working days within the biweekly payroll cycle.
+                </Text>
             </Card>
         </ScrollView>
     );

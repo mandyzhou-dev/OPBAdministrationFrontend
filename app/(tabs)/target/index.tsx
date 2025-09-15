@@ -18,7 +18,7 @@ export default function TargetIndex() {
         const localUser = JSON.parse(localStorage.getItem("user") as string);
         if (localUser) {
             setUser(localUser);
-            setIsManager(localUser.roles === "Manager");
+            setIsManager(localUser.roles === "Manager"||localUser.roles.toLowerCase().includes("team_leader"));
         }
     }, []);
 
