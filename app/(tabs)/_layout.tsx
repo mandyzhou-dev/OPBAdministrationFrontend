@@ -7,6 +7,7 @@ import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import { useClientOnlyValue } from '@/components/useClientOnlyValue';
 import { Ionicons } from '@expo/vector-icons';
+import AntDesign from '@expo/vector-icons/AntDesign';
 
 // You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
 function TabBarIcon(props: {
@@ -17,30 +18,19 @@ function TabBarIcon(props: {
 }
 
 export default function TabLayout() {
-  const [showAssignment, setShowAssignment]= useState(false);
-  const [showSchedule,setShowSchedule] = useState(false);
-  const [showApplication,setShowApplication] = useState(false);
-  const [showKPI,setShowKPI] = useState(false);
-  useEffect(()=>{
-    console.log(showKPI)
-    let user = JSON.parse(localStorage.getItem("user") as string)
-    if(user){
-      setShowSchedule(true)
-      setShowApplication(true)
-      setShowKPI(true)
-      
-      if(user != null && user.roles=='Manager'){
-        setShowAssignment(true);
-        setShowKPI(true)
+  const [isManager, setIsManager] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-      }
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user") as string);
+    if (user) {
+      setIsLoggedIn(true);
+      setIsManager(user.roles?.toLowerCase() === 'manager');
+    } else {
+      setIsLoggedIn(false);
+      setIsManager(false);
     }
-    else{
-      setShowAssignment(false);
-      setShowSchedule(false);
-      setShowKPI(false)
-    }
-  },);
+  }, []);
   const colorScheme = useColorScheme();
 
   return (
@@ -56,7 +46,7 @@ export default function TabLayout() {
         name="index"
         options={{
           title: 'Schedule',
-          href:showSchedule?"":null,
+          href:isLoggedIn?"":null,
           tabBarIcon: ({ color }) => <TabBarIcon name="calendar" color={color} />,
           headerRight: () => (
             <Link href="/announcement" asChild>
@@ -79,7 +69,7 @@ export default function TabLayout() {
         name="two"
         options={{
           title: 'Assignment',
-          href:showAssignment?"two":null,
+          href:isManager?"two":null,
           tabBarIcon: ({ color }) => <TabBarIcon name="edit" color={color} />,
         }}
       />
@@ -87,7 +77,7 @@ export default function TabLayout() {
         name="target"
         options={{
           title: 'KPI',
-          href:showKPI?"target":null,
+          href:isLoggedIn?"target":null,
           tabBarIcon: ({ color }) => <FontAwesome name="bar-chart" size={24} color={color} />,
         }}
       />
@@ -95,8 +85,16 @@ export default function TabLayout() {
         name="application"
         options={{
           title:'Application',
-          href:showApplication?"application":null,
+          href:isLoggedIn?"application":null,
           tabBarIcon: ({ color }) => <Entypo size={28} name="documents" color={color} />,
+        }}
+      />
+    <Tabs.Screen
+        name="team"
+        options={{
+          title: 'Team',
+          href:isManager?"team":null,
+          tabBarIcon: ({ color }) => <AntDesign name="team" size={24} color={color} />,
         }}
       />
 

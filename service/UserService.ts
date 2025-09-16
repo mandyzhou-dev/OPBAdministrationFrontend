@@ -42,3 +42,8 @@ export const isInProbation = async(username:string):Promise<boolean>=>{
     const userRequest = new UserRequest();
     return userRequest.isInProbation(username);
 }
+
+export const getEmployeeBasic = async():Promise<User[]>=>{
+    const userRequest = new UserRequest();
+    return userRequest.getEmployeeBasic();
+}

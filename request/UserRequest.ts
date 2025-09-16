@@ -107,5 +107,13 @@ export class UserRequest{
             throw new Error("Get Failure"+(e as Error).message)
         }
     }
+    getEmployeeBasic = async():Promise<User[]>=>{
+        try{
+            const response:AxiosResponse = await axios.get(process.env.EXPO_PUBLIC_API_URL+'api/presentor/user/employees/basic');
+            return response.data;
+        }catch(e){
+            throw new Error("Get Failure"+(e as Error).message)
+        }
+    }
 
 }

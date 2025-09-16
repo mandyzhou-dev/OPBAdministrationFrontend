@@ -1,34 +1,40 @@
 import { DeviceEventEmitter, StyleSheet } from 'react-native';
 import { View } from '@/components/Themed';
 import { useEffect, useState } from 'react';
-import * as UserService from '@/service/UserService';
-import {Login} from '@/components/Login';
-import {Profile} from '@/components/Profile';
+import { Login } from '@/components/Login';
+import { Profile } from '@/components/Profile';
 import { router } from 'expo-router';
 import { ScrollView } from '@gluestack-ui/themed';
 
 export default function MyScreen() {
 
-    const [showLogin, setShowLogin]=useState(true)
-    useEffect(()=>{
-        
+    const [showLogin, setShowLogin] = useState(true)
+
+
+    useEffect(() => {
+
         const items = JSON.parse(localStorage.getItem('user') as string);
 
-        if(items){
+        if (items) {
             setShowLogin(false)
         }
         else setShowLogin(true);
-        
-    },[showLogin]);
+
+    }, [showLogin]);
+
+
+
     return (
         <ScrollView style={styles.container}>
             <View style={styles.container}>
                 <View style={styles.separator} >
-                    {showLogin?<Login onLogined={() => {
+                    {showLogin ? <Login onLogined={() => {
                         setShowLogin(false)
                         DeviceEventEmitter.emit("userlogin", "logined")
                         router.navigate("")
-                    }}></Login>:<Profile></Profile>}
+                    }}></Login> : 
+                        <Profile />
+                    }
                 </View>
             </View>
         </ScrollView>
