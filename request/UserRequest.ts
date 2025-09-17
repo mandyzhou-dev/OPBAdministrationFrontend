@@ -33,7 +33,6 @@ export class UserRequest{
 
     getByRole = async (role: string):Promise<User[]> =>{
         try{
-            console.log(process.env.EXPO_PUBLIC_API_URL)
             const response:AxiosResponse = await axios.get(process.env.EXPO_PUBLIC_API_URL+'api/presentor/user/getUserByRoleName',{
                 params:{
                     role: role
@@ -46,7 +45,6 @@ export class UserRequest{
     }
     login = async(username:string, password:string):Promise<User> =>{
         try{
-            console.log(process.env.EXPO_PUBLIC_API_URL)
             const response:AxiosResponse = await axios.post(process.env.EXPO_PUBLIC_API_URL+'api/user/login',{
                     username: username,
                     password:password,   

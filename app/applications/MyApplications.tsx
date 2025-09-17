@@ -14,7 +14,6 @@ export default function MyApplications() {
         getApplicationByApplicant(user.name).then(
             (data) => {
                 setApplicationList(data);
-                console.log(applicationList);
             }
         ).catch(
             (error) => {

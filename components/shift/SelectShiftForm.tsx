@@ -24,7 +24,6 @@ export const SelectShiftFrom: React.FC = () => {
         getUserByRole("tester").then(
             (data) => {
                 setUserList(data)
-                //console.log(data)
             }
         ).catch(
             (error) => {
@@ -57,13 +56,8 @@ export const SelectShiftFrom: React.FC = () => {
         return statutoryHolidays.some(holiday => holiday.isSame(date, "day"));
     };
     const freeTodayByUsername = (username: string) => {
-        console.log("hello")
-        console.log("function: " + preferredWorkers);
         for (let worker of preferredWorkers) {
-            console.log("workder: " + worker)
-            console.log("username: " + username)
             if (worker === username) {
-                console.log(username + "equals")
                 return true;
             }
         }
@@ -113,7 +107,7 @@ export const SelectShiftFrom: React.FC = () => {
                             setWorkDate(d)
                             getPreferredEmployeesBydate(moment(d.toDate())).then(
                                 (data) => {
-                                    console.log("data: " + data)
+                                    //console.log("data: " + data)
                                     setPreferredWorkers(data)
                                 }
                             ).catch(

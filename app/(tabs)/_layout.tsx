@@ -20,7 +20,6 @@ function TabBarIcon(props: {
 export default function TabLayout() {
   const [isManager, setIsManager] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user") as string);
     if (user) {
@@ -30,7 +29,9 @@ export default function TabLayout() {
       setIsLoggedIn(false);
       setIsManager(false);
     }
-  }, []);
+  }, );
+  // FIXME: useEffect runs on every render because dependency array is omitted; optimize later
+
   const colorScheme = useColorScheme();
 
   return (
@@ -77,7 +78,7 @@ export default function TabLayout() {
         name="target"
         options={{
           title: 'KPI',
-          href:isLoggedIn?"target":null,
+          href:isLoggedIn?'target':null,
           tabBarIcon: ({ color }) => <FontAwesome name="bar-chart" size={24} color={color} />,
         }}
       />

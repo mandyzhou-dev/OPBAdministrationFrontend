@@ -2,7 +2,6 @@ import { Shift } from '@/model/Shift';
 import axios, {AxiosResponse} from 'axios'
 import moment, { Moment } from 'moment';
 import Cookies from 'universal-cookie'
-import { Header } from 'react-native/Libraries/NewAppScreen';
 import dayjs, { Dayjs } from 'dayjs';
 import { kpi } from '@/model/KPI';
 export class ShiftRequest{
@@ -50,7 +49,7 @@ export class ShiftRequest{
             }
             const cookies = new Cookies();
             cookies.set('JSESSIONID', JSON.parse(localStorage.getItem("user") as string).jsessionID)
-            console.log(cookies.get('JSESSIONID'))
+            //console.log(cookies.get('JSESSIONID'))
             const response:AxiosResponse = await axios.put(process.env.EXPO_PUBLIC_API_URL+'api/shift/shiftarrangement/batchCreateByDate',{
                     workDate: workDate,
                     group: group,

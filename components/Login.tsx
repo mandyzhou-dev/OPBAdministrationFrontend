@@ -22,7 +22,6 @@ export const Login: React.FC<LoginProps> = ({ onLogined }) => {
     }
 
     const login = () => {
-        console.log(username)
         UserService.login(username, password).then(onLogined)
             .catch(
                 (error) => {

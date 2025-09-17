@@ -15,7 +15,6 @@ export default function MyPreferShift() {
     const [maxDate,setMaxDate] = React.useState<Dayjs>(dayjs().date(31))
     const [statutoryHolidays,setStatutoryHolidays] = React.useState<dayjs.Dayjs[]>([])
     const onChange: DatePickerProps<Dayjs[]>['onChange'] = (date, dateString) => {
-        console.log(date, dateString);
         setpreferDates(date)
     };
     const handle=()=>{
@@ -24,8 +23,6 @@ export default function MyPreferShift() {
         let preferWorkdays = new PreferWorkdays()
         preferWorkdays.username = user.username;
         preferWorkdays.dates = preferDates;
-        console.log("hello")
-        console.log(preferDates)
         updatePreferWorkdayOfCurrentMonth(preferWorkdays).then(()=>{
             setShowSuccessAlert(true)
             setTimeout(()=>{setShowSuccessAlert(false)},10000)}
