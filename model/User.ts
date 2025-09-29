@@ -1,6 +1,7 @@
 export class User{
     username!: string;
     name!: string;
+    legalName:string | undefined;
     roles!:string;
     jsessionID:string | undefined;
     email:string |undefined;
@@ -10,9 +11,10 @@ export class User{
     active!:number;
     groupName!:string;
 
-    constructor(username: string, name: string,roles:string,email:string,phoneNumber:string,address:string,birthdate:Date,active:number,groupName:string){
+    constructor(username: string, name: string,legalName: string,roles:string,email:string,phoneNumber:string,address:string,birthdate:Date,active:number,groupName:string){
         this.username = username;
         this.name = name;
+        this.legalName = legalName;
         this.roles = roles;
         this.email = email;
         this.phoneNumber = phoneNumber;
