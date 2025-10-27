@@ -11,7 +11,7 @@ export default function MyApplications() {
     const [applicationList, setApplicationList] = React.useState<LeaveApplication[]>([])
     useEffect(() => {
         let user = JSON.parse(localStorage.getItem('user') as string);
-        getApplicationByApplicant(user.name).then(
+        getApplicationByApplicant(user.username).then(
             (data) => {
                 setApplicationList(data);
             }

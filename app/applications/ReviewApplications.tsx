@@ -27,7 +27,7 @@ export default function ReviewApplications() {
             return;
         }
         if (user.roles == 'Manager') {
-            getReviewApplicationByHandler(user.name).then(
+            getReviewApplicationByHandler(user.username).then(
                 (data) => {
                     //console.log(JSON.stringify(data))
                     setApplicationList(data)
