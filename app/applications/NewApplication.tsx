@@ -2,6 +2,7 @@
 import { RequiredFormControl } from "@/components/FreeStyle/RequiredFormControl";
 import { LeaveApplicationRequest } from "@/request/LeaveApplicationRequest";
 import { InputField, Input, ButtonText, Button, FormControl, FormControlLabel, FormControlLabelText, Text, Card, Textarea, TextareaInput, ScrollView, Alert, AlertIcon, AlertText, InfoIcon } from "@gluestack-ui/themed";
+import { router } from "expo-router";
 import moment, { duration } from "moment";
 import React from "react";
 
@@ -91,11 +92,9 @@ export default function NewApplication() {
         const leaveApplicationRequest = new LeaveApplicationRequest;
         leaveApplicationRequest.putLeaveApplication(result).then(() => {
             setShowSuccessAlert(true)
-
-            //Avoid duplicate submitting. Alert is not a good pactice.
-            setTimeout(() => { alert("Request submitted successfully! You can check the status of your request under 'My Applications'.") }, 1000);
-
-            setTimeout(() => { setShowSuccessAlert(false) }, 1000)
+            //TODO: Loading Page: Request submitted successfully! You can check the status of your request under 'My Applications'.
+            setTimeout(() => {router.navigate("/applications/MyApplications")}, 1000);
+            //setTimeout(() => { setShowSuccessAlert(false) }, 1000)
         }
         ).catch(
             (error) => {
