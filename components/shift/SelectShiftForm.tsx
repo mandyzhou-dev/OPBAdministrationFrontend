@@ -7,7 +7,7 @@ import { User } from "@/model/User";
 import { batchByDate } from "@/service/ShiftService";
 import { getPreferredEmployeesBydate } from "@/service/ShiftBoardService";
 import moment from "moment";
-import { getStatutoryHolidays } from "@/service/StatutoryHolidayService";
+import { getStatutoryHoliday } from "@/service/StatutoryHolidayService";
 import dayjs from "dayjs";
 import { DatePicker, Flex } from "antd";
 export const SelectShiftFrom: React.FC = () => {
@@ -40,10 +40,10 @@ export const SelectShiftFrom: React.FC = () => {
                 console.log((error as Error).message)
             }
         )
-        getStatutoryHolidays().then(
+        getStatutoryHoliday().then(
             (data) => {
                 //console.log(JSON.stringify(data))
-                setStatutoryHolidays(data.map(date => dayjs(date)))
+                setStatutoryHolidays(data.map(date => dayjs(date.statutoryDate)))
             }).catch(
                 (error) => {
                     console.log((error as Error).message)

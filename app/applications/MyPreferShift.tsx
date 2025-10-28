@@ -1,6 +1,6 @@
 import { PreferWorkdays } from "@/model/PreferWorkdays";
 import { getBoardByUser, getCurrentMonth, updatePreferWorkday, updatePreferWorkdayOfCurrentMonth } from "@/service/ShiftBoardService";
-import { getStatutoryHolidays } from "@/service/StatutoryHolidayService";
+import { getStatutoryHoliday } from "@/service/StatutoryHolidayService";
 import { Alert, AlertIcon, AlertText, Button,ButtonText, Card, Heading, InfoIcon, ScrollView, Text } from "@gluestack-ui/themed";
 import type { DatePickerProps } from 'antd';
 import { DatePicker, Flex } from 'antd';
@@ -56,9 +56,9 @@ export default function MyPreferShift() {
             }
             
         )
-        getStatutoryHolidays().then(
+        getStatutoryHoliday().then(
             (data) => {
-                setStatutoryHolidays(data.map(date => dayjs(date)))
+                setStatutoryHolidays(data.map(date => dayjs(date.statutoryDate)))
             }).catch(
                 (error) => {
                     console.log((error as Error).message)
