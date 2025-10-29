@@ -8,6 +8,7 @@ import { useColorScheme } from '@/components/useColorScheme';
 import { useClientOnlyValue } from '@/components/useClientOnlyValue';
 import { Ionicons } from '@expo/vector-icons';
 import AntDesign from '@expo/vector-icons/AntDesign';
+import { View ,Text} from '@gluestack-ui/themed';
 
 // You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
 function TabBarIcon(props: {
@@ -35,6 +36,22 @@ export default function TabLayout() {
   const colorScheme = useColorScheme();
 
   return (
+    <>
+    {isManager?"":<View
+        style={{
+          alignItems: 'center',
+          justifyContent: 'center',
+          paddingVertical: 10,
+          backgroundColor: '#f9fafb',
+          borderTopWidth: 1,
+          borderColor: '#e5e7eb',
+        }}
+      >
+        <Text style={{ color: '#2563eb', fontSize: 13 }}>
+          IT Support: mandychou98@outlook.com
+        </Text>
+    </View>}
+    
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
@@ -108,6 +125,10 @@ export default function TabLayout() {
         }}
       />
     </Tabs>
+
+    
+        
+      </>
     
   );
 }
