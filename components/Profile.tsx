@@ -5,29 +5,29 @@ import { User } from '@/model/User';
 import { ScrollView } from 'react-native';
 import { router } from 'expo-router';
 import moment from 'moment';
+import { useEffect } from 'react';
 
 export const Profile: React.FC = () => {
     //password ，birthdate,roles,sin and documents
     //They donot need to see their birthdate roles, sin , legalname and documents
     //They donnot need to assign their roles .
     const user = JSON.parse(localStorage.getItem("user") as string);
-
     return (
         <VStack>
             <Center margin={3} >
-                <Text size="2xl" color="white" >{user.name}</Text>
+                <Text size="2xl" color="white" >{user?.name}</Text>
             </Center>
             <Card margin={3}>
                 <TextField
                     required
                     id="outlined-required"
                     label="Username"
-                    defaultValue={user.username}
+                    defaultValue={user?.username}
                 />
             </Card>
             <Card margin={3}>
                 <Pressable
-                    onPress={() => router.navigate("/setPassword?username=" + user.username)}
+                    onPress={() => router.navigate("/setPassword?username=" + user?.username)}
                     p="$2"
                     bg="$white"
                     //bg="$primary500"
@@ -41,7 +41,7 @@ export const Profile: React.FC = () => {
                     required
                     id="outlined-required"
                     label="Email"
-                    defaultValue={user.email}
+                    defaultValue={user?.email}
                 />
             </Card>
             <Card margin={3}>
@@ -49,7 +49,7 @@ export const Profile: React.FC = () => {
                     required
                     id="outlined-required"
                     label="Birthdate"
-                    defaultValue={moment(user.birthdate).format("YYYY/MM/DD")}
+                    defaultValue={moment(user?.birthdate).format("YYYY/MM/DD")}
                 />
             </Card>
             <Card margin={3}>
@@ -57,7 +57,7 @@ export const Profile: React.FC = () => {
                     required
                     id="outlined-required"
                     label="PhoneNumber"
-                    defaultValue={user.phoneNumber}
+                    defaultValue={user?.phoneNumber}
                 />
             </Card>
             <Card margin={3}>
@@ -65,7 +65,7 @@ export const Profile: React.FC = () => {
                     required
                     id="outlined-required"
                     label="Address"
-                    defaultValue={user.address}
+                    defaultValue={user?.address}
                 />
             </Card>
             <Button
@@ -73,10 +73,10 @@ export const Profile: React.FC = () => {
                 variant="link"
                 onPress={() => {
                     localStorage.removeItem('user');
-                    //should router to my,but some bugs that:log in cannot fetch the name
+                    //should router to my,but nothing changed when router.naviate("/my")
                     window.location.reload();
                     //router.navigate("/my")
-                }
+                    }
                 }
                 marginLeft={0}
             >

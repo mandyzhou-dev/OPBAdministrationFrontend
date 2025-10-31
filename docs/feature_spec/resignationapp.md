@@ -8,16 +8,18 @@ The goal of this feature is to provide employees with an online resignation appl
 
 ## 2️ System Menu Changes
 
-A new menu item will be added:
+New menu items will be added:
+
+### a. Employee View
 
 - **Submit Resignation Application**  
-  → Allows employees to initiate a resignation request directly.
+  → Allows employees to submit a resignation request directly.
 
-Submitted resignation requests will be integrated into existing views:
+### b. Manager View
 
-- **My Applications** – for employees to track their submissions  
-- **Review Applications** – for HR reviewers to see pending requests  
-- **History** – for all past applications including leave and resignation
+- **Resignation Request**  
+  → In the Resignation Request menu, both new submissions and previously submitted requests will be displayed.
+    All entries appear in the same card, differentiated only by their status (e.g., Pending or Reviewed).
 
 ---
 
@@ -70,6 +72,7 @@ following fields:
 - Upon successful submission:
   - Notification email sent to HR
   - Request status set to **Pending**
+  - A confirmation email is sent to the employee, informing them that the system has received the request and advising them not to submit another one.
 
 ---
 
@@ -82,13 +85,18 @@ following fields:
 
 ## 4️⃣ Notifications
 
-Email to HR should include:
+### a. Email to HR should include
 
 - Employee name
 - Last working day
 - Reason for leaving
-- Submission timestamp
-- Direct link to review the request
+
+### b. Email to Employee should include
+
+- Employee name
+- Last working day
+- Reason for leaving
+- Offboarding Information
 
 ---
 

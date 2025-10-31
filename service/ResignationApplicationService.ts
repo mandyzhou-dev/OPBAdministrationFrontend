@@ -6,3 +6,8 @@ export const newResignationApplication = async(createResigApp:object):Promise<Re
     return resignationApplicationRequest.postResignationApplication(createResigApp);
 
 }
+export const getAllResignations = async():Promise<ResignationApplication[]>=>{
+    const resignationApplicationRequest = new ResignationApplicationRequest();
+    return resignationApplicationRequest.getAllResignations();
+
+}

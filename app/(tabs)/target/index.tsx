@@ -5,6 +5,7 @@ import { getUserByGroup } from "@/service/UserService";
 import { User } from "@/model/User";
 import  ManagerView  from "./ManagerView";
 import { EmployeeView } from "./EmployeeView";
+import { router } from "expo-router";
 
 
 export default function TargetIndex() {
@@ -19,6 +20,9 @@ export default function TargetIndex() {
         if (localUser) {
             setUser(localUser);
             setIsManager(localUser.roles === "Manager"||localUser.roles.toLowerCase().includes("team_leader"));
+        }else {
+            router.navigate("/my"); 
+            return;
         }
     }, []);
 

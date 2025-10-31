@@ -1,103 +1,86 @@
 import { newResignationApplication } from "@/service/ResignationApplicationService";
-import { verifyPassword } from "@/service/UserService";
 import {
     ScrollView,
     Card,
     Text,
     Input,
     InputField,
-    Checkbox,
-    CheckboxGroup,
-    CheckboxIcon,
-    CheckboxIndicator,
-    CheckboxLabel,
     VStack,
-    HStack,
     Button,
     ButtonText,
     Heading,
     Alert,
-    AlertCircleIcon,
-    InputIcon, EyeIcon, EyeOffIcon, InputSlot, AlertIcon, AlertText, InfoIcon
+    AlertIcon, AlertText, InfoIcon
 } from "@gluestack-ui/themed";
 import {
     FormControl,
-    FormControlError,
-    FormControlErrorText,
-    FormControlErrorIcon,
     FormControlLabel,
     FormControlLabelText,
-    FormControlHelper,
-    FormControlHelperText,
 } from "@gluestack-ui/themed"
-import Password from "antd/es/input/Password";
 import dayjs from "dayjs";
+import { router } from "expo-router";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 
 export default function ResignationForm() {
-    const [showPassword, setShowPassword] = useState(false)
     const [lastDay, setLastDay] = useState("");
     const [reason, setReason] = useState("");
-    const [password, setPassword] = useState("");
     const [lastDayIsRequired, setLastDayIsRequired] = React.useState(false);
-    const [passwordIsRequired, setPasswordIsRequired] = React.useState(false);
 
     const [showSuccessAlert,setShowSuccessAlert] = React.useState(false);
     const [showErrorAlert,setShowErrorAlert] = React.useState(false);
-
-    const handleState = () => {
-        setShowPassword((showState) => {
-            return !showState
-        })
-    }
+    const [errorMessage, setErrorMessage] = React.useState("Failed!");
+          
     const submit = () => {
+
+        if (localStorage.getItem("user") == null) {
+            setErrorMessage("Session expired. Redirecting to login page...");
+            setShowErrorAlert(true);
+            setTimeout(()=>{
+                setShowErrorAlert(false)
+                router.navigate("/my")
+
+            },3000)
+            return;
+        }
+
         if (!lastDay) {
             setLastDayIsRequired(true);
             return;
         }
-        if (!password) {
-            setPasswordIsRequired(true);
-            return;
-        }
+
         //DONE: Check the validation of lastDay
         // === Last day validation ===
         const parsedDate = dayjs(lastDay, ["YYYYMMDD", "YYYY-MM-DD", "YYYY/MM/DD"], true);
         if (!parsedDate.isValid()) {
-            alert("Invalid last working day. Please enter a valid date.");
+            //alert("Invalid last working day. Please enter a valid date.");
+            setErrorMessage("Invalid last working day. Please enter a valid date.");
+            setShowErrorAlert(true);
+            setTimeout(()=>{setShowErrorAlert(false)},3000)
             return;
         }
 
         const today = dayjs().startOf("day");
         if (parsedDate.isBefore(today)) {
-            alert("Last working day cannot be in the past.");
+            setErrorMessage("Last working day cannot be in the past.");
+            setShowErrorAlert(true);
+            setTimeout(()=>{setShowErrorAlert(false)},3000)
             return;
         }
 
         const twoMonthsLater = today.add(2, "month");
         if (parsedDate.isAfter(twoMonthsLater)) {
-            alert("Last working day cannot be more than 2 months from today.");
+            setErrorMessage("Last working day cannot be more than 2 months from today.");
+            setShowErrorAlert(true);
+            setTimeout(()=>{setShowErrorAlert(false)},3000)
             return;
         }
         // === End validation ===
-        if (localStorage.getItem("user") === null) {
-            alert("Session expired. Please login again!")
-            return;
-        }
 
         setLastDayIsRequired(false);
-        setPasswordIsRequired(false);
 
         let username = JSON.parse(localStorage.getItem("user") as string).username
-        verifyPassword(username, password).then(
-            (data) => {
-                if (data == false) {
-                    alert("Wrong password!");
-                    return;
-                }
-            }
-        )
         //Done: Post this resignation
         let result = {
             applicant: username,
@@ -108,12 +91,12 @@ export default function ResignationForm() {
             (data)=>{
                 console.log(data.id);
                 setShowSuccessAlert(true)
-            setTimeout(()=>{setShowSuccessAlert(false)},1000)}
+            setTimeout(()=>{setShowSuccessAlert(false)},10000)}
         ).catch(
             (error)=>{
                 console.log(error)
                 setShowErrorAlert(true);
-                setTimeout(()=>{setShowErrorAlert(false)},1000)
+                setTimeout(()=>{setShowErrorAlert(false)},3000)
             }
         )
         
@@ -125,7 +108,7 @@ export default function ResignationForm() {
             (<Alert mx="$2.5" action="success" variant="solid" >
                 <AlertIcon as={InfoIcon} mr="$3" />
                 <AlertText>
-                    Successfully submitted!
+                    Your resignation request was submitted successfully. A confirmation email will be sent to you shortly.
                 </AlertText>
             </Alert>):null}
             {
@@ -134,7 +117,7 @@ export default function ResignationForm() {
                     <Alert mx="$2.5" action="error" variant="solid" >
                 <AlertIcon as={InfoIcon} mr="$3" />
                 <AlertText>
-                    Failed!
+                    {errorMessage}
                 </AlertText>
             </Alert>
                 ):null}
@@ -169,27 +152,6 @@ export default function ResignationForm() {
 
                 </VStack>
 
-                <FormControl isRequired={passwordIsRequired} isInvalid={passwordIsRequired}>
-                    <FormControlLabel>
-                        <FormControlLabelText>
-                            Verify your identity by entering your password
-                        </FormControlLabelText>
-                    </FormControlLabel>
-                    <Input
-                        size="md"
-                    >
-                        <InputField placeholder="Enter your current password"
-                            onChangeText={(value) => { setPassword(value) }}
-                            type={showPassword ? "text" : "password"} />
-                        <InputSlot pr="$3" onPress={handleState}>
-                            <InputIcon
-                                as={showPassword ? EyeIcon : EyeOffIcon}
-                                color="$darkBlue500"
-                            />
-                        </InputSlot>
-
-                    </Input>
-                </FormControl>
             </Card>
             <Button onPress={submit} bgColor="$primary500" margin={"$3"}>
                 <ButtonText>Submit Resignation</ButtonText>
