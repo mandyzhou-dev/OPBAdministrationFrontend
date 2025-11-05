@@ -1,25 +1,17 @@
 import { HStack, ScrollView, View } from "@gluestack-ui/themed";
 import React, { useEffect } from "react";
-import { ReviewOfApplicationCard } from "@/components/applications/ReviewOfApplicationCard"
-import { LeaveApplication } from "@/model/LeaveApplication";
 import { DeviceEventEmitter } from "react-native";
-import { getReviewApplicationByHandler } from "@/service/ApplicationService";
-import moment from "moment";
-import { ReviewModal } from "@/components/applications/ReviewModal";
 import { ResignationApplication } from "@/model/ResignationApplication";
-import { getAllResignations } from "@/service/ResignationApplicationService";
+import { getAllResignations, reviewResignationById } from "@/service/ResignationApplicationService";
 import { ReviewOfResignationCard } from "@/components/applications/ReviewOfResignationCard";
 import dayjs from "dayjs";
 export default function ResigReq() {
 
     const [resignationList, setResignationList] = React.useState<ResignationApplication[]>([])
-    const [currentApplication, setCurrentApplication] =React.useState<ResignationApplication>(new ResignationApplication())
     const [refreshCount, setRefreshCount] = React.useState(0)
-    const [showModal,setShowModal] = React.useState(false);
-    const callModals=(resignation:ResignationApplication)=>{
-        console.log("clicked")
-        setCurrentApplication(resignation);
-        setShowModal(true);
+    const confirm = (id: number) => {
+        reviewResignationById(id);
+        onUpdated();
     }
     let listener = null;
     useEffect(() => {
@@ -43,8 +35,8 @@ export default function ResigReq() {
         }
 
     }, [refreshCount])
-    const onUpdated=()=>{
-        setRefreshCount(refreshCount+1);
+    const onUpdated = () => {
+        setRefreshCount(prev => prev + 1);
     }
     return (
         <ScrollView>
@@ -56,15 +48,15 @@ export default function ResigReq() {
                                 <ReviewOfResignationCard key={resignation.id} name={resignation.applicant}
                                     submittedAt={dayjs(resignation.submittedAt).format("YYYY-MM-DD HH:mm")}
                                     lastWorkingDay={resignation.lastWorkingDay}
-                                    reason={resignation.reason} 
+                                    reason={resignation.reason}
                                     status={resignation.status}
-                                    onClick={()=>callModals(resignation)}/>
+                                    onClick={() => confirm(resignation.id!)} />
                             </div>
                         )
                     }
-                    )            
+                    )
                 }
-                
+
             </HStack>
 
         </ScrollView>

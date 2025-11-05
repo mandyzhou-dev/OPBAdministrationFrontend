@@ -95,8 +95,9 @@ export default function ResignationForm() {
         ).catch(
             (error)=>{
                 console.log(error)
+                setErrorMessage(error.message);
                 setShowErrorAlert(true);
-                setTimeout(()=>{setShowErrorAlert(false)},3000)
+                setTimeout(()=>{setShowErrorAlert(false)},10000)
             }
         )
         

@@ -28,8 +28,8 @@ export const ReviewOfResignationCard: React.FC<ReviewOfApplicationCardProps> = (
     <Text margin={3}>Submitted At: {submittedAt}</Text>
 
     <VStack margin={3}>
-      <Button variant="outline" action="primary" onPress={() => onClick()}>
-        <BadgeText>Confirm</BadgeText>
+      <Button variant="solid" action={status === "REVIEWED" ? "secondary" : "primary"} onPress={() => onClick()} disabled={status === "REVIEWED"} >
+        <BadgeText>{status === "REVIEWED" ? "Confirmed" : "Confirm"}</BadgeText>
       </Button>
     </VStack>
   </Card>

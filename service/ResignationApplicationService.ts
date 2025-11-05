@@ -9,5 +9,9 @@ export const newResignationApplication = async(createResigApp:object):Promise<Re
 export const getAllResignations = async():Promise<ResignationApplication[]>=>{
     const resignationApplicationRequest = new ResignationApplicationRequest();
     return resignationApplicationRequest.getAllResignations();
+}
 
+export const reviewResignationById = async(id:number):Promise<Object>=>{
+    const resignationApplicationRequest = new ResignationApplicationRequest();
+    return resignationApplicationRequest.reviewApplicationById(id);
 }
