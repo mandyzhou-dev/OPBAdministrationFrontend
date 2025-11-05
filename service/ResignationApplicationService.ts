@@ -15,3 +15,8 @@ export const reviewResignationById = async(id:number):Promise<Object>=>{
     const resignationApplicationRequest = new ResignationApplicationRequest();
     return resignationApplicationRequest.reviewApplicationById(id);
 }
+
+export const getResignationByAplicant = async(applicant:string):Promise<ResignationApplication>=>{
+    const resignationApplicationRequest = new ResignationApplicationRequest();
+    return resignationApplicationRequest.getResignationByApplicant(applicant);
+}

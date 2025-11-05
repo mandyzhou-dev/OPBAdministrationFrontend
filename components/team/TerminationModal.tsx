@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Modal, View, Text, TextInput, Button } from "react-native";
 import { User } from "@/model/User";
 import dayjs, { Dayjs } from "dayjs";
+import { getResignationByAplicant } from "@/service/ResignationApplicationService";
 
 export interface TerminateInfo {
   lastDay: Dayjs | undefined;
@@ -26,7 +27,18 @@ const TerminationModal: React.FC<TerminationModalProps> = ({ employee, visible, 
     }
     await onSubmit(employee, { lastDay: dayjs(parsedDate).startOf('day'), terminationReason: reason });
   };
-
+  useEffect(()=>{
+    getResignationByAplicant(employee.username).then(
+        (data)=>{
+          setParsedDate(data.lastWorkingDay?? "");
+          setReason(data.reason?? "");
+        }
+    ).catch(
+      (error)=>{
+                console.log(error)
+            }
+    )
+  },[employee.username])
   return (
     <Modal visible={visible} animationType="slide" transparent={true} onRequestClose={onCancel}>
       <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.4)", justifyContent: "center", padding: 20 }}>

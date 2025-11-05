@@ -10,8 +10,11 @@ export default function ResigReq() {
     const [resignationList, setResignationList] = React.useState<ResignationApplication[]>([])
     const [refreshCount, setRefreshCount] = React.useState(0)
     const confirm = (id: number) => {
-        reviewResignationById(id);
-        onUpdated();
+        reviewResignationById(id)
+            .then(() => {
+                onUpdated();
+            })
+            .catch((err) => console.log(err));
     }
     let listener = null;
     useEffect(() => {

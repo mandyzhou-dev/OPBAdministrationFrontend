@@ -31,4 +31,12 @@ export class ResignationApplicationRequest{
             throw new Error("Put Error"+(e as Error).message)
         }
     }
+    getResignationByApplicant = async(applicant:string):Promise<ResignationApplication>=>{
+        try{
+            const response:AxiosResponse = await axios.get(process.env.EXPO_PUBLIC_API_URL + 'api/resignations/'+applicant);
+            return response.data;
+        }catch(e){
+            throw new Error("Get Error" + (e as Error).message)
+        }
+    }
 }

@@ -71,7 +71,7 @@ following fields:
 
 - Upon successful submission:
   - Notification email sent to HR
-  - Request status set to **Pending**
+  - Request status set to **PENDING_REVIEW**
   - A confirmation email is sent to the employee, informing them that the system has received the request and advising them not to submit another one.
 
 ---
@@ -79,7 +79,7 @@ following fields:
 ### c. HR Review Process
 
 - HR can log in and review pending resignation requests
-- HR marks the request as **Reviewed** once completed
+- HR marks the request as **REVIEWD** once completed
 
 ---
 

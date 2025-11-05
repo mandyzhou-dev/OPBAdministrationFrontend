@@ -109,7 +109,7 @@ export default function ResignationForm() {
             (<Alert mx="$2.5" action="success" variant="solid" >
                 <AlertIcon as={InfoIcon} mr="$3" />
                 <AlertText>
-                    Your resignation request was submitted successfully. A confirmation email will be sent to you shortly.
+                    Your resignation request was submitted successfully. 
                 </AlertText>
             </Alert>):null}
             {
@@ -151,6 +151,16 @@ export default function ResignationForm() {
                     <Text mb="$1">· Access to confidential, proprietary, or sensitive company information will be revoked upon resignation.</Text>
                     <Text mb="$1">· All company accounts and systems will be deactivated as of the employee’s last working day.</Text>
 
+                    <Heading size="md" mb="$4">Benefits</Heading>
+                    <Text mb="$1">· Participation in the company’s group benefits plan will end on the last working day.</Text>
+                    <Text mb="$1">· Any outstanding premiums before the last day will be deducted from the final pay. </Text>
+                    <Text mb="$1">· The company is not responsible for any claims, reimbursements, or disputes related to benefits coverage after the final working day.</Text>
+
+                    <Heading size="md" mb="$4">Timekeeping Deductions</Heading>
+                    <Text mb="$1">·  Final pay will be adjusted based on timekeeping records (e.g., late arrivals or early departures).</Text>
+                    <Text mb="$1">· Accumulated time will be rounded down to the nearest hour.  </Text>
+                    <Text mb="$1">· - E.g., if total time is 1.75 hours → 1 hour deducted.  </Text>
+                    <Text mb="$1">· - If 3.2 hours → 3 hours deducted.</Text>
                 </VStack>
 
             </Card>
