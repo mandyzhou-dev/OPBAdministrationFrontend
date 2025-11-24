@@ -67,12 +67,11 @@ following fields:
 
 - Form submission is allowed **only if**:
   - All required fields are filled
-  - Password is validated against the database
 
 - Upon successful submission:
   - Notification email sent to HR
   - Request status set to **PENDING_REVIEW**
-  - A confirmation email is sent to the employee, informing them that the system has received the request and advising them not to submit another one.
+  - A confirmation email is sent to the employee, informing them that the system has received the request and advising them not to submit another one.(TODO)
 
 ---
 
@@ -80,6 +79,7 @@ following fields:
 
 - HR can log in and review pending resignation requests
 - HR marks the request as **REVIEWD** once completed
+- Upon **termination** in the team tab, the corresponding fields from the resignations table will be automatically populated into the employment_record table.
 
 ---
 
