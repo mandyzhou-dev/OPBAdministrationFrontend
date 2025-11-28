@@ -104,9 +104,13 @@ export class UserRequest{
             }
             );
             return response.data;
-        }catch(e){
+        }catch(e:any){
+            if(e.response){
+                throw e.response.data;
+            }
             throw new Error("Post Failure"+(e as Error).message)
         }
+
     }
     isInProbation =async(username:string):Promise<boolean>=>{
         try{

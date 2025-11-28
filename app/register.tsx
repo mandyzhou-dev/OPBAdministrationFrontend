@@ -179,6 +179,7 @@ export default function Register() {
             password: password
         }
         register(registerInfo, verificationCode).then(() => {
+            setShowErrorAlert(false);
             setShowSuccessAlert(true)
             alert(`Registration successful! 
             Please log in with your username (${username}) and the password you created.
@@ -187,10 +188,24 @@ export default function Register() {
 
         }).catch(
             (error) => {
-                console.log(error)
+                if(error.error=="USERNAME_ALREADY_EXISTS"){
+                    setErrorMessage(error.message);
+                    setShowErrorAlert(true);
+                    return;
+                }
+                if(error.error=="INVALID_VERIFICATION_CODE"){
+                    setErrorMessage(error.message);
+                    setShowErrorAlert(true);
+                    return;
+                }
+                if(error.error=="EMAIL_ALREADY_REGISTERED"){
+                    setErrorMessage(error.message);
+                    setShowErrorAlert(true);
+                    return;
+                }
+                setErrorMessage("Unexpected Error.");
                 setShowErrorAlert(true);
-                setTimeout(() => { setShowErrorAlert(false) }, 10000)
-
+                //setTimeout(() => { setShowErrorAlert(false) }, 10000)
             }
         );
         //TODO
