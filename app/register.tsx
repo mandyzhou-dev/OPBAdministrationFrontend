@@ -24,6 +24,8 @@ export default function Register() {
     const [showSuccessAlert, setShowSuccessAlert] = useState(false);
     const [showErrorAlert, setShowErrorAlert] = useState(false);
 
+    const [isSent, setIsSent] = useState(false);
+
     const [errorMessage, setErrorMessage] = useState("Failed!");
     const [usernameIsInvalid, setUsernameIsInvalid] = useState(false);
     const [nicknameIsInvalid, setNicknameIsInvalid] = useState(false);
@@ -33,8 +35,8 @@ export default function Register() {
     const [firstNameIsInvalid, setFirstNameIsInvalid] = useState(false);
     const [lastNameIsInvalid, setLastNameIsInvalid] = useState(false);
     const [sinIsInvalid, setSinIsInvalid] = useState(false);
-    const [phonenoIsInvalid,setPhonenoIsInvalid] = useState(false);
-    const [stIsInvalid,setStIsInvalid]  = useState(false);
+    const [phonenoIsInvalid, setPhonenoIsInvalid] = useState(false);
+    const [stIsInvalid, setStIsInvalid] = useState(false);
     const [cityIsInvalid, setCityIsInvalid] = useState(false);
     const [provinceIsInvalid, setProvinceIsInvalid] = useState(false);
     const [postalCodeIsInvalid, setPostalCodeIsInvalid] = useState(false);
@@ -80,7 +82,14 @@ export default function Register() {
             setTimeout(() => { setShowErrorAlert(false) }, 3000)
             return;
         }
-        //TODO:check the illegal birthdate
+        const parsedDate = dayjs(birthdate, ["YYYYMMDD", "YYYY-MM-DD", "YYYY/MM/DD"]);
+        if (!parsedDate.isValid()) {
+            setBirthdateIsInvalid(true);
+            setErrorMessage("Invalid birthdate format. Use YYYY-MM-DD or YYYYMMDD.");
+            setShowErrorAlert(true);
+            setTimeout(() => { setShowErrorAlert(false) }, 3000);
+            return;
+        }
         if (!firstName) {
             setFirstNameIsInvalid(true);
             setErrorMessage("Please enter the first name.");
@@ -109,28 +118,28 @@ export default function Register() {
             setTimeout(() => { setShowErrorAlert(false) }, 3000)
             return;
         }
-        if(!streetAddress){
+        if (!streetAddress) {
             setStIsInvalid(true);
             setErrorMessage("Please enter the street adress");
             setShowErrorAlert(true);
             setTimeout(() => { setShowErrorAlert(false) }, 3000)
             return;
         }
-        if(!city){
+        if (!city) {
             setCityIsInvalid(true);
             setErrorMessage("Please enter the City");
             setShowErrorAlert(true);
             setTimeout(() => { setShowErrorAlert(false) }, 3000)
             return;
         }
-        if(!province){
+        if (!province) {
             setProvinceIsInvalid(true);
             setErrorMessage("Please enter the province")
             setShowErrorAlert(true);
             setTimeout(() => { setShowErrorAlert(false) }, 3000)
             return;
         }
-        if(!postalCode){
+        if (!postalCode) {
             setPostalCodeIsInvalid(true);
             setErrorMessage("Please enter the postal code");
             setShowErrorAlert(true);
@@ -155,7 +164,6 @@ export default function Register() {
 
         const address = `${streetAddress}, ${city}, ${province} ${postalCode}`;
         const legalName = `${firstName}${middleName ? ` ${middleName}` : ''} ${lastName}`;
-        const parsedDate = dayjs(birthdate, ["YYYYMMDD", "YYYY-MM-DD", "YYYY/MM/DD"], true);
 
 
 
@@ -253,7 +261,8 @@ export default function Register() {
                         <Button
                             size="sm"
                             px="$3"
-                            action="positive"
+                            action={isSent ? "secondary" : "positive"}
+                            disabled={isSent}
                             onPress={() => {
                                 if (!email) {
                                     setErrorMessage("Please enter your email before sending the verification code.");
@@ -262,10 +271,11 @@ export default function Register() {
                                     return;
                                 }
                                 sendCode(email);
-                                //TODO:Modal
+                                setIsSent(true);
+                                setTimeout(() => setIsSent(false), 60000);
                             }}
                         >
-                            <ButtonText>Send</ButtonText>
+                            <ButtonText>{isSent ? "Sent - Try again in 60s" : "Send"}</ButtonText>
                         </Button>
                     </HStack>
                 </FormControl>
@@ -383,77 +393,77 @@ export default function Register() {
             </Card>
 
             <HStack>
-            <Card margin={3} flex={1}>
-                <FormControl isRequired isInvalid={stIsInvalid}>
-                    <FormControlLabel>
-                        <FormControlLabelText>
-                            Street Address
-                        </FormControlLabelText>
-                    </FormControlLabel>
-                    
-                <Input>
-                    <InputField
-                        value={streetAddress}
-                        onChangeText={(d) => setStreetAddress(d)}
-                        placeholder="e.g., 1234 Elm St"
-                    />
-                </Input>
-            </FormControl>
-            </Card>
-            
-            <Card margin={3} flex={1}>
-                <FormControl isRequired isInvalid={cityIsInvalid}>
-                    <FormControlLabel>
-                        <FormControlLabelText>
-                            City
-                        </FormControlLabelText>
-                    </FormControlLabel>
-                <Input
-                    isRequired>
-                    <InputField
-                        value={city}
-                        onChangeText={(d) => setCity(d)}
-                        placeholder="e.g., Vancouver"
-                    />
-                </Input>
-                </FormControl>
-            </Card>
+                <Card margin={3} flex={1}>
+                    <FormControl isRequired isInvalid={stIsInvalid}>
+                        <FormControlLabel>
+                            <FormControlLabelText>
+                                Street Address
+                            </FormControlLabelText>
+                        </FormControlLabel>
+
+                        <Input>
+                            <InputField
+                                value={streetAddress}
+                                onChangeText={(d) => setStreetAddress(d)}
+                                placeholder="e.g., 1234 Elm St"
+                            />
+                        </Input>
+                    </FormControl>
+                </Card>
+
+                <Card margin={3} flex={1}>
+                    <FormControl isRequired isInvalid={cityIsInvalid}>
+                        <FormControlLabel>
+                            <FormControlLabelText>
+                                City
+                            </FormControlLabelText>
+                        </FormControlLabel>
+                        <Input
+                            isRequired>
+                            <InputField
+                                value={city}
+                                onChangeText={(d) => setCity(d)}
+                                placeholder="e.g., Vancouver"
+                            />
+                        </Input>
+                    </FormControl>
+                </Card>
             </HStack>
             <HStack>
-            <Card margin={3} flex={1}>
-                <FormControl isRequired isInvalid={provinceIsInvalid}>
-                    <FormControlLabel>
-                        <FormControlLabelText>
-                            Province
-                        </FormControlLabelText>
-                    </FormControlLabel>
-                <Input
-                    isRequired>
-                    <InputField
-                        value={province}
-                        onChangeText={(d) => setProvince(d)}
-                        placeholder="e.g., BC"
-                    />
-                </Input>
-                </FormControl>
-            </Card>
-            <Card margin={3} flex={1}>
-                <FormControl isRequired isInvalid={postalCodeIsInvalid}>
-                    <FormControlLabel>
-                        <FormControlLabelText>
-                            Postal Code
-                        </FormControlLabelText>
-                    </FormControlLabel>
-                <Input
-                    isRequired>
-                    <InputField
-                        value={postalCode}
-                        onChangeText={(d) => setPostalCode(d)}
-                        placeholder="e.g., V6B 1A1"
-                    />
-                </Input>
-                </FormControl>
-            </Card>
+                <Card margin={3} flex={1}>
+                    <FormControl isRequired isInvalid={provinceIsInvalid}>
+                        <FormControlLabel>
+                            <FormControlLabelText>
+                                Province
+                            </FormControlLabelText>
+                        </FormControlLabel>
+                        <Input
+                            isRequired>
+                            <InputField
+                                value={province}
+                                onChangeText={(d) => setProvince(d)}
+                                placeholder="e.g., BC"
+                            />
+                        </Input>
+                    </FormControl>
+                </Card>
+                <Card margin={3} flex={1}>
+                    <FormControl isRequired isInvalid={postalCodeIsInvalid}>
+                        <FormControlLabel>
+                            <FormControlLabelText>
+                                Postal Code
+                            </FormControlLabelText>
+                        </FormControlLabel>
+                        <Input
+                            isRequired>
+                            <InputField
+                                value={postalCode}
+                                onChangeText={(d) => setPostalCode(d)}
+                                placeholder="e.g., V6B 1A1"
+                            />
+                        </Input>
+                    </FormControl>
+                </Card>
 
             </HStack>
             <Card margin={3}>
