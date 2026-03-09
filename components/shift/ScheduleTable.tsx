@@ -9,6 +9,8 @@ import { WorkTimeStatisticList } from "../statistics/WorkTimeStatisticList";
 import moment from "moment";
 import { getStatutoryHoliday } from "@/service/StatutoryHolidayService";
 import { StatutoryHoliday } from "@/model/StatutoryHoliday";
+import { CopyDialogModal } from "./CopyDialogModal";
+import dayjs from "dayjs";
 
 
 
@@ -18,7 +20,8 @@ export const ScheduleTable: React.FC = () => {
     const [currentDate, setCurrentDate] = React.useState(new Date())
     const [refreshCount, setRefreshCount] = React.useState(0)
     const [showStatistic, setShowStatistic] = React.useState(false);
-    const [statutoryHolidays, setStatutoryHolidays] =React.useState<StatutoryHoliday[]>([])
+    const [statutoryHolidays, setStatutoryHolidays] = React.useState<StatutoryHoliday[]>([])
+    const [showCopyModal, setShowCopyModal] = React.useState(false);
     let listener
 
     useEffect(() => {
@@ -42,14 +45,14 @@ export const ScheduleTable: React.FC = () => {
             }
         )
         getStatutoryHoliday().then(
-                    (data) => {
-                        //console.log(JSON.stringify(data))
-                        setStatutoryHolidays(data)
-                    }).catch(
-                        (error) => {
-                            console.log((error as Error).message)
-                        }
-                    )  
+            (data) => {
+                //console.log(JSON.stringify(data))
+                setStatutoryHolidays(data)
+            }).catch(
+                (error) => {
+                    console.log((error as Error).message)
+                }
+            )
 
     }, [currentDate, refreshCount])
 
@@ -90,21 +93,28 @@ export const ScheduleTable: React.FC = () => {
 
     return (
         <View>
-            <HStack margin={"$1"}>
-                <Button variant="link" onPress={() => { onClickPreviousWeek() }}>
-                    <ButtonIcon as={ArrowLeftIcon} />
-                </Button>
-                <Center>
-                    <Text>{shiftList[0] == undefined ? "" : shiftList[0].date?.format('YYYY-MM-DD')}-{shiftList[6] == undefined ? "" : shiftList[6]?.date?.format('YYYY-MM-DD')}</Text>
-                </Center>
-                <Button variant="link" onPress={() => { onClickNextWeek() }}>
-                    <ButtonIcon as={ArrowRightIcon} color="blue" />
+            <HStack margin={"$1"} marginVertical={"$1"}
+                paddingHorizontal={"$12"}>
+                <HStack alignItems="center">
+                    <Button variant="link" onPress={() => { onClickPreviousWeek() }}>
+                        <ButtonIcon as={ArrowLeftIcon} />
+                    </Button>
+                    <Center>
+                        <Text>{shiftList[0] == undefined ? "" : shiftList[0].date?.format('YYYY-MM-DD')} - {shiftList[6] == undefined ? "" : shiftList[6]?.date?.format('YYYY-MM-DD')}</Text>
+                    </Center>
+                    <Button variant="link" onPress={() => { onClickNextWeek() }}>
+                        <ButtonIcon as={ArrowRightIcon} color="blue" />
+                    </Button>
+                </HStack>
+                <View style={{ flex: 1 }} />
+                <Button variant="outline" size="sm" action="primary" onPress={()=>setShowCopyModal(true)}>
+                    <ButtonText>Copy This Week To...</ButtonText>
                 </Button>
             </HStack>
             <ScrollView horizontal={true} >
                 <HStack space="md" style={{ minWidth: 500 }}>
                     {shiftList.map((schedule) => {
-                        
+
                         const formattedDate = schedule.date?.format("YYYY-MM-DD");
                         const holidayName = getHolidayName(formattedDate!);
 
@@ -141,6 +151,12 @@ export const ScheduleTable: React.FC = () => {
                 <ButtonIcon as={RepeatIcon} />
             </Button>
             {showStatistic ? (calculate()) : null}
+            <CopyDialogModal 
+                srcWeekStart={dayjs(currentDate).startOf('week')} // Normalizes the date to the start of the week (Sunday)
+                showModal={showCopyModal}
+                setShowModal={setShowCopyModal}
+                onClose={() => setShowCopyModal(false)}
+            />
         </View>
     )
 }

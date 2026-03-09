@@ -7,6 +7,8 @@ import { Shift } from "@/model/Shift";
 import moment, { Moment } from "moment-timezone";
 import dayjs, { Dayjs } from "dayjs";
 import { kpi } from "@/model/KPI";
+import { CopyConfig } from "antd/es/typography/Base";
+import { CopyStatus } from "@/model/CopyStatus";
 
 const day = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
 
@@ -86,4 +88,9 @@ export const getKPIByUserAndGroupAndDate = async(username: string,group:string,d
 export const getBiweekKPIByUserAndGroup = async (username:string, group: string): Promise<kpi> => {
     const shiftRequest = new ShiftRequest();
     return shiftRequest.getBiweekKPIByUserAndGroup(username,group);
+}
+
+export const copyWeekScheduleTo = async(groupName:string,srcWeekStart:Dayjs,tgtWeekStart:Dayjs):Promise<CopyStatus>=>{
+    const shiftRequest = new ShiftRequest();
+    return shiftRequest.copyWeekSchedule(groupName,srcWeekStart,tgtWeekStart);
 }

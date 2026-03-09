@@ -66,20 +66,18 @@ Upon successful registration, the system now sends employee credentials via emai
 
 Your employee account has been created successfully!
 
-Please log in to openbox.brimon.ca using the following credentials.
-Here are your login credentials:
+Please log in to openbox.brimon.ca using the following username:
 Username: {username}
-Password: {password}
 
-Once HR assigns you to a group that fits your role, your work shifts will become available in the system.
+Please note that once HR approves your onboarding, your work shifts will become available in the system.
 
 If you encounter any issues, please contact the IT Support Team.
-.
+
 
 Welcome aboard!
 
 Best regards,
-Mandy
+TOPTECH ELECTRONICS
 ```
 
 ### 2.5 HR Notification Email After Successful Registration//TODO
