@@ -1,7 +1,7 @@
 
 import { CopyStatus } from "@/model/CopyStatus";
 import { copyWeekScheduleTo } from "@/service/ShiftService";
-import { Button, Text, ButtonText, Modal, ModalBackdrop, ModalContent, Card, HStack, RadioGroup, RadioIndicator, RadioIcon, CircleIcon, RadioLabel, Radio, Heading, ModalHeader, ModalCloseButton, Icon, CloseIcon, ModalFooter, ModalBody } from "@gluestack-ui/themed";
+import { Button, Text, ButtonText, Modal, ModalBackdrop, ModalContent, Card, HStack, RadioGroup, RadioIndicator, RadioIcon, CircleIcon, RadioLabel, Radio, Heading, ModalHeader, ModalCloseButton, Icon, CloseIcon, ModalFooter, ModalBody, Toast, ToastTitle, ToastDescription, useToast, VStack, Alert, AlertIcon, InfoIcon, AlertText } from "@gluestack-ui/themed";
 import { DatePicker, Flex } from "antd";
 import dayjs, { Dayjs } from "dayjs";
 import React from "react";
@@ -15,7 +15,11 @@ interface ShiftCopyDialogModalProps {
 export const CopyDialogModal: React.FC<ShiftCopyDialogModalProps> = ({ srcWeekStart, showModal, setShowModal, onClose }) => {
     const [groupName, setGroupName] = React.useState("surrey")
     const [dstWeekStart, setDstWeekStart] = React.useState(dayjs().add(1, 'week').startOf('week'))
-    const [status, setStatus] = React.useState<CopyStatus>()
+    const toast = useToast();
+    const [toastId, setToastId] = React.useState(0);
+    const [showErrorAlert, setShowErrorAlert] = React.useState(false);
+    const [errorMessage, setErrorMessage] = React.useState("Failed!");
+
     const disabledDate = (dst: Dayjs) => {
         // 1. Disable if it's NOT Sunday
         const isNotSunday = dst.day() !== 0;
@@ -27,102 +31,143 @@ export const CopyDialogModal: React.FC<ShiftCopyDialogModalProps> = ({ srcWeekSt
         return isNotSunday || isTooEarly;
     };
 
-    const copySchedule = async() => {
+    const copySchedule = async () => {
         try {
-            
             const data = await copyWeekScheduleTo(groupName, srcWeekStart, dstWeekStart);
-            setStatus(data);
-            console.log("ok");
             setShowModal(false)
+            if (!toast.isActive(toastId)) {
+                showNewToast(data);
+            }
         } catch (err: any) {
-            console.log(err.message);
+            console.log(err.error)
+            if (err.error == "INVALID_SCHEDULE_RANGE") {
+                setErrorMessage(err.message);
+                setShowErrorAlert(true);
+                setTimeout(() => { setShowErrorAlert(false) }, 15000)
+                return;
+            }
+
         }
     }
+    const showNewToast = (data: CopyStatus) => {
+        const newId = Math.random();
+        setToastId(newId);
+        toast.show({
+            id: newId,
+            placement: 'top',
+            duration: 3000,
+            render: ({ id }) => {
+                const uniqueToastId = 'toast-' + id;
+                return (
+                    <Toast nativeID={uniqueToastId} action="success" variant="solid" style={{ flexDirection: 'column', alignItems: 'flex-start' }}>
+                        <ToastTitle>Success!</ToastTitle>
+                        <ToastDescription>
+                            Created: {data?.created} {" "}
+                            Skipped: {data?.skipped}
+                        </ToastDescription>
 
-        return (
-            <Modal isOpen={showModal} onClose={onClose}>
-                <ModalBackdrop />
-                <ModalContent>
-                    <ModalHeader>
-                        <Heading size="lg">Copying This Week To...</Heading>
-                        <ModalCloseButton>
-                            <Icon as={CloseIcon} />
-                        </ModalCloseButton>
-                    </ModalHeader>
+                    </Toast>
+                );
+            },
+        });
+    };
 
-                    <ModalBody>
-                        <Card margin={3}>
-                            <HStack>
-                                <Text color="$text500" lineHeight="$xs" mr={10}>
-                                    Source Group:
-                                </Text>
-                                <RadioGroup value={groupName} onChange={(d) => setGroupName(d)} aria-label="Select Group Name">
-                                    <HStack space="2xl">
-                                        <Radio value="surrey" size="md">
-                                            <RadioIndicator>
-                                                <RadioIcon as={CircleIcon} />
-                                            </RadioIndicator>
-                                            <RadioLabel>SRY</RadioLabel>
-                                        </Radio>
-                                        <Radio value="coquitlam" size="md">
-                                            <RadioIndicator>
-                                                <RadioIcon as={CircleIcon} />
-                                            </RadioIndicator>
-                                            <RadioLabel>COQ</RadioLabel>
-                                        </Radio>
-                                    </HStack>
-                                </RadioGroup>
-                            </HStack>
-                        </Card>
+    return (
+        <Modal isOpen={showModal} onClose={onClose}>
+            <ModalBackdrop />
+            <ModalContent>
+                <ModalHeader>
+                    <Heading size="lg">Copying This Week To...</Heading>
+                    <ModalCloseButton>
+                        <Icon as={CloseIcon} />
+                    </ModalCloseButton>
+                </ModalHeader>
 
-                        <Card>
-                            <Text>Source Week: {srcWeekStart.format('YYYY-MM-DD')} - {srcWeekStart.add(6, 'day').format('YYYY-MM-DD')}</Text>
+                <ModalBody>
+                    <Card margin={3}>
+                        <HStack>
+                            <Text color="$text500" lineHeight="$xs" mr={10}>
+                                Source Group:
+                            </Text>
+                            <RadioGroup value={groupName} onChange={(d) => setGroupName(d)} aria-label="Select Group Name">
+                                <HStack space="2xl">
+                                    <Radio value="surrey" size="md">
+                                        <RadioIndicator>
+                                            <RadioIcon as={CircleIcon} />
+                                        </RadioIndicator>
+                                        <RadioLabel>SRY</RadioLabel>
+                                    </Radio>
+                                    <Radio value="coquitlam" size="md">
+                                        <RadioIndicator>
+                                            <RadioIcon as={CircleIcon} />
+                                        </RadioIndicator>
+                                        <RadioLabel>COQ</RadioLabel>
+                                    </Radio>
+                                </HStack>
+                            </RadioGroup>
+                        </HStack>
+                    </Card>
 
-                            <Card margin={3}>
-                                <Text bold>Target Week:</Text>
-                                <Text color="$text500" lineHeight="$xs">
-                                    From
-                                </Text>
-                                <Flex vertical gap="small">
-                                    <DatePicker
-                                        value={dstWeekStart}
-                                        onChange={(d: dayjs.Dayjs | null): void => {
-                                            if (d) {
-                                                setDstWeekStart(d)
-                                            }
+                    <Card margin={3}>
+                        <Text>Source Week: {srcWeekStart.format('YYYY-MM-DD')} - {srcWeekStart.add(6, 'day').format('YYYY-MM-DD')}</Text>
+
+                    </Card>
+
+                    <Card margin={3}>
+                            <Text bold>Target Week:</Text>
+                            <Text color="$text500" lineHeight="$xs">
+                                From
+                            </Text>
+                            <Flex vertical gap="small">
+                                <DatePicker
+                                    value={dstWeekStart}
+                                    onChange={(d: dayjs.Dayjs | null): void => {
+                                        if (d) {
+                                            setDstWeekStart(d)
                                         }
-                                        }
-                                        disabledDate={disabledDate}
-                                    />
-                                </Flex>
+                                    }
+                                    }
+                                    disabledDate={disabledDate}
+                                />
+                            </Flex>
 
-                                <Text color="$text500" lineHeight="$xs">
-                                    To: {dstWeekStart.add(6, 'day').format('YYYY-MM-DD')}
-                                </Text>
-                            </Card>
+                            <Text color="$text500" lineHeight="$xs">
+                                To: {dstWeekStart.add(6, 'day').format('YYYY-MM-DD')}
+                            </Text>
                         </Card>
+                    {
+                        showErrorAlert ?
+                            (
+                                <Alert mx="$2.5" action="error" variant="outline" >
+                                    <AlertIcon as={InfoIcon} mr="$3" />
+                                    <AlertText>
+                                        {errorMessage}
+                                    </AlertText>
+                                </Alert>
+                            ) : null}
 
-                    </ModalBody>
+
+                </ModalBody>
 
 
-                    <ModalFooter>
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            action="secondary"
-                            mr="$3"
-                            onPress={() => {
-                                setShowModal(false)
-                            }}
-                        >
-                            <ButtonText>Cancel</ButtonText>
-                        </Button>
-                        <Button onPress={copySchedule}>
-                            <ButtonText>Copy</ButtonText>
-                        </Button>
-                    </ModalFooter>
+                <ModalFooter>
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        action="secondary"
+                        mr="$3"
+                        onPress={() => {
+                            setShowModal(false)
+                        }}
+                    >
+                        <ButtonText>Cancel</ButtonText>
+                    </Button>
+                    <Button onPress={copySchedule}>
+                        <ButtonText>Copy</ButtonText>
+                    </Button>
+                </ModalFooter>
 
-                </ModalContent>
-            </Modal>
-        );
-    }
+            </ModalContent>
+        </Modal>
+    );
+}

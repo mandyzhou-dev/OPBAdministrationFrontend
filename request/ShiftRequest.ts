@@ -152,8 +152,10 @@ export class ShiftRequest {
             );
             return response.data;
         } catch(e:any){
-            const backendMessage = e.response?.data?.message;
-            throw new Error(backendMessage ??"Error. Please contact the support");
+            if(e.response){
+                throw e.response.data;
+            }
+            throw new Error("Post Failure"+(e as Error).message)
         }
     }
 }
