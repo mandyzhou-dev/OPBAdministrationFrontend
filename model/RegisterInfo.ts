@@ -1,3 +1,4 @@
+import { Dayjs } from "dayjs";
 import { Moment } from "moment";
 
 export class RegisterInfo{
@@ -10,10 +11,9 @@ export class RegisterInfo{
     email!:string |undefined;
     phoneNumber!:string | undefined;
     address!:string |undefined;
-    birthdate!:Moment |undefined;
-    personalDocumentsPath!: string | undefined;
+    birthdate!:Dayjs |undefined;
 
-    constructor(username: string, name: string,password:string, /*roles:string,*/legalname:string, email:string,phoneNumber:string,address:string,birthdate:Moment){
+    constructor(username: string, name: string,password:string, /*roles:string,*/legalname:string, email:string,phoneNumber:string,address:string,birthdate:Dayjs){
         this.username = username;
         this.name = name;
         this.password = password;

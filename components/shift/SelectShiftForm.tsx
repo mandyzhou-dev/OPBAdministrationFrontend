@@ -14,8 +14,7 @@ export const SelectShiftFrom: React.FC = () => {
     const [workDate, setWorkDate] = React.useState(dayjs())
     const [userList, setUserList] = React.useState<User[]>([])
     const [checkedUsers, setCheckedUsers] = React.useState<string[]>([])
-    //set the currently unuesed checkedGroup as ‘default’. It is not used in the current version 
-    const [checkedGroup,setCheckedGroup] = React.useState<string>('default')
+    const [checkedGroup,setCheckedGroup] = React.useState<string>('surrey')
     const [showSuccessAlert, setShowSuccessAlert] = React.useState(false)
     const [showErrorAlert, setShowErrorAlert] = React.useState(false)
     const [preferredWorkers, setPreferredWorkers] = React.useState<string[]>([])
@@ -122,12 +121,7 @@ export const SelectShiftFrom: React.FC = () => {
                 />
                 </Flex>
             </Card>
-            {/* 
-                The following code segment has been commented out because the group selection feature is not needed in the current version.
-                It may be re-enabled in a future feature update.
-                Component Description:
-                - A card component for selecting groups ("surrey" or "coquitlam").
-                - Once selected, the checkedGroup state will update to reflect the user's choice.
+            
             
                 <Card margin={3}>
                 <HStack>
@@ -152,7 +146,8 @@ export const SelectShiftFrom: React.FC = () => {
                     </RadioGroup>
                 </HStack>
             </Card>
-            */}
+            
+            
             <Card margin={3}>
                 <HStack>
                     <Text color="$text500" lineHeight="$xs">

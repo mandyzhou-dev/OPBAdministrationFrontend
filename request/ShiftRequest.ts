@@ -6,12 +6,10 @@ import dayjs, { Dayjs } from 'dayjs';
 import { kpi } from '@/model/KPI';
 import { CopyStatus } from '@/model/CopyStatus';
 export class ShiftRequest {
-
-
-    getByStartDateScope = async (username: string, start: Moment, end: Moment): Promise<Shift[]> => {
+    findVisibleShifts = async (username: string, start: Moment, end: Moment): Promise<Shift[]> => {
         try {
 
-            const response: AxiosResponse = await axios.get(process.env.EXPO_PUBLIC_API_URL + 'api/presentor/shift/' + username + '/getShiftByStartDateScopeAndGroup', {
+            const response: AxiosResponse = await axios.get(process.env.EXPO_PUBLIC_API_URL + 'api/presentor/shift/' + username + '/findVisibleShifts', {
                 params: {
                     start: start.format(),
                     end: end.format(),
@@ -27,7 +25,7 @@ export class ShiftRequest {
     getByUsernameAndStartDateScope = async (username: string, start: Moment, end: Moment): Promise<Shift[]> => {
         try {
 
-            const response: AxiosResponse = await axios.get(process.env.EXPO_PUBLIC_API_URL + 'api/presentor/shift/' + username + '/getShiftByStartDateScope', {
+            const response: AxiosResponse = await axios.get(process.env.EXPO_PUBLIC_API_URL + 'api/presentor/shift/' + username + '/getMyShiftByStartDateScope', {
                 params: {
                     start: start.format(),
                     end: end.format(),
@@ -40,7 +38,7 @@ export class ShiftRequest {
 
     }
 
-    batchCreateByDate = async (workDate: string, group: string, usernameList: string[]): Promise<Object> => {
+    batchCreateByDate = async (workDate: string, groupName: string, usernameList: string[]): Promise<Object> => {
 
         try {
             const config = {
@@ -53,7 +51,7 @@ export class ShiftRequest {
             //console.log(cookies.get('JSESSIONID'))
             const response: AxiosResponse = await axios.put(process.env.EXPO_PUBLIC_API_URL + 'api/shift/shiftarrangement/batchCreateByDate', {
                 workDate: workDate,
-                group: group,
+                groupName: groupName,
                 usernames: usernameList,
             }, config)
             return response.data

@@ -39,7 +39,7 @@ export const ShiftCell: React.FC<ShiftCellProps> = ({ workers, shifts,onUpdated 
                 {workers.map((worker) => {
                     return (
                         <div key={worker.username} onClick={()=>callModals(shifts.get(worker.username??"")) }>
-                            <Badge key={worker.username} size="md" variant="solid" action="success" h={"$10"} >
+                            <Badge key={worker.username} size="md" variant="solid" action={worker.groupName=="surrey"?"success":"warning"} h={"$10"} >
                                 <VStack >
                                     <HStack>
                                         <BadgeIcon as={InfoIcon} mr="$2" />

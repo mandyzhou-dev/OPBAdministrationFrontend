@@ -18,7 +18,7 @@ export const getScheduleThisWeek = async (username: string, today: Moment): Prom
     //console.log("sunday:" + sunday.format('YYYY-MM-DD HH:mm:ss'))
     let saturday = moment(today).endOf('week')
     //console.log("saturday:" + saturday.format('YYYY-MM-DD HH:mm:ss'))
-    const shiftArray = await shiftRequest.getByStartDateScope(username, sunday, saturday)
+    const shiftArray = await shiftRequest.findVisibleShifts(username, sunday, saturday)
     //console.log(JSON.stringify(shiftArray))
     let scheduleTable:Schedule[] = Array.from({length: 7}, () => new Schedule())
     scheduleTable.forEach((schedule, index) => {schedule.day = day[index];
@@ -27,7 +27,12 @@ export const getScheduleThisWeek = async (username: string, today: Moment): Prom
     shiftArray.forEach((shift) => {
         if(shift.start != undefined){
             let newDate = moment(shift.start)
-            scheduleTable[newDate.day()].workers.push(new User(shift.username, shift.userRealName));
+            const user:User = {
+                username: shift.username,
+                name: shift.userRealName,
+                groupName: shift.groupName
+            }
+            scheduleTable[newDate.day()].workers.push(user);
             scheduleTable[newDate.day()].shifts.set(shift.username,shift);
         }
     })
@@ -47,19 +52,24 @@ export const getUserScheduleThisWeek = async (username:string, today: Moment): P
     shiftArray.forEach((shift) => {
         if(shift.start != undefined){
             let newDate = new Date(shift.start)
-            scheduleTable[newDate.getDay()].workers.push(new User(shift.username, shift.userRealName));
+            const user:User = {
+                username: shift.username,
+                name: shift.userRealName,
+                groupName: shift.groupName
+            }
+            scheduleTable[newDate.getDay()].workers.push(user);
             scheduleTable[newDate.getDay()].shifts.set(shift.username,shift);
         }
     })
     return scheduleTable;
 }
 
-export const batchByDate = async(workDate: Moment, group: string, usernameList: string[]):Promise<Object>=>{
+export const batchByDate = async(workDate: Moment, groupName: string, usernameList: string[]):Promise<Object>=>{
     const shiftRequest = new ShiftRequest()
     //console.log("Workdate " + workDate);
     const dateString = workDate.format()
     //console.log("Debug Timezone: " + dateString);
-    return shiftRequest.batchCreateByDate(dateString,group,usernameList)
+    return shiftRequest.batchCreateByDate(dateString,groupName,usernameList)
 }
 
 export const deleteCurrentShift = async(currentShift: Shift):Promise<Object>=>{

@@ -4,5 +4,6 @@ export class Shift{
     userRealName: string = "";
     start: Date |undefined;
     end: Date | undefined;
-    status!: string | "active"
+    status!: string | "active";
+    groupName!:string | "";
 }
