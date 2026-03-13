@@ -66,7 +66,7 @@ export const ShiftDetailModal: React.FC<ShiftDetailModalProps> = ({ currentShift
                 finalFocusRef={ref}
             >
                 <ModalBackdrop />
-                <ModalContent>
+                <ModalContent w="$full">
                     <ModalHeader>
                         <Heading size="lg">{currentShift.userRealName}</Heading>
                         <ModalCloseButton>
@@ -92,7 +92,7 @@ export const ShiftDetailModal: React.FC<ShiftDetailModalProps> = ({ currentShift
                         </Box>
 
 
-                        <HStack alignItems="center" margin={"$3"}>
+                        <HStack margin={"$3"}>
                             <Text margin={"$3"}>
                                 Start:
                             </Text>
@@ -102,23 +102,23 @@ export const ShiftDetailModal: React.FC<ShiftDetailModalProps> = ({ currentShift
                                 isDisabled={false}
                                 isInvalid={false}
                                 isReadOnly={false}
-                                width={"$12"}
+                                width={"$10"}
                             >
                                 <InputField placeholder="H" value={startHour.toString()} onChangeText={(text) => setStartHour(Number(text))} />
                             </Input>
-                            <Text size="lg"> : </Text>
+                            <Text size="sm"> : </Text>
                             <Input
                                 variant="outline"
                                 size="sm"
                                 isDisabled={false}
                                 isInvalid={false}
                                 isReadOnly={false}
-                                width={"$12"}
+                                width={"$10"}
                             >
                                 <InputField placeholder="M" value={startMinute.toString()} onChangeText={(text) => setStartMinute(Number(text))} />
                             </Input>
                             <Text margin={"$3"}>
-                                ----
+                                -
                             </Text>
                             <Text margin={"$3"}>
                                 End:
@@ -129,18 +129,18 @@ export const ShiftDetailModal: React.FC<ShiftDetailModalProps> = ({ currentShift
                                 isDisabled={false}
                                 isInvalid={false}
                                 isReadOnly={false}
-                                width={"$12"}
+                                width={"$10"}
                             >
                                 <InputField placeholder="H" value={endHour.toString()} onChangeText={(a)=>setEndHour(Number(a))} />
                             </Input>
-                            <Text size="lg"> : </Text>
+                            <Text size="sm"> : </Text>
                             <Input
                                 variant="outline"
                                 size="sm"
                                 isDisabled={false}
                                 isInvalid={false}
                                 isReadOnly={false}
-                                width={"$12"}
+                                width={"$10"}
                             >
                                 <InputField placeholder="M" value={endMinute.toString()} onChangeText={(a)=>setEndMinute(Number(a))} />
                             </Input>
