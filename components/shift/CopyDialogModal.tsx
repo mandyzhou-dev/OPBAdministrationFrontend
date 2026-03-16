@@ -1,7 +1,7 @@
 
 import { CopyStatus } from "@/model/CopyStatus";
 import { copyWeekScheduleTo } from "@/service/ShiftService";
-import { Button, Text, ButtonText, Modal, ModalBackdrop, ModalContent, Card, HStack, RadioGroup, RadioIndicator, RadioIcon, CircleIcon, RadioLabel, Radio, Heading, ModalHeader, ModalCloseButton, Icon, CloseIcon, ModalFooter, ModalBody, Toast, ToastTitle, ToastDescription, useToast, VStack, Alert, AlertIcon, InfoIcon, AlertText } from "@gluestack-ui/themed";
+import { Button, Text, ButtonText, Modal, ModalBackdrop, ModalContent, Card, HStack, RadioGroup, RadioIndicator, RadioIcon, CircleIcon, RadioLabel, Radio, Heading, ModalHeader, ModalCloseButton, Icon, CloseIcon, ModalFooter, ModalBody, Toast, ToastTitle, ToastDescription, useToast, VStack, Alert, AlertIcon, InfoIcon, AlertText, Spinner } from "@gluestack-ui/themed";
 import { DatePicker, Flex } from "antd";
 import dayjs, { Dayjs } from "dayjs";
 import React from "react";
@@ -19,6 +19,7 @@ export const CopyDialogModal: React.FC<ShiftCopyDialogModalProps> = ({ srcWeekSt
     const [toastId, setToastId] = React.useState(0);
     const [showErrorAlert, setShowErrorAlert] = React.useState(false);
     const [errorMessage, setErrorMessage] = React.useState("Failed!");
+    const [isCopying, setIsCopying] = React.useState(false);
 
     const disabledDate = (dst: Dayjs) => {
         // 1. Disable if it's NOT Sunday
@@ -32,7 +33,10 @@ export const CopyDialogModal: React.FC<ShiftCopyDialogModalProps> = ({ srcWeekSt
     };
 
     const copySchedule = async () => {
+        if (isCopying) return;
+        setIsCopying(true);//start spining
         try {
+            //TODO: spin
             const data = await copyWeekScheduleTo(groupName, srcWeekStart, dstWeekStart);
             setShowModal(false)
             if (!toast.isActive(toastId)) {
@@ -46,7 +50,8 @@ export const CopyDialogModal: React.FC<ShiftCopyDialogModalProps> = ({ srcWeekSt
                 setTimeout(() => { setShowErrorAlert(false) }, 15000)
                 return;
             }
-
+        } finally {
+            setIsCopying(false);
         }
     }
     const showNewToast = (data: CopyStatus) => {
@@ -114,27 +119,27 @@ export const CopyDialogModal: React.FC<ShiftCopyDialogModalProps> = ({ srcWeekSt
                     </Card>
 
                     <Card margin={3}>
-                            <Text bold>Target Week:</Text>
-                            <Text color="$text500" lineHeight="$xs">
-                                From
-                            </Text>
-                            <Flex vertical gap="small">
-                                <DatePicker
-                                    value={dstWeekStart}
-                                    onChange={(d: dayjs.Dayjs | null): void => {
-                                        if (d) {
-                                            setDstWeekStart(d)
-                                        }
+                        <Text bold>Target Week:</Text>
+                        <Text color="$text500" lineHeight="$xs">
+                            From
+                        </Text>
+                        <Flex vertical gap="small">
+                            <DatePicker
+                                value={dstWeekStart}
+                                onChange={(d: dayjs.Dayjs | null): void => {
+                                    if (d) {
+                                        setDstWeekStart(d)
                                     }
-                                    }
-                                    disabledDate={disabledDate}
-                                />
-                            </Flex>
+                                }
+                                }
+                                disabledDate={disabledDate}
+                            />
+                        </Flex>
 
-                            <Text color="$text500" lineHeight="$xs">
-                                To: {dstWeekStart.add(6, 'day').format('YYYY-MM-DD')}
-                            </Text>
-                        </Card>
+                        <Text color="$text500" lineHeight="$xs">
+                            To: {dstWeekStart.add(6, 'day').format('YYYY-MM-DD')}
+                        </Text>
+                    </Card>
                     {
                         showErrorAlert ?
                             (
@@ -149,7 +154,6 @@ export const CopyDialogModal: React.FC<ShiftCopyDialogModalProps> = ({ srcWeekSt
 
                 </ModalBody>
 
-
                 <ModalFooter>
                     <Button
                         variant="outline"
@@ -162,8 +166,12 @@ export const CopyDialogModal: React.FC<ShiftCopyDialogModalProps> = ({ srcWeekSt
                     >
                         <ButtonText>Cancel</ButtonText>
                     </Button>
-                    <Button onPress={copySchedule}>
-                        <ButtonText>Copy</ButtonText>
+                    <Button onPress={copySchedule} isDisabled={isCopying}>
+                        {isCopying ? (
+                            <Spinner size="small" color="white" />
+                        ) : (
+                            <ButtonText>Copy</ButtonText>
+                        )}
                     </Button>
                 </ModalFooter>
 
