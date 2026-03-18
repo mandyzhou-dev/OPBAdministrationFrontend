@@ -11,6 +11,7 @@ import { getStatutoryHoliday } from "@/service/StatutoryHolidayService";
 import { StatutoryHoliday } from "@/model/StatutoryHoliday";
 import { CopyDialogModal } from "./CopyDialogModal";
 import dayjs from "dayjs";
+import { useAuth } from "@/util/useAuth";
 
 
 
@@ -19,24 +20,18 @@ export const ScheduleTable: React.FC = () => {
     const [shiftList, setShiftList] = React.useState<Schedule[]>([])
     const [currentDate, setCurrentDate] = React.useState(new Date())
     const [refreshCount, setRefreshCount] = React.useState(0)
-    const [showStatistic, setShowStatistic] = React.useState(false);
     const [statutoryHolidays, setStatutoryHolidays] = React.useState<StatutoryHoliday[]>([])
     const [showCopyModal, setShowCopyModal] = React.useState(false);
-    const [showCopyButton,setShowCopyButton] = React.useState(false);
-    let listener
+    const { canEdit, user } = useAuth();
 
     useEffect(() => {
-        let user = JSON.parse(localStorage.getItem('user') as string)
         if (user == null) {
-            listener = DeviceEventEmitter.addListener('userlogin', () => {
+            const listener = DeviceEventEmitter.addListener('userlogin', () => {
                 setRefreshCount(refreshCount + 1)
             })
-            return;
+            return()=> listener.remove();
         }
-        if (user.roles == 'Manager') {
-            setShowStatistic(true);
-            setShowCopyButton(true);
-        }
+
         getScheduleThisWeek(user.username, moment(currentDate)).then(
             (data) => {
                 setShiftList(data)
@@ -109,10 +104,10 @@ export const ScheduleTable: React.FC = () => {
                     </Button>
                 </HStack>
                 <View style={{ flex: 1 }} />
-                {showCopyButton ? (<Button variant="outline" size="sm" action="primary" onPress={()=>setShowCopyModal(true)}>
+                {canEdit ? (<Button variant="outline" size="sm" action="primary" onPress={() => setShowCopyModal(true)}>
                     <ButtonText>Copy This Week To...</ButtonText>
                 </Button>) : null}
-                
+
             </HStack>
             <ScrollView horizontal={true} >
                 <HStack space="md" style={{ minWidth: 500 }}>
@@ -153,9 +148,9 @@ export const ScheduleTable: React.FC = () => {
             <Button width={"$1/6"} onPress={() => { reload() }} margin={10}>
                 <ButtonIcon as={RepeatIcon} />
             </Button>
-            {showStatistic ? (calculate()) : null}
-            
-            <CopyDialogModal 
+            {canEdit ? (calculate()) : null}
+
+            <CopyDialogModal
                 srcWeekStart={dayjs(currentDate).startOf('week')} // Normalizes the date to the start of the week (Sunday)
                 showModal={showCopyModal}
                 setShowModal={setShowCopyModal}

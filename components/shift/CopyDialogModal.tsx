@@ -50,6 +50,12 @@ export const CopyDialogModal: React.FC<ShiftCopyDialogModalProps> = ({ srcWeekSt
                 setTimeout(() => { setShowErrorAlert(false) }, 15000)
                 return;
             }
+            if(err.error=="SHIFT_ALREADY_EXISTS"){
+                setErrorMessage(err.message);
+                setShowErrorAlert(true);
+                setTimeout(() => { setShowErrorAlert(false) }, 15000)
+                return;
+            }
         } finally {
             setIsCopying(false);
         }

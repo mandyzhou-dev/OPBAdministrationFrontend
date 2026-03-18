@@ -55,7 +55,10 @@ export class ShiftRequest {
                 usernames: usernameList,
             }, config)
             return response.data
-        } catch (e) {
+        } catch (e:any) {
+            if(e.response){
+                throw e.response.data;
+            }
             throw new Error("Put Failure" + (e as Error).message)
         }
     }

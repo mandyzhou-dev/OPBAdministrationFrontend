@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react"
-import { Badge, BadgeText, InfoIcon, BadgeIcon, VStack, HStack} from "@gluestack-ui/themed"
+import { Badge, BadgeText, InfoIcon, BadgeIcon, VStack, HStack } from "@gluestack-ui/themed"
 import { TextInput, View } from "react-native"
 import { User } from "@/model/User";
 import { Schedule } from "@/model/Schedule";
@@ -7,30 +7,30 @@ import moment from "moment";
 import { TimePickerModal } from "react-native-paper-dates";
 import DateTimePickerModal from "react-native-modal-datetime-picker"
 import { ShiftDetailModal } from "./ShiftDetailModal";
-import {Shift} from "@/model/Shift"
+import { Shift } from "@/model/Shift"
+import { useAuth } from "@/util/useAuth";
 interface ShiftCellProps {
     workers: User[];
     shifts: Map<string, Shift>;
-    onUpdated:Function;
+    onUpdated: Function;
 }
 
-export const ShiftCell: React.FC<ShiftCellProps> = ({ workers, shifts,onUpdated }) => {
+export const ShiftCell: React.FC<ShiftCellProps> = ({ workers, shifts, onUpdated }) => {
+    const { canEdit } = useAuth();
     const [currentShift, setCurrentShift] = React.useState(new Shift())
     const [showModal, setShowModal] = React.useState(false)
 
 
 
-    const callModals=(currentShift:Shift | undefined)=>{
-        if(currentShift != undefined){
-            try{
-                const items = JSON.parse(localStorage.getItem("user") as string).roles;
-                if(items=="Manager") {
-                setCurrentShift(currentShift)
-                setShowModal(true);
-            }}catch(error){
+    const callModals = (currentShift: Shift | undefined) => {
+        if (currentShift && canEdit) {
+            try {
+                    setCurrentShift(currentShift)
+                    setShowModal(true);
+                } catch (error) {
             }
         }
-        
+
     }
 
     return (
@@ -38,7 +38,7 @@ export const ShiftCell: React.FC<ShiftCellProps> = ({ workers, shifts,onUpdated 
             <VStack space="md">
                 {workers.map((worker) => {
                     return (
-                        <div key={worker.username} onClick={()=>callModals(shifts.get(worker.username??"")) }>
+                        <div key={worker.username} onClick={() => callModals(shifts.get(worker.username ?? ""))}>
                             <Badge key={worker.username} size="md" variant="solid" action={worker.groupName=="surrey"?"success":"warning"} h={"$10"} >
                                 <VStack >
                                     <HStack>
@@ -49,13 +49,14 @@ export const ShiftCell: React.FC<ShiftCellProps> = ({ workers, shifts,onUpdated 
                                         {moment(shifts.get(worker.username ? worker.username : "")?.end ?? "").format("HH:mm")}
                                     </BadgeText>
                                 </VStack>
-                                <ShiftDetailModal currentShift={currentShift} showModal={showModal} setShowModal={setShowModal} onClose={onUpdated}>
-                                </ShiftDetailModal>
+
                             </Badge>
                         </div>
                     )
                 })}
             </VStack>
+            <ShiftDetailModal currentShift={currentShift} showModal={showModal} setShowModal={setShowModal} onClose={onUpdated}>
+            </ShiftDetailModal>
         </View>
     )
 }

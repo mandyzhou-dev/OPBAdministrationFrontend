@@ -14,21 +14,38 @@ export const SelectShiftFrom: React.FC = () => {
     const [workDate, setWorkDate] = React.useState(dayjs())
     const [userList, setUserList] = React.useState<User[]>([])
     const [checkedUsers, setCheckedUsers] = React.useState<string[]>([])
-    const [checkedGroup,setCheckedGroup] = React.useState<string>('surrey')
+    const [checkedGroup, setCheckedGroup] = React.useState<string>('surrey')
     const [showSuccessAlert, setShowSuccessAlert] = React.useState(false)
     const [showErrorAlert, setShowErrorAlert] = React.useState(false)
     const [preferredWorkers, setPreferredWorkers] = React.useState<string[]>([])
-    const [statutoryHolidays,setStatutoryHolidays] = React.useState<dayjs.Dayjs[]>([])
+    const [statutoryHolidays, setStatutoryHolidays] = React.useState<dayjs.Dayjs[]>([])
+    const [errorMessage, setErrorMessage] = React.useState("Duplicate Shift!");
+
     useEffect(() => {
-        getUserByRole("tester").then(
-            (data) => {
-                setUserList(data)
-            }
-        ).catch(
-            (error) => {
-                console.log((error as Error).message)
-            }
-        )
+        //Only the first-time initialization is required for these two resources.
+        if (userList.length === 0) {
+            getUserByRole("tester").then(
+                (data) => {
+                    setUserList(data)
+                }
+            ).catch(
+                (error) => {
+                    console.log((error as Error).message)
+                }
+            )
+            getStatutoryHoliday().then(
+                (data) => {
+                    //console.log(JSON.stringify(data))
+                    setStatutoryHolidays(data.map(date => dayjs(date.statutoryDate)))
+                }).catch(
+                    (error) => {
+                        console.log((error as Error).message)
+                    }
+                )
+        }
+
+        //This effect is synchronized with the workDate dependency
+        setPreferredWorkers([]);
         getPreferredEmployeesBydate(moment(workDate.toDate())).then(
             (data) => {
 
@@ -39,18 +56,10 @@ export const SelectShiftFrom: React.FC = () => {
                 console.log((error as Error).message)
             }
         )
-        getStatutoryHoliday().then(
-            (data) => {
-                //console.log(JSON.stringify(data))
-                setStatutoryHolidays(data.map(date => dayjs(date.statutoryDate)))
-            }).catch(
-                (error) => {
-                    console.log((error as Error).message)
-                }
-            )  
-        
 
-    }, [])
+
+
+    }, [workDate])
     const isDisabled = (date: any) => {
         return statutoryHolidays.some(holiday => holiday.isSame(date, "day"));
     };
@@ -66,12 +75,18 @@ export const SelectShiftFrom: React.FC = () => {
         //console.log("getdate(): " + workDate.getDate())
         const workDateMoment = moment().year(workDate.year()).month(workDate.month()).date(workDate.date()).hour(workDate.hour()).minute(workDate.minute()).second(workDate.second())
         //TODO: checkedGroup is not uesed，just save it position for future 
-        batchByDate(workDateMoment,checkedGroup,checkedUsers).then((obj) => {
+        batchByDate(workDateMoment, checkedGroup, checkedUsers).then((obj) => {
             setShowSuccessAlert(true)
             setTimeout(() => { setShowSuccessAlert(false) }, 1000)
         }
         ).catch(
-            (error) => {
+            (err: any) => {
+                if (err.error == "SHIFT_ALREADY_EXISTS") {
+                    setErrorMessage(err.message);
+                    setShowErrorAlert(true);
+                    setTimeout(() => { setShowErrorAlert(false) }, 8000)
+                    return;
+                }
                 setShowErrorAlert(true);
                 setTimeout(() => { setShowErrorAlert(false) }, 1000)
 
@@ -91,7 +106,7 @@ export const SelectShiftFrom: React.FC = () => {
                 (<Alert mx="$2.5" action="error" variant="solid" >
                     <AlertIcon as={InfoIcon} mr="$3" />
                     <AlertText>
-                        Duplicate Shift, submitted failed!
+                        {errorMessage}
                     </AlertText>
                 </Alert>) : null}
             <Card margin={3}>
@@ -99,55 +114,41 @@ export const SelectShiftFrom: React.FC = () => {
                     Date
                 </Text>
                 <Flex vertical gap="small">
-                <DatePicker
-                    value={workDate}
-                    onChange={(d: dayjs.Dayjs | null): void => {
-                        if (d) {
-                            setWorkDate(d)
-                            getPreferredEmployeesBydate(moment(d.toDate())).then(
-                                (data) => {
-                                    //console.log("data: " + data)
-                                    setPreferredWorkers(data)
-                                }
-                            ).catch(
-                                (error) => {
-                                    console.log((error as Error).message)
-                                }
-                            )
+                    <DatePicker
+                        value={workDate}
+                        onChange={(d) => { if (d) setWorkDate(d) }
                         }
-                    }
-                    }
-                    disabledDate={isDisabled}
-                />
+                        disabledDate={isDisabled}
+                    />
                 </Flex>
             </Card>
-            
-            
-                <Card margin={3}>
+
+
+            <Card margin={3}>
                 <HStack>
                     <Text color="$text500" lineHeight="$xs" mr={10}>
                         Group:
                     </Text>
-                    <RadioGroup value={checkedGroup} onChange={(d)=>setCheckedGroup(d)}>
-                    <HStack space="2xl">
-                        <Radio value="surrey" size="md">
-                            <RadioIndicator>
-                                <RadioIcon as={CircleIcon} />
-                            </RadioIndicator>
-                            <RadioLabel>SRY</RadioLabel>
-                        </Radio>
-                        <Radio value="coquitlam" size="md">
-                            <RadioIndicator>
-                                <RadioIcon as={CircleIcon} />
-                            </RadioIndicator>
-                            <RadioLabel>COQ</RadioLabel>
-                        </Radio>
+                    <RadioGroup value={checkedGroup} onChange={(d) => setCheckedGroup(d)}>
+                        <HStack space="2xl">
+                            <Radio value="surrey" size="md">
+                                <RadioIndicator>
+                                    <RadioIcon as={CircleIcon} />
+                                </RadioIndicator>
+                                <RadioLabel>SRY</RadioLabel>
+                            </Radio>
+                            <Radio value="coquitlam" size="md">
+                                <RadioIndicator>
+                                    <RadioIcon as={CircleIcon} />
+                                </RadioIndicator>
+                                <RadioLabel>COQ</RadioLabel>
+                            </Radio>
                         </HStack>
                     </RadioGroup>
                 </HStack>
             </Card>
-            
-            
+
+
             <Card margin={3}>
                 <HStack>
                     <Text color="$text500" lineHeight="$xs">

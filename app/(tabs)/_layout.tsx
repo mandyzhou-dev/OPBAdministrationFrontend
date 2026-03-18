@@ -9,6 +9,7 @@ import { useClientOnlyValue } from '@/components/useClientOnlyValue';
 import { Ionicons } from '@expo/vector-icons';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { View ,Text} from '@gluestack-ui/themed';
+import { useAuth } from '@/util/useAuth';
 
 // You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
 function TabBarIcon(props: {
@@ -32,7 +33,7 @@ export default function TabLayout() {
     }
   }, );
   // FIXME: useEffect runs on every render because dependency array is omitted; optimize later
-
+  const { canEdit } = useAuth();
   const colorScheme = useColorScheme();
 
   return (
@@ -87,7 +88,7 @@ export default function TabLayout() {
         name="two"
         options={{
           title: 'Assignment',
-          href:isManager?"two":null,
+          href:canEdit ? "two" : null,
           tabBarIcon: ({ color }) => <TabBarIcon name="edit" color={color} />,
         }}
       />
