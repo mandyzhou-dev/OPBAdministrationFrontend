@@ -94,13 +94,13 @@ export const ScheduleTable: React.FC = () => {
                 paddingHorizontal={"$12"}>
                 <HStack alignItems="center">
                     <Button variant="link" onPress={() => { onClickPreviousWeek() }}>
-                        <ButtonIcon as={ArrowLeftIcon} />
+                        <ButtonIcon as={ArrowLeftIcon} style={{width: 24, height: 24}} />
                     </Button>
                     <Center>
                         <Text>{shiftList[0] == undefined ? "" : shiftList[0].date?.format('YYYY-MM-DD')} - {shiftList[6] == undefined ? "" : shiftList[6]?.date?.format('YYYY-MM-DD')}</Text>
                     </Center>
                     <Button variant="link" onPress={() => { onClickNextWeek() }}>
-                        <ButtonIcon as={ArrowRightIcon} color="blue" />
+                        <ButtonIcon as={ArrowRightIcon} style={{width: 24, height: 24}}/>
                     </Button>
                 </HStack>
                 <View style={{ flex: 1 }} />
@@ -146,7 +146,7 @@ export const ScheduleTable: React.FC = () => {
                 </HStack>
             </ScrollView>
             <Button width={"$1/6"} onPress={() => { reload() }} margin={10}>
-                <ButtonIcon as={RepeatIcon} />
+                <ButtonIcon as={RepeatIcon} style={{width: 24, height: 24}} />
             </Button>
             {canEdit ? (calculate()) : null}
 
