@@ -43,7 +43,7 @@ export default function AnnouncementDetail() {
                     </VStack >
                     <VStack w={"50%"}>
                         <Text color="gray" size="xs">
-                            EXP:{moment(announcement.expiryDate?.toString()).format("YYYY-MM-DD")}
+                            EXP:{announcement.expiryDate?moment(announcement.expiryDate).format("YYYY-MM-DD"):"Permanant"}
                         </Text>
                     </VStack>
                 </HStack>

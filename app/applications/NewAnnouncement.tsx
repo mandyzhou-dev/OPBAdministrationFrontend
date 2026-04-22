@@ -1,4 +1,4 @@
-import { InfoIcon,Alert, AlertIcon, AlertText,Card, Heading, Input, InputField, HStack, ScrollView, Text, Textarea,TextareaInput,Button,ButtonText, RadioGroup, Radio, RadioIndicator, RadioIcon, CircleIcon, RadioLabel} from "@gluestack-ui/themed";
+import { InfoIcon,Alert, AlertIcon, AlertText,Card, Heading, Input, InputField, HStack, ScrollView, Text, Textarea,TextareaInput,Button,ButtonText, RadioGroup, Radio, RadioIndicator, RadioIcon, CircleIcon, RadioLabel, Switch} from "@gluestack-ui/themed";
 import moment from "moment";
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
@@ -9,6 +9,7 @@ import { postAnnouncement } from "@/service/AnnouncementService";
 
 export default function History() {
     const [date, setDate] = React.useState<Dayjs | null>(dayjs());
+    const [isPermanent, setIsPermanent] = React.useState(true);
     const [title,setTitle] = React.useState("");
     const [content,setContent] = React.useState("");
     //new
@@ -22,7 +23,7 @@ export default function History() {
         let result = {
             title: title,
             content: content,
-            expiryDate:date,
+            expiryDate:isPermanent ? null:date,
             groupName:groupName,
             publisher:username
         }
@@ -68,13 +69,32 @@ export default function History() {
                     <InputField placeholder="Enter The title of new announcement" onChangeText={(value)=>setTitle(value)}/>
                 </Input>
 
+                <HStack justifyContent="space-between" alignItems="center" mt="$4">
+                    <HStack alignItems="center" space="md">
+                        <Text>Permanent</Text>
+                        <Switch 
+                            value={isPermanent} 
+                            onValueChange={(val) => setIsPermanent(val)} 
+                        />
+                    </HStack>
+                </HStack>
+
                 <Heading>ExpiryDate:</Heading>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    {<DatePicker
+                    <DatePicker
                         value={date}
                         onChange={(newValue) => setDate(newValue)}
-                    />}
+                        disabled={isPermanent} 
+                        slotProps={{
+                            textField: {
+                                fullWidth: true,
+                                style: { opacity: isPermanent ? 0.4 : 1 } 
+                            }
+                        }}
+                    />
                 </LocalizationProvider>
+                {isPermanent && <Text size="xs" mt="$1" color="$textLight500">Post will never expire.</Text>}
+        
                 </Card>
                 <Card margin={3}>
                 <Heading>Visibility:</Heading>

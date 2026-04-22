@@ -1,6 +1,6 @@
 import { Announcement } from "@/model/Announcement"
 import { putAnnouncement } from "@/service/AnnouncementService";
-import { ModalFooter,Button,ButtonText,Modal, ModalBackdrop, ModalContent, ModalHeader, ModalBody, Heading, ModalCloseButton, Icon, CloseIcon, Card, Text, Input, InputField,Textarea,TextareaInput } from "@gluestack-ui/themed"
+import { ModalFooter,Button,ButtonText,Modal, ModalBackdrop, ModalContent, ModalHeader, ModalBody, Heading, ModalCloseButton, Icon, CloseIcon, Card, Text, Input, InputField,Textarea,TextareaInput, Switch, HStack } from "@gluestack-ui/themed"
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
@@ -16,11 +16,13 @@ export const ModifyModal: React.FC<ModifyModalProps> = ({ announcement, showModa
     const [title, setTitle] = React.useState("");
     const [date, setDate] = React.useState(dayjs())
     const [content,setContent] = React.useState("")
+    const [isPermanent, setIsPermanent] = React.useState(true);
     const modifyCurrentAnnouncement=()=>{
         let modifiedAnnouncement = {
+            ...announcement,
             title:title,
             content:content,
-            expiryDate:date
+            expiryDate: isPermanent ? null : date.toDate()
         }
         putAnnouncement(announcement.id??0,modifiedAnnouncement).then(
             ()=>{
@@ -38,8 +40,14 @@ export const ModifyModal: React.FC<ModifyModalProps> = ({ announcement, showModa
     useEffect(() => {
         setTitle(announcement.title??"")
         setContent(announcement.content??"")
-        setDate(dayjs(announcement.expiryDate))
-    },[announcement])
+        if (announcement.expiryDate == null) {
+            setIsPermanent(true);
+            setDate(dayjs()); 
+        } else {
+            setIsPermanent(false);
+            setDate(dayjs(announcement.expiryDate));
+        }
+    },[announcement,showModal])
 
     return (
         <Modal
@@ -57,7 +65,7 @@ export const ModifyModal: React.FC<ModifyModalProps> = ({ announcement, showModa
                     </ModalCloseButton>
                 </ModalHeader>
                 <ModalBody>
-                    <Card>
+                    <Card margin={3}>
                         <Text >
                             Title:
                         </Text>
@@ -69,15 +77,24 @@ export const ModifyModal: React.FC<ModifyModalProps> = ({ announcement, showModa
                             <InputField value={title} onChangeText={setTitle} />
                         </Input>
                     </Card>
-                    <Card>
+                    <Card margin={3}>
+                        <HStack justifyContent="space-between" alignItems="center" mb="$2">
+                            <HStack alignItems="center" space="xs">
+                                <Text size="sm">Permanent</Text>
+                                <Switch value={isPermanent} onValueChange={setIsPermanent} />
+                            </HStack>
+                        </HStack>
+
+
                         <Text >
                             ExpiredDate:
                         </Text>
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            {<DatePicker
+                            <DatePicker
                                 value={date}
-                                onChange={(newValue) => newValue!=undefined?setDate(newValue):""}
-                            />}
+                                onChange={(newValue) => newValue != undefined ? setDate(newValue) : ""}
+                                disabled={isPermanent}
+                            />
                         </LocalizationProvider>
                     </Card>
                     <Card margin={3} height="100%">

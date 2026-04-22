@@ -3,7 +3,7 @@ export class Announcement{
     title: string | undefined;
     createdTime: Date | undefined;
     content: string|undefined;
-    expiryDate: Date|undefined;
+    expiryDate: Date | null | undefined;
     publisher:string|undefined;
     isRead:boolean;
     constructor () {
