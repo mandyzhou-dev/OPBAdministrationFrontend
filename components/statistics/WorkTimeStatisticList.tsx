@@ -32,7 +32,7 @@ export const WorkTimeStatisticList: React.FC<StatisticListProps> = ({start,end})
             {
                 statisticList.map((statistic)=>{               
                     return (
-                    <WorkTimeStatisticItem key={statistic.username} value={statistic.hours} name={statistic.userRealName}></WorkTimeStatisticItem>);
+                    <WorkTimeStatisticItem key={statistic.username} value={+statistic.hours.toFixed(4)} name={statistic.userRealName}></WorkTimeStatisticItem>);
                 })
             }
             
