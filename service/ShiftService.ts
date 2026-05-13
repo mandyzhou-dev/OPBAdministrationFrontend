@@ -9,6 +9,8 @@ import dayjs, { Dayjs } from "dayjs";
 import { kpi } from "@/model/KPI";
 import { CopyConfig } from "antd/es/typography/Base";
 import { CopyStatus } from "@/model/CopyStatus";
+import { ManualShiftStatus } from "@/constants/ShiftStatus";
+import { PaidSickLeaveQuota } from "@/model/PaidSickLeaveQuota";
 
 const day = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
 
@@ -80,6 +82,16 @@ export const deleteCurrentShift = async(currentShift: Shift):Promise<Object>=>{
 export const modifyCurrentShift = async(currentShift:Shift):Promise<Object>=>{
     const shiftRequest = new ShiftRequest();
     return shiftRequest.modifyCurrentShift(currentShift)
+}
+
+export const updateShiftStatus = async(shiftId:number,status:ManualShiftStatus,operatorUsername:string):Promise<Shift>=>{
+    const shiftRequest = new ShiftRequest();
+    return shiftRequest.updateShiftStatus(shiftId,status,operatorUsername)
+}
+
+export const getPaidSickLeaveQuota = async(shiftId:number,operatorUsername:string):Promise<PaidSickLeaveQuota>=>{
+    const shiftRequest = new ShiftRequest();
+    return shiftRequest.getPaidSickLeaveQuota(shiftId,operatorUsername)
 }
 
 export const getKPIByDateAndGroup = async(group:string,date:Dayjs):Promise<kpi>=>{

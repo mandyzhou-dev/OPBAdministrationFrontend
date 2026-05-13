@@ -5,6 +5,8 @@ import Cookies from 'universal-cookie'
 import dayjs, { Dayjs } from 'dayjs';
 import { kpi } from '@/model/KPI';
 import { CopyStatus } from '@/model/CopyStatus';
+import { ManualShiftStatus } from '@/constants/ShiftStatus';
+import { PaidSickLeaveQuota } from '@/model/PaidSickLeaveQuota';
 export class ShiftRequest {
     findVisibleShifts = async (username: string, start: Moment, end: Moment): Promise<Shift[]> => {
         try {
@@ -84,6 +86,38 @@ export class ShiftRequest {
         }
     }
 
+    updateShiftStatus = async (shiftId: number, status: ManualShiftStatus, operatorUsername: string): Promise<Shift> => {
+        try {
+            const response: AxiosResponse = await axios.patch(process.env.EXPO_PUBLIC_API_URL + 'api/shift/shiftarrangement/' + shiftId + '/status',
+                {
+                    status,
+                    operatorUsername,
+                })
+            return response.data
+        } catch (e:any) {
+            if(e.response){
+                throw e.response.data;
+            }
+            throw new Error("Patch Failure" + (e as Error).message)
+        }
+    }
+
+    getPaidSickLeaveQuota = async (shiftId: number, operatorUsername: string): Promise<PaidSickLeaveQuota> => {
+        try {
+            const response: AxiosResponse = await axios.get(process.env.EXPO_PUBLIC_API_URL + 'api/shift/shiftarrangement/' + shiftId + '/paid-sick-leave-quota', {
+                params: {
+                    operatorUsername,
+                }
+            });
+            return response.data
+        } catch (e:any) {
+            if(e.response){
+                throw e.response.data;
+            }
+            throw new Error("Get Failure" + (e as Error).message)
+        }
+    }
+
     getKPIByDateAndGroup = async (groupName: string, date: Dayjs): Promise<kpi> => {
         try {
             const response: AxiosResponse = await axios.get(process.env.EXPO_PUBLIC_API_URL + 'api/shift/kpi/groupName', {
@@ -160,6 +194,5 @@ export class ShiftRequest {
         }
     }
 }
-
 
 

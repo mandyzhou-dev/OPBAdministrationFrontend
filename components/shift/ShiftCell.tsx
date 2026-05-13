@@ -9,6 +9,11 @@ import DateTimePickerModal from "react-native-modal-datetime-picker"
 import { ShiftDetailModal } from "./ShiftDetailModal";
 import { Shift } from "@/model/Shift"
 import { useAuth } from "@/util/useAuth";
+import {
+    normalizeShiftStatus,
+    SHIFT_STATUS_COLORS,
+    SHIFT_STATUS_TEXT_COLORS
+} from "@/constants/ShiftStatus";
 interface ShiftCellProps {
     workers: User[];
     shifts: Map<string, Shift>;
@@ -37,16 +42,27 @@ export const ShiftCell: React.FC<ShiftCellProps> = ({ workers, shifts, onUpdated
         <View>
             <VStack space="md">
                 {workers.map((worker) => {
+                    const workerShift = shifts.get(worker.username ?? "");
+                    const shiftStatus = normalizeShiftStatus(workerShift?.status);
+                    const statusBackgroundColor = SHIFT_STATUS_COLORS[shiftStatus];
+                    const statusTextColor = SHIFT_STATUS_TEXT_COLORS[shiftStatus];
                     return (
                         <div key={worker.username} onClick={() => callModals(shifts.get(worker.username ?? ""))}>
-                            <Badge key={worker.username} size="md" variant="solid" action={worker.groupName=="surrey"?"success":"warning"} h={"$10"} >
+                            <Badge
+                                key={worker.username}
+                                size="md"
+                                variant="solid"
+                                action={worker.groupName=="surrey"?"success":"warning"}
+                                h={"$10"}
+                                style={statusBackgroundColor ? { backgroundColor: statusBackgroundColor } : undefined}
+                            >
                                 <VStack >
                                     <HStack>
                                         <BadgeIcon as={InfoIcon} mr="$2" />
-                                        <BadgeText>{worker.name}</BadgeText>
+                                        <BadgeText style={statusTextColor ? { color: statusTextColor } : undefined}>{worker.name}</BadgeText>
                                     </HStack>
-                                    <BadgeText>{moment(shifts.get(worker.username ? worker.username : "")?.start ?? "").format("HH:mm")}-
-                                        {moment(shifts.get(worker.username ? worker.username : "")?.end ?? "").format("HH:mm")}
+                                    <BadgeText style={statusTextColor ? { color: statusTextColor } : undefined}>{moment(workerShift?.start ?? "").format("HH:mm")}-
+                                        {moment(workerShift?.end ?? "").format("HH:mm")}
                                     </BadgeText>
                                 </VStack>
 
