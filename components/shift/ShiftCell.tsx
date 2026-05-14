@@ -12,6 +12,7 @@ import { useAuth } from "@/util/useAuth";
 import {
     normalizeShiftStatus,
     SHIFT_STATUS_COLORS,
+    SHIFT_STATUS_LABELS,
     SHIFT_STATUS_TEXT_COLORS
 } from "@/constants/ShiftStatus";
 interface ShiftCellProps {
@@ -46,6 +47,10 @@ export const ShiftCell: React.FC<ShiftCellProps> = ({ workers, shifts, onUpdated
                     const shiftStatus = normalizeShiftStatus(workerShift?.status);
                     const statusBackgroundColor = SHIFT_STATUS_COLORS[shiftStatus];
                     const statusTextColor = SHIFT_STATUS_TEXT_COLORS[shiftStatus];
+                    const showStatusDetail =
+                        shiftStatus === "paid_sick_leave" ||
+                        shiftStatus === "unpaid_sick_leave" ||
+                        shiftStatus === "no_show";
                     return (
                         <div key={worker.username} onClick={() => callModals(shifts.get(worker.username ?? ""))}>
                             <Badge
@@ -53,7 +58,7 @@ export const ShiftCell: React.FC<ShiftCellProps> = ({ workers, shifts, onUpdated
                                 size="md"
                                 variant="solid"
                                 action={worker.groupName=="surrey"?"success":"warning"}
-                                h={"$10"}
+                                minHeight={"$10"}
                                 style={statusBackgroundColor ? { backgroundColor: statusBackgroundColor } : undefined}
                             >
                                 <VStack >
@@ -64,6 +69,17 @@ export const ShiftCell: React.FC<ShiftCellProps> = ({ workers, shifts, onUpdated
                                     <BadgeText style={statusTextColor ? { color: statusTextColor } : undefined}>{moment(workerShift?.start ?? "").format("HH:mm")}-
                                         {moment(workerShift?.end ?? "").format("HH:mm")}
                                     </BadgeText>
+                                    {showStatusDetail && (
+                                        <BadgeText
+                                            size="xs"
+                                            style={[
+                                                statusTextColor ? { color: statusTextColor } : undefined,
+                                                { fontWeight: "600", lineHeight: 14 }
+                                            ]}
+                                        >
+                                            {SHIFT_STATUS_LABELS[shiftStatus]}
+                                        </BadgeText>
+                                    )}
                                 </VStack>
 
                             </Badge>
