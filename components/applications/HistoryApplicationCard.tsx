@@ -1,8 +1,5 @@
-import { Heading, ButtonText,  Pressable, BadgeText, Text, Card, Input, InputField, ScrollView, HStack, Icon, CircleIcon, BadgeIcon, InfoIcon, VStack, Button, Tooltip, TooltipContent, TooltipText, Textarea, TextareaInput, CheckIcon, CloseIcon } from "@gluestack-ui/themed"
+import { Heading, ButtonText,  Pressable, BadgeText, Text, Card, ScrollView, HStack, Icon, CircleIcon, BadgeIcon, InfoIcon, VStack, Button, Tooltip, TooltipContent, TooltipText, Textarea, TextareaInput, CheckIcon, CloseIcon, Modal, ModalBackdrop, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter } from "@gluestack-ui/themed"
 import React from "react";
-import { useEffect } from "react";
-import { TextInput } from "react-native-paper";
-import { SettingsContext } from "react-native-paper/lib/typescript/core/settings";
 import { MaterialIcons } from '@expo/vector-icons';
 import moment from "moment";
 import { LeaveApplication } from "@/model/LeaveApplication";
@@ -10,10 +7,56 @@ import { addNote } from "@/service/ApplicationService";
 interface HistoryApplicationCardProps {
     application:LeaveApplication
 }
+
+const COMMENT_SUMMARY_LINES = 2;
+const NOTE_SUMMARY_LINES = 3;
+const SUMMARY_LINE_HEIGHT = 20;
+const HISTORY_CARD_MIN_HEIGHT = 330;
+
 export const HistoryApplicationCard: React.FC<HistoryApplicationCardProps> = ({ application }) => {
     const [noteValue, setNoteValue] = React.useState(application.note);
     const [readValue, setReadValue] = React.useState(true);
     const [showOP, setShowOP] = React.useState(false);
+    const [showDetails, setShowDetails] = React.useState(false);
+
+    const openDetails = () => setShowDetails(true);
+
+    const handleDetailsKeyDown = (event: any) => {
+        if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault?.();
+            openDetails();
+        }
+    };
+
+    const detailButtonWebProps = {
+        onKeyDown: handleDetailsKeyDown,
+        role: "button",
+        "aria-label": "View record details",
+        tabIndex: 0,
+    } as any;
+
+    const renderSummaryText = (value?: string | null, numberOfLines = COMMENT_SUMMARY_LINES, emptyText = "-") => (
+        <Text
+            numberOfLines={numberOfLines}
+            ellipsizeMode="tail"
+            color={value?.trim() ? "$textDark900" : "$textLight500"}
+            style={{ lineHeight: SUMMARY_LINE_HEIGHT, maxHeight: SUMMARY_LINE_HEIGHT * numberOfLines }}
+        >
+            {value?.trim() ? value : emptyText}
+        </Text>
+    );
+
+    const renderDetailSection = (title:string, value?: string | null) => (
+        <VStack marginBottom={12}>
+            <Heading size="md">
+                {title}
+            </Heading>
+            <Text>
+                {value?.trim() ? value : "-"}
+            </Text>
+        </VStack>
+    );
+
     const handle = () => {       
         addNote(application.id??0,noteValue??"").then(
             (data)=>{
@@ -23,10 +66,19 @@ export const HistoryApplicationCard: React.FC<HistoryApplicationCardProps> = ({ 
         )
     }
     return (
-        <Card margin={10} width={360}>
-            <Heading margin={3} size="xl">
-                {application.applicant}
-            </Heading>
+        <>
+        <Card margin={10} padding={14} width="100%" maxWidth={350} minHeight={HISTORY_CARD_MIN_HEIGHT}>
+            <HStack alignItems="flex-start" justifyContent="space-between" marginBottom={6}>
+                <VStack flex={1}>
+                    <Heading size="lg" numberOfLines={1}>
+                        {application.applicant}
+                    </Heading>
+                    <Text size="sm" color="$textLight600">
+                        {application.status}
+                        <BadgeIcon as={(application.status == "approved") ? CheckIcon : CloseIcon} marginLeft={4} />
+                    </Text>
+                </VStack>
+            </HStack>
             <HStack margin={3}>
                 <VStack w={"10%"}>
                     <BadgeIcon as={CircleIcon} color={(application.leaveType == "SICK") ? "green" : "$red500"} />
@@ -41,11 +93,24 @@ export const HistoryApplicationCard: React.FC<HistoryApplicationCardProps> = ({ 
                         placement="top"
                         trigger={(value) => {
                             return (
-                                <BadgeIcon as={InfoIcon} mr={"$2"} />)
+                                <Pressable
+                                    onPress={openDetails}
+                                    accessibilityLabel="View record details"
+                                    accessibilityRole="button"
+                                    {...detailButtonWebProps}
+                                    minHeight={32}
+                                    minWidth={32}
+                                    alignItems="center"
+                                    justifyContent="center"
+                                    $hover-bg="$secondary100"
+                                    $focus-bg="$secondary100"
+                                >
+                                    <BadgeIcon as={InfoIcon} mr={"$2"} />
+                                </Pressable>)
                         }}>
                         <TooltipContent>
                             <TooltipText>
-                                hdfjksafk
+                                View record details
                             </TooltipText>
 
                         </TooltipContent>
@@ -79,62 +144,84 @@ export const HistoryApplicationCard: React.FC<HistoryApplicationCardProps> = ({ 
                 </VStack>
             </HStack>
 
-            <Text margin={3}>
-                {application.status}
-                <BadgeIcon as={(application.status == "approved") ? CheckIcon : CloseIcon} />
-            </Text>
-
-            <VStack>
-                <Heading size="md">
-                    Comment
-                </Heading>
-                <Text>
-                    {application.reason}
-                </Text>
-                {application.rejectReason ? <VStack><Heading size="md">
+            <VStack marginTop={8} space="sm">
+                <VStack>
+                    <Heading size="sm" color="$textLight700">
+                        Comment
+                    </Heading>
+                    {renderSummaryText(application.reason)}
+                </VStack>
+                {application.rejectReason ? <VStack><Heading size="sm" color="$textLight700">
                     Reject Reason
-                </Heading><Text>{application.rejectReason}</Text></VStack> : null}
-                <Pressable
-                    onPress={() => {
-                        setReadValue(false)
-                        setShowOP(true)
-                    }}
-                    $hover-bg="$secondary100"
-                >
-                    <HStack>
-                        <Heading size="md">
+                </Heading>{renderSummaryText(application.rejectReason)}</VStack> : null}
+                <VStack>
+                    <HStack alignItems="center">
+                        <Heading size="sm" color="$textLight700">
                             Note
                         </Heading>
-                        <MaterialIcons name="edit" size={24} color="black" />
-
-
+                        <Pressable
+                            onPress={() => {
+                                setReadValue(false)
+                                setShowOP(true)
+                            }}
+                            $hover-bg="$secondary100"
+                            accessibilityLabel="Edit note"
+                        >
+                            <MaterialIcons name="edit" size={14} color="#555555" />
+                        </Pressable>
                     </HStack>
-                </Pressable>
 
-                <Textarea
-                    size="md"
-                    isReadOnly={readValue}
-                    w="$64"
+                    {showOP ? <Textarea
+                        size="md"
+                        isReadOnly={readValue}
+                        width="100%"
+                        h={72}
 
-                >
-                    <TextareaInput value={noteValue??""} onChangeText={(e)=>setNoteValue(e)} />
-                </Textarea>
+                    >
+                        <TextareaInput value={noteValue??""} onChangeText={(e)=>setNoteValue(e)} />
+                    </Textarea> : renderSummaryText(noteValue, NOTE_SUMMARY_LINES, "No note")}
+                </VStack>
 
                 {showOP ? <HStack>
-                    <Button action="negative" margin={3} onPress={()=>{setShowOP(false); setNoteValue(application.note)}}>
+                    <Button size="sm" action="negative" margin={3} onPress={()=>{setShowOP(false); setNoteValue(application.note)}}>
                         <ButtonText>
                             Cancel
                         </ButtonText></Button>
-                    <Button action="positive" margin={3} onPress={handle}>
+                    <Button size="sm" action="positive" margin={3} onPress={handle}>
                         <ButtonText>OK</ButtonText>
                         </Button>
                 </HStack> : null}
 
-
             </VStack>
-
-
-
         </Card>
+        <Modal
+            isOpen={showDetails}
+            onClose={() => setShowDetails(false)}
+        >
+            <ModalBackdrop />
+            <ModalContent>
+                <ModalHeader>
+                    <Heading size="lg">
+                        History Details
+                    </Heading>
+                    <ModalCloseButton>
+                        <Icon as={CloseIcon} />
+                    </ModalCloseButton>
+                </ModalHeader>
+                <ModalBody>
+                    <ScrollView maxHeight={420}>
+                        {renderDetailSection("Comment", application.reason)}
+                        {application.rejectReason ? renderDetailSection("Reject Reason", application.rejectReason) : null}
+                        {renderDetailSection("Note", noteValue)}
+                    </ScrollView>
+                </ModalBody>
+                <ModalFooter>
+                    <Button action="secondary" variant="outline" onPress={() => setShowDetails(false)}>
+                        <ButtonText>Close</ButtonText>
+                    </Button>
+                </ModalFooter>
+            </ModalContent>
+        </Modal>
+        </>
     )
 }

@@ -128,5 +128,17 @@ export class UserRequest{
             throw new Error("Get Failure"+(e as Error).message)
         }
     }
+    getEmployeeOptions = async(activeOnly:boolean = true):Promise<User[]>=>{
+        try{
+            const response:AxiosResponse = await axios.get(process.env.EXPO_PUBLIC_API_URL+'api/presentor/user/employees/options',{
+                params:{
+                    activeOnly:activeOnly
+                }
+            });
+            return response.data;
+        }catch(e){
+            throw new Error("Get Failure"+(e as Error).message)
+        }
+    }
 
 }

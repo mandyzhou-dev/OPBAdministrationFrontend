@@ -1,4 +1,5 @@
 import { LeaveApplication } from "@/model/LeaveApplication";
+import { ApplicationHistoryPage, ApplicationHistoryQuery } from "@/model/ApplicationHistory";
 import axios, { Axios, AxiosResponse } from "axios";
 
 export class LeaveApplicationRequest{
@@ -31,6 +32,26 @@ export class LeaveApplicationRequest{
     getAllApplications = async():Promise<LeaveApplication[]>=>{
         try{
             const response:AxiosResponse = await axios.get(process.env.EXPO_PUBLIC_API_URL+'api/process/application');
+            return response.data;
+        }catch(e){
+            throw new Error("Request Failure" +(e as Error).message)
+        }
+    }
+    getApplicationHistory = async(query:ApplicationHistoryQuery):Promise<ApplicationHistoryPage>=>{
+        try{
+            const params:Record<string, string | number> = {
+                operatorUsername: query.operatorUsername,
+                page: query.page ?? 0,
+                size: query.size ?? 20,
+                sort: query.sort ?? "submitTime,desc",
+            };
+            const employeeUsername = query.employeeUsername?.trim();
+            if(employeeUsername){
+                params.employeeUsername = employeeUsername;
+            }
+            const response:AxiosResponse = await axios.get(process.env.EXPO_PUBLIC_API_URL+'api/process/application/history',{
+                params:params
+            });
             return response.data;
         }catch(e){
             throw new Error("Request Failure" +(e as Error).message)
