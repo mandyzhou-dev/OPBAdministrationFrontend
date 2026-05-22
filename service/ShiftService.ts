@@ -11,6 +11,7 @@ import { CopyConfig } from "antd/es/typography/Base";
 import { CopyStatus } from "@/model/CopyStatus";
 import { ManualShiftStatus } from "@/constants/ShiftStatus";
 import { PaidSickLeaveQuota } from "@/model/PaidSickLeaveQuota";
+import { ShiftCandidate } from "@/model/ShiftCandidate";
 
 const day = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
 
@@ -72,6 +73,12 @@ export const batchByDate = async(workDate: Moment, groupName: string, usernameLi
     const dateString = workDate.format()
     //console.log("Debug Timezone: " + dateString);
     return shiftRequest.batchCreateByDate(dateString,groupName,usernameList)
+}
+
+export const getShiftCandidatesByDate = async(workDate: Moment, groupName: string): Promise<ShiftCandidate[]> => {
+    const shiftRequest = new ShiftRequest()
+    const dateString = workDate.format()
+    return shiftRequest.getShiftCandidatesByDate(dateString, groupName)
 }
 
 export const deleteCurrentShift = async(currentShift: Shift):Promise<Object>=>{

@@ -7,6 +7,7 @@ import { kpi } from '@/model/KPI';
 import { CopyStatus } from '@/model/CopyStatus';
 import { ManualShiftStatus } from '@/constants/ShiftStatus';
 import { PaidSickLeaveQuota } from '@/model/PaidSickLeaveQuota';
+import { ShiftCandidate } from '@/model/ShiftCandidate';
 export class ShiftRequest {
     findVisibleShifts = async (username: string, start: Moment, end: Moment): Promise<Shift[]> => {
         try {
@@ -62,6 +63,21 @@ export class ShiftRequest {
                 throw e.response.data;
             }
             throw new Error("Put Failure" + (e as Error).message)
+        }
+    }
+
+    getShiftCandidatesByDate = async (workDate: string, groupName: string): Promise<ShiftCandidate[]> => {
+        try {
+            const response: AxiosResponse = await axios.get(process.env.EXPO_PUBLIC_API_URL + 'api/shift/shiftarrangement/candidatesByDate', {
+                params: {
+                    date: workDate,
+                    groupName: groupName,
+                    role: "tester",
+                }
+            });
+            return response.data
+        } catch (e) {
+            throw new Error("Get Failure" + (e as Error).message)
         }
     }
 
@@ -194,5 +210,4 @@ export class ShiftRequest {
         }
     }
 }
-
 

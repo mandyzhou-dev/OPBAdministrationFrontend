@@ -1,82 +1,85 @@
-import { View } from "react-native"
-import { Alert, AlertIcon, AlertText, Button, Text, Card, Input, InputField, Checkbox, CheckboxLabel, CheckboxIndicator, CheckboxIcon, CheckIcon, HStack, ButtonText, ButtonIcon, ArrowRightIcon, CheckboxGroup, InfoIcon, BadgeIcon, CircleIcon, RadioGroup, Radio, RadioLabel, RadioIndicator, RadioIcon } from "@gluestack-ui/themed"
+import { StyleSheet, View } from "react-native"
+import { Alert, AlertIcon, AlertText, Button, Text, Card, Checkbox, CheckboxLabel, CheckboxIndicator, CheckboxIcon, CheckIcon, HStack, ButtonText, ButtonIcon, ArrowRightIcon, CheckboxGroup, InfoIcon, CircleIcon, RadioGroup, Radio, RadioLabel, RadioIndicator, RadioIcon } from "@gluestack-ui/themed"
 import React, { useEffect } from "react"
-import { DatePickerInput } from "react-native-paper-dates";
-import { getUserByRole } from "@/service/UserService";
-import { User } from "@/model/User";
-import { batchByDate } from "@/service/ShiftService";
-import { getPreferredEmployeesBydate } from "@/service/ShiftBoardService";
+import { batchByDate, getShiftCandidatesByDate } from "@/service/ShiftService";
 import moment from "moment";
 import { getStatutoryHoliday } from "@/service/StatutoryHolidayService";
 import dayjs from "dayjs";
 import { DatePicker, Flex } from "antd";
+import { ShiftCandidate } from "@/model/ShiftCandidate";
+import {
+    CandidateStatus,
+    filterSelectableUsernames,
+    getCandidateStatus,
+    isCandidateDisabled
+} from "@/components/shift/SelectShiftFormCandidateState";
+
 export const SelectShiftFrom: React.FC = () => {
     const [workDate, setWorkDate] = React.useState(dayjs())
-    const [userList, setUserList] = React.useState<User[]>([])
+    const [candidates, setCandidates] = React.useState<ShiftCandidate[]>([])
     const [checkedUsers, setCheckedUsers] = React.useState<string[]>([])
     const [checkedGroup, setCheckedGroup] = React.useState<string>('surrey')
     const [showSuccessAlert, setShowSuccessAlert] = React.useState(false)
     const [showErrorAlert, setShowErrorAlert] = React.useState(false)
-    const [preferredWorkers, setPreferredWorkers] = React.useState<string[]>([])
     const [statutoryHolidays, setStatutoryHolidays] = React.useState<dayjs.Dayjs[]>([])
     const [errorMessage, setErrorMessage] = React.useState("Duplicate Shift!");
 
-    useEffect(() => {
-        //Only the first-time initialization is required for these two resources.
-        if (userList.length === 0) {
-            getUserByRole("tester").then(
-                (data) => {
-                    setUserList(data)
-                }
-            ).catch(
-                (error) => {
-                    console.log((error as Error).message)
-                }
-            )
-            getStatutoryHoliday().then(
-                (data) => {
-                    //console.log(JSON.stringify(data))
-                    setStatutoryHolidays(data.map(date => dayjs(date.statutoryDate)))
-                }).catch(
-                    (error) => {
-                        console.log((error as Error).message)
-                    }
-                )
-        }
+    const getWorkDateMoment = React.useCallback(() => {
+        return moment()
+            .year(workDate.year())
+            .month(workDate.month())
+            .date(workDate.date())
+            .hour(workDate.hour())
+            .minute(workDate.minute())
+            .second(workDate.second())
+    }, [workDate])
 
-        //This effect is synchronized with the workDate dependency
-        setPreferredWorkers([]);
-        getPreferredEmployeesBydate(moment(workDate.toDate())).then(
+    const refreshCandidates = React.useCallback(() => {
+        return getShiftCandidatesByDate(getWorkDateMoment(), checkedGroup).then(
             (data) => {
-
-                setPreferredWorkers(data)
+                setCandidates(data)
             }
         ).catch(
             (error) => {
                 console.log((error as Error).message)
             }
         )
+    }, [checkedGroup, getWorkDateMoment])
 
+    useEffect(() => {
+        getStatutoryHoliday().then(
+            (data) => {
+                setStatutoryHolidays(data.map(date => dayjs(date.statutoryDate)))
+            }).catch(
+            (error) => {
+                console.log((error as Error).message)
+            }
+        )
+    }, [])
 
+    useEffect(() => {
+        refreshCandidates()
+    }, [refreshCandidates])
 
-    }, [workDate])
+    useEffect(() => {
+        setCheckedUsers((current) => filterSelectableUsernames(current, candidates))
+    }, [candidates])
+
     const isDisabled = (date: any) => {
         return statutoryHolidays.some(holiday => holiday.isSame(date, "day"));
     };
-    const freeTodayByUsername = (username: string) => {
-        for (let worker of preferredWorkers) {
-            if (worker === username) {
-                return true;
-            }
-        }
-        return false;
+
+    const handleCheckedUsersChange = (selected: string[]) => {
+        setCheckedUsers(filterSelectableUsernames(selected, candidates))
     }
+
     const submitShift = () => {
-        //console.log("getdate(): " + workDate.getDate())
-        const workDateMoment = moment().year(workDate.year()).month(workDate.month()).date(workDate.date()).hour(workDate.hour()).minute(workDate.minute()).second(workDate.second())
-        //TODO: checkedGroup is not uesed，just save it position for future 
-        batchByDate(workDateMoment, checkedGroup, checkedUsers).then((obj) => {
+        const selectableUsers = filterSelectableUsernames(checkedUsers, candidates)
+        setCheckedUsers(selectableUsers)
+        batchByDate(getWorkDateMoment(), checkedGroup, selectableUsers).then((obj) => {
             setShowSuccessAlert(true)
+            setCheckedUsers([])
+            refreshCandidates()
             setTimeout(() => { setShowSuccessAlert(false) }, 1000)
         }
         ).catch(
@@ -150,28 +153,31 @@ export const SelectShiftFrom: React.FC = () => {
 
 
             <Card margin={3}>
-                <HStack>
+                <View style={styles.assignmentHeader}>
                     <Text color="$text500" lineHeight="$xs">
                         Assignment:
                     </Text>
+                    <Text style={styles.legendText}>
+                        Preferred = employee prefers to work this day
+                    </Text>
+                </View>
 
-                    <CheckboxGroup value={checkedUsers} onChange={(d) => setCheckedUsers(d)}>
-                        {userList.map((user) => {
-                            return (<Checkbox
-                                aria-label={user.name}
-                                key={user.username}
-                                value={user.username ?? "No Name!"}
-                                justifyContent={"space-between"}
-                                margin={10}>
-                                <CheckboxLabel>{user.name}</CheckboxLabel>
-                                <CheckboxIndicator>
-                                    <CheckboxIcon as={CheckIcon} />
-                                </CheckboxIndicator>
-                                {(freeTodayByUsername(user.username ?? "No Name!")) ? <BadgeIcon as={CircleIcon} color="green" /> : null}
-                            </Checkbox>)
+                <CheckboxGroup value={checkedUsers} onChange={handleCheckedUsersChange}>
+                    <View style={styles.candidateList}>
+                        {candidates.map((candidate) => {
+                            const status = getCandidateStatus(candidate, checkedUsers)
+                            const disabled = isCandidateDisabled(candidate)
+                            return (
+                                <ShiftCandidateRow
+                                    key={candidate.username}
+                                    candidate={candidate}
+                                    status={status}
+                                    disabled={disabled}
+                                />
+                            )
                         })}
-                    </CheckboxGroup>
-                </HStack>
+                    </View>
+                </CheckboxGroup>
             </Card>
             <Card margin={3}>
                 <Button
@@ -189,3 +195,147 @@ export const SelectShiftFrom: React.FC = () => {
         </View>
     )
 }
+
+interface ShiftCandidateRowProps {
+    candidate: ShiftCandidate;
+    status: CandidateStatus | null;
+    disabled: boolean;
+}
+
+const ShiftCandidateRow: React.FC<ShiftCandidateRowProps> = ({ candidate, status, disabled }) => {
+    return (
+        <Checkbox
+            aria-label={candidate.name ?? candidate.username}
+            value={candidate.username}
+            isDisabled={disabled}
+            style={[
+                styles.candidateRow,
+                disabled ? styles.disabledCandidateRow : null,
+            ]}
+        >
+            <View style={styles.candidateNameSlot}>
+                <CheckboxLabel style={disabled ? styles.disabledCandidateName : styles.candidateName}>
+                    {candidate.name ?? candidate.username}
+                </CheckboxLabel>
+            </View>
+            <View style={styles.statusSlot}>
+                <StatusTag status={status} />
+            </View>
+            <CheckboxIndicator>
+                <CheckboxIcon as={CheckIcon} />
+            </CheckboxIndicator>
+        </Checkbox>
+    )
+}
+
+const StatusTag: React.FC<{ status: CandidateStatus | null }> = ({ status }) => {
+    if (status === "alreadyScheduled") {
+        return (
+            <View style={[styles.statusTag, styles.alreadyScheduledTag]}>
+                <Text style={styles.alreadyScheduledTagText}>Already scheduled</Text>
+            </View>
+        )
+    }
+
+    if (status === "selected") {
+        return (
+            <View style={[styles.statusTag, styles.selectedTag]}>
+                <Text style={styles.selectedTagText}>Selected</Text>
+            </View>
+        )
+    }
+
+    if (status === "preferred") {
+        return (
+            <View style={[styles.statusTag, styles.preferredTag]}>
+                <View style={styles.preferredDot} />
+                <Text style={styles.preferredTagText}>Prefers this day</Text>
+            </View>
+        )
+    }
+
+    return null;
+}
+
+const styles = StyleSheet.create({
+    assignmentHeader: {
+        gap: 4,
+        marginBottom: 10,
+    },
+    legendText: {
+        color: "#64748B",
+        fontSize: 12,
+    },
+    candidateList: {
+        gap: 8,
+    },
+    candidateRow: {
+        alignItems: "center",
+        borderColor: "#E2E8F0",
+        borderRadius: 6,
+        borderWidth: 1,
+        flexDirection: "row",
+        gap: 8,
+        justifyContent: "space-between",
+        minHeight: 44,
+        paddingHorizontal: 12,
+        paddingVertical: 10,
+    },
+    disabledCandidateRow: {
+        backgroundColor: "#F8FAFC",
+        cursor: "not-allowed",
+    } as any,
+    candidateNameSlot: {
+        flex: 1,
+        minWidth: 0,
+    },
+    candidateName: {
+        color: "#0F172A",
+    },
+    disabledCandidateName: {
+        color: "#94A3B8",
+    },
+    statusSlot: {
+        alignItems: "flex-end",
+        flexShrink: 0,
+    },
+    statusTag: {
+        alignItems: "center",
+        borderRadius: 6,
+        borderWidth: 1,
+        flexDirection: "row",
+        gap: 6,
+        minHeight: 22,
+        paddingHorizontal: 8,
+    },
+    preferredTag: {
+        backgroundColor: "#DCFCE7",
+        borderColor: "#BBF7D0",
+    },
+    preferredTagText: {
+        color: "#166534",
+        fontSize: 12,
+    },
+    preferredDot: {
+        backgroundColor: "#16A34A",
+        borderRadius: 999,
+        height: 6,
+        width: 6,
+    },
+    alreadyScheduledTag: {
+        backgroundColor: "#E2E8F0",
+        borderColor: "#CBD5E1",
+    },
+    alreadyScheduledTagText: {
+        color: "#475569",
+        fontSize: 12,
+    },
+    selectedTag: {
+        backgroundColor: "#EFF6FF",
+        borderColor: "#BFDBFE",
+    },
+    selectedTagText: {
+        color: "#1D4ED8",
+        fontSize: 12,
+    },
+})
