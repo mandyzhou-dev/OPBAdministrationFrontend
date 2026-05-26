@@ -25,3 +25,13 @@ Related implementation files:
 ## Cross-Stack Planning Notes
 
 Reusable Fullstack Architect notes for Application History planning, UI scope control, API boundaries, database-change handling, and verification are captured in [plans/fullstack-architect-reusable-notes-2026-05-20.md](plans/fullstack-architect-reusable-notes-2026-05-20.md).
+
+The same notes now include the Select Shift Form candidate availability workflow: confirm UI intent first, produce the plan before implementation, define the front/back DTO contract first, and never apply DB schema/data changes directly. If a schema change is needed, agents must give the user complete SQL to execute.
+
+Related plan:
+
+- [plans/select-shift-form-preference-availability-plan-2026-05-21.md](plans/select-shift-form-preference-availability-plan-2026-05-21.md)
+
+## Frontend Knowledge Notes
+
+- Select shift form candidate-status UI guidance is captured in [docs/feature_spec/select-shift-form-frontend-knowledge.md](docs/feature_spec/select-shift-form-frontend-knowledge.md). It covers requirement confirmation, candidate DTO semantics, row status priority, disabled selection/submit guards, label and legend design, mobile layout, and focused tests.
