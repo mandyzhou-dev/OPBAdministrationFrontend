@@ -1,6 +1,9 @@
 
 import { CopyStatus } from "@/model/CopyStatus";
 import { copyWeekScheduleTo } from "@/service/ShiftService";
+import { getStatutoryHoliday } from "@/service/StatutoryHolidayService";
+import { StatutoryHoliday } from "@/model/StatutoryHoliday";
+import { buildHolidayWarningText, getStatutoryHolidaySkippedDetails, getTargetWeekHolidays, groupSkippedDetailsByTargetDate } from "./CopyDialogModalState";
 import { Button, Text, ButtonText, Modal, ModalBackdrop, ModalContent, Card, HStack, RadioGroup, RadioIndicator, RadioIcon, CircleIcon, RadioLabel, Radio, Heading, ModalHeader, ModalCloseButton, Icon, CloseIcon, ModalFooter, ModalBody, Toast, ToastTitle, ToastDescription, useToast, VStack, Alert, AlertIcon, InfoIcon, AlertText, Spinner } from "@gluestack-ui/themed";
 import { DatePicker, Flex } from "antd";
 import dayjs, { Dayjs } from "dayjs";
@@ -20,6 +23,31 @@ export const CopyDialogModal: React.FC<ShiftCopyDialogModalProps> = ({ srcWeekSt
     const [showErrorAlert, setShowErrorAlert] = React.useState(false);
     const [errorMessage, setErrorMessage] = React.useState("Failed!");
     const [isCopying, setIsCopying] = React.useState(false);
+    const [statutoryHolidays, setStatutoryHolidays] = React.useState<StatutoryHoliday[]>([]);
+    const [copyResult, setCopyResult] = React.useState<CopyStatus | null>(null);
+
+    React.useEffect(() => {
+        if (!showModal) return;
+
+        setCopyResult(null);
+        getStatutoryHoliday()
+            .then(setStatutoryHolidays)
+            .catch((err) => console.log(err));
+    }, [showModal]);
+
+    const targetWeekHolidays = React.useMemo(
+        () => getTargetWeekHolidays(statutoryHolidays, dstWeekStart),
+        [statutoryHolidays, dstWeekStart]
+    );
+    const holidaySkippedDetails = React.useMemo(
+        () => getStatutoryHolidaySkippedDetails(copyResult),
+        [copyResult]
+    );
+    const holidaySkippedGroups = React.useMemo(
+        () => groupSkippedDetailsByTargetDate(holidaySkippedDetails),
+        [holidaySkippedDetails]
+    );
+    const hasHolidaySkippedDetails = holidaySkippedDetails.length > 0;
 
     const disabledDate = (dst: Dayjs) => {
         // 1. Disable if it's NOT Sunday
@@ -35,12 +63,18 @@ export const CopyDialogModal: React.FC<ShiftCopyDialogModalProps> = ({ srcWeekSt
     const copySchedule = async () => {
         if (isCopying) return;
         setIsCopying(true);//start spining
+        setCopyResult(null);
+        setShowErrorAlert(false);
         try {
             //TODO: spin
             const data = await copyWeekScheduleTo(groupName, srcWeekStart, dstWeekStart);
-            setShowModal(false)
-            if (!toast.isActive(toastId)) {
-                showNewToast(data);
+            if (getStatutoryHolidaySkippedDetails(data).length > 0) {
+                setCopyResult(data);
+            } else {
+                setShowModal(false)
+                if (!toast.isActive(toastId)) {
+                    showNewToast(data);
+                }
             }
         } catch (err: any) {
             console.log(err.error)
@@ -135,17 +169,62 @@ export const CopyDialogModal: React.FC<ShiftCopyDialogModalProps> = ({ srcWeekSt
                                 onChange={(d: dayjs.Dayjs | null): void => {
                                     if (d) {
                                         setDstWeekStart(d)
+                                        setCopyResult(null)
                                     }
                                 }
                                 }
                                 disabledDate={disabledDate}
                             />
                         </Flex>
+                        {targetWeekHolidays.length > 0 ? (
+                            <Alert
+                                action="warning"
+                                variant="outline"
+                                style={{
+                                    backgroundColor: "#FFFBEB",
+                                    borderColor: "#F59E0B",
+                                    borderRadius: 6,
+                                    marginTop: 8,
+                                    padding: 12,
+                                }}
+                            >
+                                <AlertIcon as={InfoIcon} mr="$3" color="#92400E" />
+                                <AlertText style={{ color: "#92400E" }}>
+                                    {buildHolidayWarningText(targetWeekHolidays)}
+                                </AlertText>
+                            </Alert>
+                        ) : null}
 
                         <Text color="$text500" lineHeight="$xs">
                             To: {dstWeekStart.add(6, 'day').format('YYYY-MM-DD')}
                         </Text>
                     </Card>
+                    {hasHolidaySkippedDetails ? (
+                        <Alert
+                            mx="$2.5"
+                            action="warning"
+                            variant="outline"
+                            style={{
+                                backgroundColor: "#FFFBEB",
+                                borderColor: "#F59E0B",
+                                borderRadius: 6,
+                            }}
+                        >
+                            <AlertIcon as={InfoIcon} mr="$3" color="#92400E" />
+                            <VStack space="xs">
+                                <AlertText style={{ color: "#92400E" }}>
+                                    {(copyResult?.created || 0) > 0
+                                        ? `Created ${copyResult?.created || 0} shifts. Skipped ${holidaySkippedDetails.length} on statutory holiday(s).`
+                                        : `No shifts were created. Skipped ${holidaySkippedDetails.length} on statutory holiday(s).`}
+                                </AlertText>
+                                {holidaySkippedGroups.map((group) => (
+                                    <AlertText key={group.targetDate} style={{ color: "#92400E" }}>
+                                        {group.targetDate} - {group.count} shifts skipped
+                                    </AlertText>
+                                ))}
+                            </VStack>
+                        </Alert>
+                    ) : null}
                     {
                         showErrorAlert ?
                             (
@@ -172,7 +251,7 @@ export const CopyDialogModal: React.FC<ShiftCopyDialogModalProps> = ({ srcWeekSt
                     >
                         <ButtonText>Cancel</ButtonText>
                     </Button>
-                    <Button onPress={copySchedule} isDisabled={isCopying}>
+                    <Button onPress={copySchedule} isDisabled={isCopying} style={{ minWidth: 72 }}>
                         {isCopying ? (
                             <Spinner size="small" color="white" />
                         ) : (

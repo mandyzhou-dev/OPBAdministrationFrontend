@@ -1,5 +1,5 @@
 export class StatutoryHoliday{
     id: number | undefined;
     holidayName: string = "";
-    statutoryDate: Date |undefined;
+    statutoryDate: Date | string | undefined;
 }
