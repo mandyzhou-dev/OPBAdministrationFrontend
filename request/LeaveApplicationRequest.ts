@@ -1,9 +1,10 @@
 import { LeaveApplication } from "@/model/LeaveApplication";
 import { ApplicationHistoryPage, ApplicationHistoryQuery } from "@/model/ApplicationHistory";
+import { LeaveDateAvailability, PutLeaveApplicationPayload } from "@/model/LeaveDateAvailability";
 import axios, { Axios, AxiosResponse } from "axios";
 
 export class LeaveApplicationRequest{
-    putLeaveApplication = async(putLeaveAplication:object):Promise<LeaveApplication>=>{
+    putLeaveApplication = async(putLeaveAplication:PutLeaveApplicationPayload | object):Promise<LeaveApplication>=>{
         try{
             const response:AxiosResponse = await axios.put(process.env.EXPO_PUBLIC_API_URL+'api/process/application/leave-application',
             putLeaveAplication);
@@ -12,6 +13,21 @@ export class LeaveApplicationRequest{
             throw new Error("Put Failure"+(e as Error).message)
         }
     
+    }
+
+    getLeaveDateAvailability = async(applicant:string, from:string, to:string):Promise<LeaveDateAvailability>=>{
+        try{
+            const response:AxiosResponse = await axios.get(process.env.EXPO_PUBLIC_API_URL+'api/process/application/leave-date-availability',{
+                params:{
+                    applicant:applicant,
+                    from:from,
+                    to:to
+                }
+            });
+            return response.data;
+        }catch(e){
+            throw new Error("Request Failure" +(e as Error).message)
+        }
     }
 
     getApplication = async(handler:string,applicant:string):Promise<LeaveApplication[]>=>{

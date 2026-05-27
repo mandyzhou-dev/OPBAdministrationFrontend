@@ -91,6 +91,34 @@ describe("application history request contracts", () => {
     );
   });
 
+  it("requests leave date availability with applicant and date-only range", async () => {
+    axios.get.mockResolvedValueOnce({
+      data: {
+        applicant: "worker1",
+        from: "2026-05-27",
+        to: "2026-08-25",
+        businessZone: "America/Vancouver",
+        dates: [{ date: "2026-05-27", scheduled: true, shiftIds: [101] }],
+      },
+    });
+
+    const { LeaveApplicationRequest } = require("@/request/LeaveApplicationRequest");
+    const request = new LeaveApplicationRequest();
+    const result = await request.getLeaveDateAvailability("worker1", "2026-05-27", "2026-08-25");
+
+    expect(axios.get).toHaveBeenCalledWith(
+      expect.stringContaining("api/process/application/leave-date-availability"),
+      {
+        params: {
+          applicant: "worker1",
+          from: "2026-05-27",
+          to: "2026-08-25",
+        },
+      }
+    );
+    expect(result.dates).toEqual([{ date: "2026-05-27", scheduled: true, shiftIds: [101] }]);
+  });
+
   it("requests employee options with activeOnly enabled by default", async () => {
     axios.get.mockResolvedValueOnce({
       data: [{ username: "worker1", name: "Worker One", active: 1 }],

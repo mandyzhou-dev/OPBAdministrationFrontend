@@ -1,11 +1,35 @@
 
 import { RequiredFormControl } from "@/components/FreeStyle/RequiredFormControl";
+import { PutLeaveApplicationPayload } from "@/model/LeaveDateAvailability";
 import { LeaveApplicationRequest } from "@/request/LeaveApplicationRequest";
 import { InputField, Input, ButtonText, Button, FormControl, FormControlLabel, FormControlLabelText, Text, Card, Textarea, TextareaInput, ScrollView, Alert, AlertIcon, AlertText, InfoIcon } from "@gluestack-ui/themed";
+import { DatePicker, Flex } from "antd";
+import { Dayjs } from "dayjs";
 import { router } from "expo-router";
-import moment, { duration } from "moment";
+import moment from "moment";
 import React from "react";
+import {
+    areAllDatesScheduled,
+    buildAvailabilityMap,
+    formatBusinessDate,
+    getVancouverToday,
+    isLeaveDateDisabled,
+    isSickLeave,
+    LeaveAvailabilityMap,
+} from "@/util/leaveDateAvailability";
 
+const { RangePicker } = DatePicker;
+const AVAILABILITY_DAYS = 90;
+const helperTextStyle = {
+    color: "#8c8c8c",
+    fontSize: 14,
+    lineHeight: 20,
+    marginTop: 6,
+};
+const sickLeaveHelperTextStyle = {
+    ...helperTextStyle,
+    marginBottom: 12,
+};
 
 export default function NewApplication() {
     const [leaveTypeIsRequired, setLeaveTypeIsRequired] = React.useState(false);
@@ -15,16 +39,108 @@ export default function NewApplication() {
     const [timeIsRequired, setTimeIsRequired] = React.useState(false);
     const [commentValue, setCommentValue] = React.useState("");
     const [durationValue, setDurationValue] = React.useState("oneday");
-    const [dateValue, setDateValue] = React.useState("");
+    const [dateValue, setDateValue] = React.useState<Dayjs | null>(null);
     const [timeValue, setTimeValue] = React.useState("");
-    const [rangeStartDate, setRangeStartDate] = React.useState("");
-    const [rangeEndDate, setRangeEndDate] = React.useState("")
+    const [rangeValue, setRangeValue] = React.useState<[Dayjs | null, Dayjs | null] | null>(null);
     const [rangeStartIsRequired, setRangeStartIsRequired] = React.useState(false);
     const [rangeEndIsRequired, setRangeEndIsRequired] = React.useState(false);
     const [showSuccessAlert, setShowSuccessAlert] = React.useState(false);
     const [showErrorAlert, setShowErrorAlert] = React.useState(false);
+    const [availability, setAvailability] = React.useState<LeaveAvailabilityMap | null>(null);
+    const [availabilityLoading, setAvailabilityLoading] = React.useState(false);
+    const [availabilityError, setAvailabilityError] = React.useState("");
+    const [availabilityRange, setAvailabilityRange] = React.useState<{ from: string, to: string } | null>(null);
 
-    const submit = () => {
+    const getUsername = React.useCallback(() => {
+        if (localStorage.getItem("user") === null) {
+            return "";
+        }
+        return JSON.parse(localStorage.getItem("user") as string).username;
+    }, []);
+
+    const fetchAvailability = React.useCallback(async (fromDate: Dayjs, toDate: Dayjs) => {
+        const username = getUsername();
+        if (!username) {
+            setAvailability(null);
+            return null;
+        }
+
+        const from = formatBusinessDate(fromDate);
+        const to = formatBusinessDate(toDate);
+        setAvailabilityLoading(true);
+        setAvailabilityError("");
+        try {
+            const leaveApplicationRequest = new LeaveApplicationRequest();
+            const data = await leaveApplicationRequest.getLeaveDateAvailability(username, from, to);
+            const availabilityMap = buildAvailabilityMap(data);
+            setAvailability(availabilityMap);
+            setAvailabilityRange({ from, to });
+            return availabilityMap;
+        } catch (error) {
+            setAvailability(null);
+            setAvailabilityError("Failed to load sick leave date availability.");
+            return null;
+        } finally {
+            setAvailabilityLoading(false);
+        }
+    }, [getUsername]);
+
+    React.useEffect(() => {
+        if (!isSickLeave(leaveTypeValue)) {
+            setAvailability(null);
+            setAvailabilityError("");
+            setAvailabilityRange(null);
+            return;
+        }
+
+        const today = getVancouverToday();
+        fetchAvailability(today, today.add(AVAILABILITY_DAYS, "day"));
+    }, [leaveTypeValue, fetchAvailability]);
+
+    const disabledDate = React.useCallback((current: Dayjs) => {
+        return isLeaveDateDisabled(current, leaveTypeValue, availability);
+    }, [leaveTypeValue, availability]);
+
+    const ensureSelectedSickDatesAvailable = async (startDate: Dayjs, endDate: Dayjs) => {
+        if (!isSickLeave(leaveTypeValue)) {
+            return true;
+        }
+
+        let availabilityMap = availability;
+        const selectedFrom = formatBusinessDate(startDate);
+        const selectedTo = formatBusinessDate(endDate);
+        const loaded = availabilityRange && selectedFrom >= availabilityRange.from && selectedTo <= availabilityRange.to;
+        if (!loaded || !areAllDatesScheduled(startDate, endDate, availabilityMap)) {
+            availabilityMap = await fetchAvailability(startDate, endDate);
+        }
+
+        if (!areAllDatesScheduled(startDate, endDate, availabilityMap)) {
+            setAvailabilityError("Sick leave requires an existing scheduled shift for every selected date.");
+            return false;
+        }
+        return true;
+    }
+
+    const renderSickLeaveDateHelper = () => {
+        const shouldShowAvailabilityStatus = isSickLeave(leaveTypeValue);
+        if (!shouldShowAvailabilityStatus) {
+            return null;
+        }
+
+        return (
+            <>
+                <Text style={sickLeaveHelperTextStyle}>
+                    {availabilityLoading ? "Loading sick leave availability..." : "Sick leave dates require an existing scheduled shift."}
+                </Text>
+                {availabilityError ?
+                    <Text color="$red600" lineHeight="$xs">
+                        {availabilityError}
+                    </Text> : null}
+            </>
+        );
+    }
+
+    const submit = async () => {
         if (!leaveTypeValue) {
             setLeaveTypeIsRequired(true);
             return;
@@ -45,11 +161,11 @@ export default function NewApplication() {
         }
 
         if (durationValue == "range") {
-            if (!rangeStartDate) {
+            if (!rangeValue?.[0]) {
                 setRangeStartIsRequired(true);
                 return;
             }
-            if (!rangeEndDate) {
+            if (!rangeValue?.[1]) {
                 setRangeEndIsRequired(true);
                 return;
             }
@@ -64,27 +180,37 @@ export default function NewApplication() {
         setCommentIsRequired(false);
         setDateIsRequired(false);
         setTimeIsRequired(false);
+        setRangeStartIsRequired(false);
+        setRangeEndIsRequired(false);
         if (localStorage.getItem("user") === null) {
             alert("Submit Failure!")
             return;
         }
         let start, end;
-        let username = JSON.parse(localStorage.getItem("user") as string).username
+        let username = getUsername();
         if (durationValue == "oneday") {
             let starttime = timeValue.split('-')[0];
             let endtime = timeValue.split('-')[1];
-            start = moment(dateValue + ' ' + starttime, "YYYY-MM-DD HH:mm").format();
-            end = moment(dateValue + ' ' + endtime, "YYYY-MM-DD HH:mm").format();
+            if (!await ensureSelectedSickDatesAvailable(dateValue!, dateValue!)) {
+                return;
+            }
+            const date = formatBusinessDate(dateValue!);
+            start = moment(date + ' ' + starttime, "YYYY-MM-DD HH:mm").format();
+            end = moment(date + ' ' + endtime, "YYYY-MM-DD HH:mm").format();
         }
         if (durationValue == "range") {
-            console.log(rangeStartDate + ' 00:00')
-            start = moment(rangeStartDate + ' 00:00', "YYYY-MM-DD HH:mm").format();
-            end = moment(rangeEndDate + ' 23:59', "YYYY-MM-DD HH:mm").format();
+            const rangeStartDate = rangeValue![0]!;
+            const rangeEndDate = rangeValue![1]!;
+            if (!await ensureSelectedSickDatesAvailable(rangeStartDate, rangeEndDate)) {
+                return;
+            }
+            start = moment(formatBusinessDate(rangeStartDate) + ' 00:00', "YYYY-MM-DD HH:mm").format();
+            end = moment(formatBusinessDate(rangeEndDate) + ' 23:59', "YYYY-MM-DD HH:mm").format();
         }
-        let result = {
+        let result: PutLeaveApplicationPayload = {
             applicant: username,
-            start: start,
-            end: end,
+            start: start!,
+            end: end!,
             leaveType: leaveTypeValue,
             reason: commentValue
         }
@@ -161,20 +287,24 @@ export default function NewApplication() {
                     <FormControl isRequired={dateIsRequired} isInvalid={dateIsRequired}>
                         <FormControlLabel>
                             <FormControlLabelText>
-                                Day(Format:YYYYMMDD)
+                                Day
                             </FormControlLabelText>
 
                         </FormControlLabel>
-                        <Input
-                            size="md"
-                        >
-                            <InputField placeholder="YYYYMMDD" onChangeText={(value) => { setDateValue(value) }} />
-                        </Input>
+                        <Flex vertical gap="small">
+                            <DatePicker
+                                value={dateValue}
+                                onChange={(value) => { setDateValue(value) }}
+                                disabledDate={disabledDate}
+                                style={{ width: "100%" }}
+                            />
+                        </Flex>
+                        {renderSickLeaveDateHelper()}
                     </FormControl>
-                    <FormControl isRequired={timeIsRequired} isInvalid={timeIsRequired}>
+                    <FormControl isRequired={timeIsRequired} isInvalid={timeIsRequired} style={{ marginTop: 16 }}>
                         <FormControlLabel>
                             <FormControlLabelText>
-                                Time(Format:HHmm-HHmm)
+                                Time
                             </FormControlLabelText>
 
                         </FormControlLabel>
@@ -184,35 +314,29 @@ export default function NewApplication() {
                         >
                             <InputField placeholder="HHmm-HHmm" onChangeText={(value) => { setTimeValue(value) }} />
                         </Input>
+                        <Text style={helperTextStyle}>
+                            Format: HHmm-HHmm
+                        </Text>
                     </FormControl>
 
                 </Card>
                 :
                 <Card>
-                    <FormControl isRequired={rangeStartIsRequired} isInvalid={rangeStartIsRequired}>
+                    <FormControl isRequired={rangeStartIsRequired || rangeEndIsRequired} isInvalid={rangeStartIsRequired || rangeEndIsRequired}>
                         <FormControlLabel>
                             <FormControlLabelText>
-                                Start Date(Format:YYYYMMDD)
+                                Start / End Date
                             </FormControlLabelText>
                         </FormControlLabel>
-                        <Input
-                            size="md"
-                        >
-                            <InputField placeholder="YYYYMMDD" onChangeText={(value) => { setRangeStartDate(value) }} />
-                        </Input>
-                    </FormControl>
-                    <FormControl isRequired={rangeEndIsRequired} isInvalid={rangeEndIsRequired}>
-                        <FormControlLabel>
-                            <FormControlLabelText>
-                                End Date(Format:YYYYMMDD)
-                            </FormControlLabelText>
-                        </FormControlLabel>
-                        <Input
-                            size="md"
-
-                        >
-                            <InputField placeholder="YYYYMMDD" onChangeText={(value) => { setRangeEndDate(value) }} />
-                        </Input>
+                        <Flex vertical gap="small">
+                            <RangePicker
+                                value={rangeValue}
+                                onChange={(value) => { setRangeValue(value) }}
+                                disabledDate={disabledDate}
+                                style={{ width: "100%" }}
+                            />
+                        </Flex>
+                        {renderSickLeaveDateHelper()}
                     </FormControl>
                 </Card>
             }
