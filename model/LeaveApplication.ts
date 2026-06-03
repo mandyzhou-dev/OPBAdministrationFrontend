@@ -7,6 +7,11 @@ export class LeaveApplication{
     submitTime: Date|undefined;
     currentHandler:string|undefined;
     status:string|undefined;
+    canDelete:boolean|undefined;
+    sickProofRequired:boolean|undefined;
+    sickProofSubmitted:boolean|undefined;
+    sickProofUploadedAt:Date|undefined;
+    sickProofOriginalFilename:string|undefined;
     rejectReason:string|undefined;
     reason: string|undefined;  
     note:string|undefined;

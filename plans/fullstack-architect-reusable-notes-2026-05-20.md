@@ -10,6 +10,36 @@ These notes capture reusable cross-stack lessons from the Application History em
 - Treat user UI sketches as candidate solutions, not automatically as requirements. First restate the underlying job-to-be-done, then confirm the recommended interaction before planning implementation.
 - For front/back-separated work, the Fullstack Architect deliverable is the executable plan. Developers should not start until the plan records the approved product decision, API contract, DTO names, field semantics, file-level touch points, and verification checklist.
 
+## Cross-Stack Feature Plan Structure
+
+Cross-stack plans must keep implementation ownership clear. Do not write a single blended task list that forces Backend_Dev and Frontend_Dev to infer their own boundaries. Use this structure for new frontend/backend-separated features:
+
+1. `Goal / Scope`: describe the user-facing outcome, non-goals, and whether the task is planning-only or implementation-ready.
+2. `Backend Plan`: list controller endpoints, service/repository/entity responsibilities, validation, persistence, storage, email/queue behavior, error handling, and backend verification.
+3. `Frontend Plan`: list affected screens/components, UI states, mobile behavior, request integration, loading/success/error states, and frontend verification.
+4. `API Contract`: isolate method, path, request fields, response fields, field defaults, nullable fields, state values, and backward compatibility with existing endpoints.
+5. `DB Change Required`: state yes/no. If yes, provide complete SQL for tables, columns, indexes, constraints, data backfill, and rollback, and say explicitly that the user executes SQL and agents do not.
+6. `Cross-Module Behavior`: for email, file upload, configured storage paths, queues, or background work, document trigger timing, owner module, retry/failure policy, and whether failures roll back the user action.
+7. `Task Breakdown`: separate `Backend_Dev` and `Frontend_Dev` task lists. A task should not mix backend schema/API work with frontend UI work.
+8. `Acceptance Criteria`: write externally observable outcomes, including DB, API, UI, email, file-storage, and negative cases.
+
+The API contract section must be concrete enough that each side can implement without reading the other side's code. Include exact request field names, response field names, enum/string state values, boolean semantics, null behavior, and error responses. For status-driven UI, define which backend field is authoritative and how the frontend derives each visible state.
+
+UI details belong in the frontend/UI section only. If a UI designer provides colors, spacing, labels, icons, mobile wrapping, or component hierarchy, record those under `Frontend Plan` or `Frontend/UI Details`, not inside backend responsibilities.
+
+Email and file-upload features need explicit boundaries. Plans must say:
+
+- when the email event is triggered;
+- who resolves recipients;
+- whether recipient source is workflow state, configured usernames, a role/group lookup, or request data;
+- whether email failure rolls back the business action;
+- which timezone is used for user-visible dates;
+- which storage property/path is authoritative;
+- whether saved files are viewable in-system;
+- how reupload/retry behavior works.
+
+Do not use a workflow routing field as an email address book unless the plan explicitly proves the two meanings stay aligned for every state. If a notification has fixed business recipients, define a dedicated recipient resolver instead of mutating workflow state for mail delivery.
+
 ## Frontend Scope Control
 
 - Small UI requests must stay small. Do not use a filter, button, or text truncation change as a reason to redesign the whole page.

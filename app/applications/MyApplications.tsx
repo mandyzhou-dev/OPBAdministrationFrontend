@@ -1,45 +1,80 @@
 import { ApplicationCardforE } from "@/components/applications/ApplicationCardforE"
+import { resolveCanDelete } from "@/components/applications/applicationDeleteRules";
 import { LeaveApplication } from "@/model/LeaveApplication"
-import { deleteApplication, getApplicationByApplicant } from "@/service/ApplicationService"
+import { deleteApplication, getApplicationByApplicant, uploadSickProof } from "@/service/ApplicationService"
 import { Text, Card, Input, Button,InputField, ScrollView, HStack, AlertDialog, AlertDialogBackdrop, AlertDialogContent, AlertDialogHeader, Heading, AlertDialogCloseButton, Icon, CloseIcon, AlertDialogBody, AlertDialogFooter, ButtonGroup, ButtonText } from "@gluestack-ui/themed"
 import React from "react"
 import { useEffect } from "react"
 
 export default function MyApplications() {
     const [value,setValue] = React.useState(0);
+    const [selectedApplication,setSelectedApplication] = React.useState<LeaveApplication | null>(null);
     const [showAlertDialog,setShowAlertDialog] = React.useState(false)
+    const [isDeleting,setIsDeleting] = React.useState(false)
     const [applicationList, setApplicationList] = React.useState<LeaveApplication[]>([])
-    useEffect(() => {
+    const loadApplications = React.useCallback(async () => {
         let user = JSON.parse(localStorage.getItem('user') as string);
-        getApplicationByApplicant(user.username).then(
-            (data) => {
-                setApplicationList(data);
-            }
-        ).catch(
-            (error) => {
-                console.log((error as Error).message)
-            }
-        )
+        const data = await getApplicationByApplicant(user.username);
+        setApplicationList(data);
     },[setApplicationList])
+    useEffect(() => {
+        loadApplications().catch(
+          (error) => {
+              console.log((error as Error).message)
+          }
+        )
+    },[loadApplications])
     const showDeleteModal = (application:LeaveApplication)=>{
-        /*if(application.currentHandler!==application.applicant||application.status=="approved"){
-          alert("The current application status does not support deletion operations！")
-          return;
-        }*/
-        if(application.status==="approved"){
-          alert("The current application status does not support deletion operations！")
+        if(!resolveCanDelete(application)){
+          alert("This application can no longer be deleted.")
           return;
         }
         setValue(application.id ?? 0);
+        setSelectedApplication(application);
         setShowAlertDialog(true);
     }
-    const deleteCurrentApplication = ()=>{
-        alert("successfully deleted");
-        deleteApplication(value);
-        setShowAlertDialog(false);
+    const deleteCurrentApplication = async()=>{
+        if(!selectedApplication || !resolveCanDelete(selectedApplication)){
+            alert("This application can no longer be deleted.");
+            setShowAlertDialog(false);
+            await loadApplications().catch((error) => console.log((error as Error).message));
+            return;
+        }
+
+        setIsDeleting(true);
+        try{
+            await deleteApplication(value);
+            alert("successfully deleted");
+            setApplicationList((currentApplications)=>
+                currentApplications.filter((application)=>application.id !== value)
+            );
+            setShowAlertDialog(false);
+            setSelectedApplication(null);
+        }catch(error){
+            const status = (error as {response?: {status?: number}})?.response?.status;
+            if(status===409){
+                alert("This application can no longer be deleted.");
+                await loadApplications().catch((loadError) => console.log((loadError as Error).message));
+            }else{
+                alert("Failed to delete this application. Please try again.");
+            }
+        }finally{
+            setIsDeleting(false);
+        }
+    }
+    const uploadProofForApplication = async(application:LeaveApplication, proof:File | Blob):Promise<LeaveApplication>=>{
+        let user = JSON.parse(localStorage.getItem('user') as string);
+        const updatedApplication = await uploadSickProof(application.id ?? 0, proof, user.username);
+        setApplicationList((currentApplications)=>
+            currentApplications.map((currentApplication)=>
+                currentApplication.id === updatedApplication.id ? updatedApplication : currentApplication
+            )
+        );
+        alert("Proof uploaded successfully.");
+        return updatedApplication;
     }
     return (
-        <ScrollView>
+        <ScrollView contentContainerStyle={{ padding: 16 }}>
             <Card>
                 <Text>
                     Range
@@ -49,7 +84,7 @@ export default function MyApplications() {
                 </Input>
             </Card>
 
-            <HStack flexWrap="wrap">
+            <HStack flexWrap="wrap" space="lg" alignItems="stretch">
                 {
                     applicationList.map((application) => {
                         return (
@@ -57,6 +92,7 @@ export default function MyApplications() {
                                 key={application.id}
                                 application={application}
                                 deleteApplication={(application)=>showDeleteModal(application)}
+                                uploadSickProof={uploadProofForApplication}
                                 />
                         )
                     })
@@ -66,10 +102,11 @@ export default function MyApplications() {
             </HStack>
             <AlertDialog
         isOpen={showAlertDialog}
-        onClose={() => {
-          setShowAlertDialog(false)
-        }}
-      >
+                onClose={() => {
+                  setShowAlertDialog(false)
+                  setSelectedApplication(null)
+                }}
+              >
         <AlertDialogBackdrop />
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -91,7 +128,9 @@ export default function MyApplications() {
                 action="secondary"
                 onPress={() => {
                   setShowAlertDialog(false)
+                  setSelectedApplication(null)
                 }}
+                isDisabled={isDeleting}
               >
                 <ButtonText>Cancel</ButtonText>
               </Button>
@@ -99,8 +138,9 @@ export default function MyApplications() {
                 bg="$error600"
                 action="negative"
                 onPress={deleteCurrentApplication}
+                isDisabled={isDeleting}
               >
-                <ButtonText>Delete</ButtonText>
+                <ButtonText>{isDeleting?"Deleting...":"Delete"}</ButtonText>
               </Button>
             </ButtonGroup>
           </AlertDialogFooter>

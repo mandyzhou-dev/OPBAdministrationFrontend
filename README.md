@@ -28,15 +28,19 @@ Reusable Fullstack Architect notes for Application History planning, UI scope co
 
 The same notes now include the Select Shift Form candidate availability workflow: confirm UI intent first, produce the plan before implementation, define the front/back DTO contract first, and never apply DB schema/data changes directly. If a schema change is needed, agents must give the user complete SQL to execute.
 
+The same notes also include the sick leave proof upload planning lessons: future cross-stack plans must separate `Backend Plan`, `Frontend Plan`, `API Contract`, `DB Change Required`, cross-module email/file-upload behavior, and separate Backend_Dev / Frontend_Dev task lists. UI details belong in the frontend/UI section, and database SQL must be complete and user-executed when schema or data changes are required.
+
 Related plan:
 
 - [plans/select-shift-form-preference-availability-plan-2026-05-21.md](plans/select-shift-form-preference-availability-plan-2026-05-21.md)
+- [plans/sick-leave-proof-upload-cross-stack-plan-2026-06-01.md](plans/sick-leave-proof-upload-cross-stack-plan-2026-06-01.md)
 
 ## Frontend Knowledge Notes
 
 - Select shift form candidate-status UI guidance is captured in [docs/feature_spec/select-shift-form-frontend-knowledge.md](docs/feature_spec/select-shift-form-frontend-knowledge.md). It covers requirement confirmation, candidate DTO semantics, row status priority, disabled selection/submit guards, label and legend design, mobile layout, and focused tests.
 - Leave application DatePicker guidance is captured in [docs/feature_spec/leave-application-datepicker-frontend-knowledge.md](docs/feature_spec/leave-application-datepicker-frontend-knowledge.md), with the matching repo-local skill at `.codex/skills/opboa-leave-datepicker-workflow/SKILL.md`. It covers the Ant Design `DatePicker` / `RangePicker` + dayjs pattern, Vancouver business-date rules, sick leave availability disabling, final helper-text style, fixed test-date fixtures, and focused tests.
 - Cross-stack DatePicker architecture guidance is captured in [docs/feature_spec/leave-application-datepicker-cross-stack-architecture.md](docs/feature_spec/leave-application-datepicker-cross-stack-architecture.md), with the matching repo-local skill at `.codex/skills/opb-leave-datepicker-cross-stack-architecture/SKILL.md`. It covers MAN-19 requirement evolution, normal/sick leave rules, Vancouver business-date contract, availability API, non-adopted TimePicker/start-end split direction, and final acceptance points.
+- Employee application card guidance is captured in [docs/feature_spec/employee-application-card-frontend-knowledge.md](docs/feature_spec/employee-application-card-frontend-knowledge.md). It covers MAN-25 delete visibility rules, the `Details + i` details-entry pattern, summary-card vs details-modal content split, backend delete validation as the required fallback, focused verification, and known unrelated blockers.
 
 ### Leave Application DatePicker
 
@@ -78,3 +82,37 @@ TMPDIR=/Users/marktwain/Projects/OPBOA/.jest-tmp npx jest --runInBand --watchAll
 ```
 
 Known typecheck caveat as of 2026-05-26: `npx tsc --noEmit` fails on unrelated pre-existing errors in `app/applications/Regulations.tsx`, `app/setPassword.tsx`, `components/applications/ReviewModal.tsx`, and `components/FreeStyle/RequiredFormControl.tsx`. The copy-modal files were not listed in those typecheck errors during the MAN-18 verification pass.
+
+### Sick Leave Proof Upload
+
+Reusable frontend guidance for sick leave proof upload:
+
+- Keep proof submission visible inside the employee application card. The proof strip belongs below the application status pill and above the comment summary, not in the details modal or card footer.
+- Use two clear proof states on sick leave cards:
+  - Required: show a compact amber proof strip with `Proof required` and the current required prompt.
+  - Submitted: show a compact green proof strip with `Proof submitted`, the uploaded filename when available, and a reupload action.
+- Do not hide the upload entry after submission. The same card must continue offering `Upload again` so employees can replace proof without admin intervention.
+- Keep the card copy compact. The helper text should stay short, for example `PDF or image files up to 10 MB.`; detailed accepted MIME/extension handling belongs in the file input and validation code.
+- Use a browser file input for the current React Native Web implementation. The hidden input should use web-safe `data-testid` selectors, not React Native `testID`, because Gluestack / React Web may pass unknown props to DOM and trigger console warnings.
+- Build the request with `FormData`: append the selected file as `proof` and the current logged-in username as `applicant`, then post to `api/process/application/{id}/sick-proof`.
+- Validate before upload when possible: allow PDF and common image formats, reject unsupported files inline, and keep the frontend 10 MB limit aligned with the backend.
+- After a successful upload, use the backend response as the source of truth. Replace the matching card with the returned updated `LeaveApplication` instead of guessing local proof state.
+- Keep `LeaveApplication` model fields aligned with the backend contract: `sickProofRequired`, `sickProofSubmitted`, `sickProofUploadedAt`, and `sickProofOriginalFilename`.
+- For mobile or narrow cards, let the proof strip wrap naturally: the text group and upload button may stack, the button should remain touch-friendly, and long filenames should stay single-line with middle ellipsis where supported.
+- Keep success feedback lightweight. A short success alert/toast is fine, but the card itself must immediately switch to the submitted state.
+
+Related implementation files:
+
+- `components/applications/ApplicationCardforE.tsx`
+- `app/applications/MyApplications.tsx`
+- `request/LeaveApplicationRequest.ts`
+- `service/ApplicationService.ts`
+- `model/LeaveApplication.ts`
+
+Effective verification command for this flow:
+
+```bash
+TMPDIR=/Users/marktwain/Projects/OPBOA/.jest-tmp npx jest components/__tests__/ApplicationCardforESickProof-test.js components/__tests__/ApplicationCardforEDeleteVisibility-test.js components/__tests__/MyApplicationsSickProofFlow-test.js components/__tests__/MyApplicationsDeleteFlow-test.js components/__tests__/LeaveApplicationSickProofRequest-test.js --runInBand --watchAll=false
+```
+
+Known typecheck caveat as of 2026-06-03: `npx tsc --noEmit` still fails on unrelated pre-existing errors in `app/applications/Regulations.tsx`, `app/setPassword.tsx`, `components/applications/ReviewModal.tsx`, and `components/FreeStyle/RequiredFormControl.tsx`. Use focused Jest verification for this frontend flow until those repo-wide type issues are cleaned up.

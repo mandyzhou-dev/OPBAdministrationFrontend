@@ -116,7 +116,27 @@ export class LeaveApplicationRequest{
             const response:AxiosResponse = await axios.delete(process.env.EXPO_PUBLIC_API_URL+'api/process/application/'+id,)
             return response.data;
         }catch(e){
-            throw new Error("Delete Failure"+(e as Error).message)
+            throw e
+        }
+    }
+
+    uploadSickProof = async(id:number, proof:File | Blob, applicant:string):Promise<LeaveApplication>=>{
+        try{
+            const formData = new FormData();
+            formData.append("proof", proof);
+            formData.append("applicant", applicant);
+            const response:AxiosResponse = await axios.post(
+                process.env.EXPO_PUBLIC_API_URL+'api/process/application/'+id+'/sick-proof',
+                formData,
+                {
+                    headers:{
+                        "Content-Type":"multipart/form-data"
+                    }
+                }
+            );
+            return response.data;
+        }catch(e){
+            throw e
         }
     }
 

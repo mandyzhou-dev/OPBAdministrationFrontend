@@ -36,3 +36,7 @@ export const deleteApplication = async(id:number):Promise<Object>=>{
     const leaveApplicationRequest = new LeaveApplicationRequest();
     return leaveApplicationRequest.deleteApplication(id);
 }
+export const uploadSickProof = async(id:number, proof:File | Blob, applicant:string):Promise<LeaveApplication>=>{
+    const leaveApplicationRequest = new LeaveApplicationRequest();
+    return leaveApplicationRequest.uploadSickProof(id,proof,applicant);
+}
