@@ -1,29 +1,38 @@
-import { Heading, BadgeText, Text, Card, Input, InputField, ScrollView, HStack, Icon, CircleIcon, BadgeIcon, InfoIcon, VStack, Button, Tooltip, TooltipContent, TooltipText, Textarea, TextareaInput } from "@gluestack-ui/themed"
+import { Heading, BadgeText, Text, Card, HStack, CircleIcon, BadgeIcon, InfoIcon, VStack, Button, Tooltip, TooltipContent, TooltipText, Textarea, TextareaInput } from "@gluestack-ui/themed"
 import React from "react";
-import { useEffect } from "react";
+import moment from "moment";
+import { LeaveApplication } from "@/model/LeaveApplication";
+import { ProofStatusBadge } from "@/components/applications/ProofStatus";
+import { getProofStatusDisplay } from "@/components/applications/adminProofStatus";
 interface ReviewOfApplicationCardProps {
-    name: string|undefined,
-    leaveType: string|undefined,
-    start: string,
-    end: string,
-    reason: string|undefined,
+    application: LeaveApplication,
     onClick:Function
 }
-export const ReviewOfApplicationCard: React.FC<ReviewOfApplicationCardProps> = ({ name, leaveType, start, end, reason,onClick }) => {
+export const ReviewOfApplicationCard: React.FC<ReviewOfApplicationCardProps> = ({ application,onClick }) => {
+    const proofStatus = getProofStatusDisplay(application);
+    const showProofStatus = proofStatus.shouldShowOnCard;
+    const hasMissingProof = proofStatus.kind === "missing";
     const review=()=>{
         onClick();
     }
     return (
-        <Card margin={10} width={360}>
+        <Card
+            data-testid="review-application-card"
+            margin={10}
+            width={360}
+            borderLeftWidth={hasMissingProof ? 3 : 0}
+            borderLeftColor={hasMissingProof ? "#F59E0B" : undefined}
+        >
             <Heading margin={3}>
-                {name}
+                {application.applicant}
             </Heading>
             <HStack margin={3}>
                 <VStack w={"10%"}>
-                    <BadgeIcon as={CircleIcon} color={(leaveType == "SICK") ? "green" : "$red500"} />
+                    <BadgeIcon as={CircleIcon} color={(application.leaveType == "SICK") ? "green" : "$red500"} />
                 </VStack>
-                <VStack w={"85%"}>
-                    <BadgeText >{leaveType}</BadgeText>
+                <VStack w={"85%"} space="xs">
+                    <BadgeText >{application.leaveType}</BadgeText>
+                    {showProofStatus ? <ProofStatusBadge proofStatus={proofStatus} variant="review" /> : null}
                 </VStack>
                 <VStack w={"5%"}>
                     <Tooltip
@@ -45,7 +54,7 @@ export const ReviewOfApplicationCard: React.FC<ReviewOfApplicationCardProps> = (
             <HStack margin={3}>
                 <VStack w={"85%"}>
                     <Text>
-                        {start}
+                        {moment(application.start).format("YYYY-MM-DD HH:mm")}
                     </Text>
                 </VStack >
                 <VStack w={"25%"}>
@@ -57,7 +66,7 @@ export const ReviewOfApplicationCard: React.FC<ReviewOfApplicationCardProps> = (
             <HStack margin={3}>
                 <VStack w={"85%"}>
                     <Text>
-                        {end}
+                        {moment(application.end).format("YYYY-MM-DD HH:mm")}
                     </Text>
                 </VStack >
                 <VStack w={"25%"}>
@@ -75,7 +84,7 @@ export const ReviewOfApplicationCard: React.FC<ReviewOfApplicationCardProps> = (
                     isReadOnly
                     w="$64"
                 >
-                    <TextareaInput value={reason} />
+                    <TextareaInput value={application.reason} />
                 </Textarea>
             </VStack>
 

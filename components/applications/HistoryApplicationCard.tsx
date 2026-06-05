@@ -4,6 +4,8 @@ import { MaterialIcons } from '@expo/vector-icons';
 import moment from "moment";
 import { LeaveApplication } from "@/model/LeaveApplication";
 import { addNote } from "@/service/ApplicationService";
+import { ProofStatusBadge, ProofStatusSummary } from "@/components/applications/ProofStatus";
+import { getProofStatusDisplay } from "@/components/applications/adminProofStatus";
 interface HistoryApplicationCardProps {
     application:LeaveApplication
 }
@@ -18,6 +20,8 @@ export const HistoryApplicationCard: React.FC<HistoryApplicationCardProps> = ({ 
     const [readValue, setReadValue] = React.useState(true);
     const [showOP, setShowOP] = React.useState(false);
     const [showDetails, setShowDetails] = React.useState(false);
+    const proofStatus = getProofStatusDisplay(application);
+    const showProofStatus = proofStatus.shouldShowOnCard;
 
     const openDetails = () => setShowDetails(true);
 
@@ -86,6 +90,12 @@ export const HistoryApplicationCard: React.FC<HistoryApplicationCardProps> = ({ 
 
                 <VStack w={"85%"}>
                     <BadgeText >{application.leaveType}</BadgeText>
+                    {showProofStatus ? <ProofStatusBadge proofStatus={proofStatus} variant="history" /> : null}
+                    {proofStatus.kind === "submitted" && (proofStatus.uploadedAtText || proofStatus.filenameText) ?
+                        <Text fontSize={12} color="$textLight600" numberOfLines={1} ellipsizeMode="middle" style={{ lineHeight: 18 }}>
+                            {[proofStatus.uploadedAtText ? `Uploaded ${moment(application.sickProofUploadedAt).format("MMM D")}` : undefined, proofStatus.filenameText].filter(Boolean).join(" · ")}
+                        </Text>
+                        : null}
                 </VStack>
 
                 <VStack w={"5%"}>
@@ -210,6 +220,7 @@ export const HistoryApplicationCard: React.FC<HistoryApplicationCardProps> = ({ 
                 </ModalHeader>
                 <ModalBody>
                     <ScrollView maxHeight={420}>
+                        <ProofStatusSummary application={application} />
                         {renderDetailSection("Comment", application.reason)}
                         {application.rejectReason ? renderDetailSection("Reject Reason", application.rejectReason) : null}
                         {renderDetailSection("Note", noteValue)}

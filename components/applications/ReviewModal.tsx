@@ -2,6 +2,7 @@ import { LeaveApplication } from "@/model/LeaveApplication";
 import { Textarea,Button, ButtonText, CloseIcon, FormControl, FormControlLabel, FormControlLabelText, Heading, Icon, Modal, ModalBackdrop, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, TextareaInput, View } from "@gluestack-ui/themed";
 import {permitReview,rejectReview} from "@/service/ApplicationService";
 import React from "react";
+import { ProofStatusSummary } from "@/components/applications/ProofStatus";
 interface ReviewModalProps{
     currentApplication:LeaveApplication;
     showModal:boolean;
@@ -12,10 +13,16 @@ export const ReviewModal:React.FC<ReviewModalProps>=({currentApplication,showMod
     const [rejectReason,setRejectReason] = React.useState("");
     const [commentIsRequired,setCommentIsRequired] = React.useState(false);
     const permit=()=>{
+        if(currentApplication.id === undefined){
+            return;
+        }
         permitReview(currentApplication.id);
         onClose();
     }
     const reject=()=>{
+        if(currentApplication.id === undefined){
+            return;
+        }
         if(rejectReason==''){
             setCommentIsRequired(true);
             return;
@@ -39,6 +46,7 @@ export const ReviewModal:React.FC<ReviewModalProps>=({currentApplication,showMod
                         </ModalCloseButton>
                     </ModalHeader>
                     <ModalBody>
+                        <ProofStatusSummary application={currentApplication} />
                         <FormControl isRequired={commentIsRequired} isInvalid={commentIsRequired}>
                             <FormControlLabel>
                                 <FormControlLabelText>Comment</FormControlLabelText>

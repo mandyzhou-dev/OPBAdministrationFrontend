@@ -4,7 +4,6 @@ import { ReviewOfApplicationCard } from "@/components/applications/ReviewOfAppli
 import { LeaveApplication } from "@/model/LeaveApplication";
 import { DeviceEventEmitter } from "react-native";
 import { getReviewApplicationByHandler } from "@/service/ApplicationService";
-import moment from "moment";
 import { ReviewModal } from "@/components/applications/ReviewModal";
 export default function ReviewApplications() {
 
@@ -49,11 +48,8 @@ export default function ReviewApplications() {
                     applicationList.map((application) => {
                         return (
                             <div key={application.id}>
-                                <ReviewOfApplicationCard key={application.id} name={application.applicant}
-                                    leaveType={application.leaveType}
-                                    start={moment(application.start).format("YYYY-MM-DD HH:mm")}
-                                    end={moment(application.end).format("YYYY-MM-DD HH:mm")}
-                                    reason={application.reason} 
+                                <ReviewOfApplicationCard key={application.id}
+                                    application={application}
                                     onClick={()=>callModals(application)}/>
                                 
                             </div>
