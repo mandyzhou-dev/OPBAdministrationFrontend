@@ -31,14 +31,6 @@ export default function TabOneScreen() {
 
       }
     )
-    /*alert(user.active)
-    alert(user.email)
-    if(user.active!==1){
-      alert(user.active)
-      localStorage.removeItem("user")
-      return;
-    }*/
-      
     getUnreadListByReader(user.username).then(
     (data) => {
       setUnreadList(data);

@@ -1,16 +1,9 @@
 import { StyleSheet } from 'react-native';
 import TextField from '@mui/material/TextField';
-import { ButtonText, Card, Center, Text, View, Button, Pressable, HStack, VStack } from '@gluestack-ui/themed';
-import { User } from '@/model/User';
-import { ScrollView } from 'react-native';
+import { ButtonText, Card, Center, Text, Button, Pressable, VStack } from '@gluestack-ui/themed';
 import { router } from 'expo-router';
-import moment from 'moment';
-import { useEffect } from 'react';
 
 export const Profile: React.FC = () => {
-    //password ，birthdate,roles,sin and documents
-    //They donot need to see their birthdate roles, sin , legalname and documents
-    //They donnot need to assign their roles .
     const user = JSON.parse(localStorage.getItem("user") as string);
     return (
         <VStack>
@@ -35,38 +28,6 @@ export const Profile: React.FC = () => {
                 >
                     <Text>Set Password</Text>
                 </Pressable>
-            </Card>
-            <Card margin={3}>
-                <TextField
-                    required
-                    id="outlined-required"
-                    label="Email"
-                    defaultValue={user?.email}
-                />
-            </Card>
-            <Card margin={3}>
-                <TextField
-                    required
-                    id="outlined-required"
-                    label="Birthdate"
-                    defaultValue={moment(user?.birthdate).format("YYYY/MM/DD")}
-                />
-            </Card>
-            <Card margin={3}>
-                <TextField
-                    required
-                    id="outlined-required"
-                    label="PhoneNumber"
-                    defaultValue={user?.phoneNumber}
-                />
-            </Card>
-            <Card margin={3}>
-                <TextField
-                    required
-                    id="outlined-required"
-                    label="Address"
-                    defaultValue={user?.address}
-                />
             </Card>
             <Button
                 ml="auto"

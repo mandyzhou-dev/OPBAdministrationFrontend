@@ -1,4 +1,5 @@
 import { RegisterInfo } from "@/model/RegisterInfo";
+import { LoginResponse } from "@/model/LoginResponse";
 import { User } from "@/model/User";
 import axios, { AxiosResponse } from "axios";
 
@@ -54,7 +55,7 @@ export class UserRequest{
             throw new Error("Request Failure"+(e as Error).message)
         }
     }
-    login = async(username:string, password:string):Promise<User> =>{
+    login = async(username:string, password:string):Promise<LoginResponse> =>{
         try{
             const response:AxiosResponse = await axios.post(process.env.EXPO_PUBLIC_API_URL+'api/user/login',{
                     username: username,

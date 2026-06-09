@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
 import dayjs from 'dayjs';
 import { DeviceEventEmitter } from 'react-native';
+import { LoginResponse } from '@/model/LoginResponse';
 
 export const useAuth = (mockDate?: string) => {
-    const [user, setUser] = useState(() => {
+    const [user, setUser] = useState<LoginResponse | null>(() => {
         try {
             const data = localStorage.getItem('user');
             return data ? JSON.parse(data) : null;
