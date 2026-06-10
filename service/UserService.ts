@@ -1,4 +1,5 @@
 import { RegisterInfo } from "@/model/RegisterInfo";
+import { LoginResponse, sanitizeLoginResponse } from "@/model/LoginResponse";
 import { User } from "@/model/User";
 import{ UserRequest} from "@/request/UserRequest"
 export const getUserByRole = async (role:string):Promise<User[]>=>{
@@ -11,12 +12,13 @@ export const getUserByGroup = async(group:string):Promise<User[]>=>{
     return userRequest.getUserByGroup(group);
 }
 
-export const login = async(username:string, password:string):Promise<Object>=>{
+export const login = async(username:string, password:string):Promise<LoginResponse>=>{
     const userRequest = new UserRequest()
-    let data = await userRequest.login(username,password)
+    const data = await userRequest.login(username,password)
+    const session = sanitizeLoginResponse(data)
     
-    localStorage.setItem("user", JSON.stringify(data));
-    return data;
+    localStorage.setItem("user", JSON.stringify(session));
+    return session;
 }
 
 export const resetPassword = async(username:string, password:string):Promise<Object>=>{

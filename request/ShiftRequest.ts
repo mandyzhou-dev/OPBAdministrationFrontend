@@ -50,7 +50,8 @@ export class ShiftRequest {
                 }
             }
             const cookies = new Cookies();
-            cookies.set('JSESSIONID', JSON.parse(localStorage.getItem("user") as string).jsessionID)
+            const storedUser = JSON.parse(localStorage.getItem("user") as string);
+            cookies.set('JSESSIONID', storedUser?.jsessionID ?? storedUser?.JSessionID)
             //console.log(cookies.get('JSESSIONID'))
             const response: AxiosResponse = await axios.put(process.env.EXPO_PUBLIC_API_URL + 'api/shift/shiftarrangement/batchCreateByDate', {
                 workDate: workDate,
@@ -210,4 +211,3 @@ export class ShiftRequest {
         }
     }
 }
-
