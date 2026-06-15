@@ -161,9 +161,9 @@ export const HistoryApplicationCard: React.FC<HistoryApplicationCardProps> = ({ 
                     </Heading>
                     {renderSummaryText(application.reason)}
                 </VStack>
-                {application.rejectReason ? <VStack><Heading size="sm" color="$textLight700">
-                    Reject Reason
-                </Heading>{renderSummaryText(application.rejectReason)}</VStack> : null}
+                {application.reviewComment ? <VStack><Heading size="sm" color="$textLight700">
+                    Review Comment
+                </Heading>{renderSummaryText(application.reviewComment)}</VStack> : null}
                 <VStack>
                     <HStack alignItems="center">
                         <Heading size="sm" color="$textLight700">
@@ -222,7 +222,7 @@ export const HistoryApplicationCard: React.FC<HistoryApplicationCardProps> = ({ 
                     <ScrollView maxHeight={420}>
                         <ProofStatusSummary application={application} />
                         {renderDetailSection("Comment", application.reason)}
-                        {application.rejectReason ? renderDetailSection("Reject Reason", application.rejectReason) : null}
+                        {application.reviewComment ? renderDetailSection("Review Comment", application.reviewComment) : null}
                         {renderDetailSection("Note", noteValue)}
                     </ScrollView>
                 </ModalBody>

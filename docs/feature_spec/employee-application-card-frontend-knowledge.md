@@ -26,8 +26,8 @@ This note records the employee application card interaction decisions from the M
 
 - Keep employee application cards as scannable summaries.
 - Show high-priority fields on the card: leave type, dates, status badge, and a short comment preview.
-- Limit card comment/reject reason text to a short preview. Do not let long text expand the card.
-- Put complete `comment` and `rejectReason` content in the details modal.
+- Limit card comment/review comment text to a short preview. Do not let long text expand the card.
+- Put complete `comment` and `reviewComment` content in the details modal.
 - Use the card footer for the delete action or the unavailable-delete explanation. Do not place delete status copy in the middle of the content area.
 
 ## Details Entry Pattern
@@ -35,14 +35,14 @@ This note records the employee application card interaction decisions from the M
 - Do not hide important details behind an isolated small `i` icon on the employee view.
 - Employee-facing cards should use a lightweight `Details + i` entry so the affordance is clear without making the card bulky.
 - Keep the details entry near the card header and preserve the modal pattern used by management history cards.
-- When hidden details exist, such as long comments or a reject reason, the details entry may use a slightly stronger visual treatment.
+- When hidden details exist, such as long comments or a review comment, the details entry may use a slightly stronger visual treatment.
 - Tooltip-only detail access is not enough, especially on mobile.
 
 ## Details Modal
 
 - Title: `Application Details`.
 - Include full `Comment`.
-- Include `Reject Reason` when present.
+- Include `Review Comment` when present.
 - Include a quiet unavailable-delete explanation for locked statuses when useful.
 - Let modal body content scroll instead of expanding the card.
 

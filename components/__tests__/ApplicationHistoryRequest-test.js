@@ -56,7 +56,7 @@ describe("application history request contracts", () => {
     expect(result.content).toEqual([{ id: 1, applicant: "worker1" }]);
   });
 
-  it("omits blank employeeUsername when requesting all visible employees", async () => {
+  it("preserves employeeUsername exactly when requesting application history", async () => {
     axios.get.mockResolvedValueOnce({
       data: {
         content: [],
@@ -72,7 +72,7 @@ describe("application history request contracts", () => {
     const request = new LeaveApplicationRequest();
     await request.getApplicationHistory({
       operatorUsername: "manager1",
-      employeeUsername: "   ",
+      employeeUsername: "Harsimranjit Kaur ",
       page: 0,
       size: 20,
       sort: "submitTime,desc",
@@ -83,11 +83,41 @@ describe("application history request contracts", () => {
       {
         params: {
           operatorUsername: "manager1",
+          employeeUsername: "Harsimranjit Kaur ",
           page: 0,
           size: 20,
           sort: "submitTime,desc",
         },
       }
+    );
+  });
+
+  it("sends review comments as JSON for approve and decline decisions", async () => {
+    axios.post.mockResolvedValue({ data: {} });
+
+    const { LeaveApplicationRequest } = require("@/request/LeaveApplicationRequest");
+    const request = new LeaveApplicationRequest();
+    await request.permitReview(12, "  conditional approval  ");
+    await request.permitReview(13, "   ");
+    await request.rejectReview(14, "Needs more detail");
+
+    expect(axios.post).toHaveBeenNthCalledWith(
+      1,
+      expect.stringContaining("api/process/application/12/permit"),
+      { reviewComment: "conditional approval" },
+      { headers: { "Content-Type": "application/json" } }
+    );
+    expect(axios.post).toHaveBeenNthCalledWith(
+      2,
+      expect.stringContaining("api/process/application/13/permit"),
+      {},
+      { headers: { "Content-Type": "application/json" } }
+    );
+    expect(axios.post).toHaveBeenNthCalledWith(
+      3,
+      expect.stringContaining("api/process/application/14/reject"),
+      { reviewComment: "Needs more detail" },
+      { headers: { "Content-Type": "application/json" } }
     );
   });
 

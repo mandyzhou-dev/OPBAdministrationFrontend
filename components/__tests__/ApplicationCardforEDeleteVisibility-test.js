@@ -151,7 +151,7 @@ describe("ApplicationCardforE delete visibility", () => {
       component = renderCard({
         status: "rejected",
         reason: "Full employee comment",
-        rejectReason: "Manager reject reason",
+        reviewComment: "Manager review comment",
       });
     });
 
@@ -174,14 +174,15 @@ describe("ApplicationCardforE delete visibility", () => {
 
     expect(root.findByType("Modal").props.isOpen).toBe(true);
     expect(collectText(component.toJSON())).toContain("Application Details");
-    expect(collectText(component.toJSON())).toContain("Manager reject reason");
+    expect(collectText(component.toJSON())).toContain("Review Comment");
+    expect(collectText(component.toJSON())).toContain("Manager review comment");
   });
 
   it("makes the Details trigger stronger when hidden detail content exists", () => {
     const component = renderCard({
       status: "approved",
       reason: "Short comment",
-      rejectReason: "Manager explanation hidden in details",
+      reviewComment: "Manager explanation hidden in details",
     });
     const detailLabel = component.root
       .findAllByType("Text")

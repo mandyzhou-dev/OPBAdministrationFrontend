@@ -70,7 +70,7 @@ const baseApplication = {
   leaveType: "SICK",
   status: "approved",
   reason: longText,
-  rejectReason: longText,
+  reviewComment: longText,
   note: longText,
 };
 
@@ -133,5 +133,6 @@ describe("HistoryApplicationCard summaries", () => {
     });
 
     expect(root.findByType("Modal").props.isOpen).toBe(true);
+    expect(findAllByType(testRenderer.toJSON(), "Heading").some((heading) => heading.children?.includes("Review Comment"))).toBe(true);
   });
 });

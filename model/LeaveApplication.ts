@@ -12,7 +12,7 @@ export class LeaveApplication{
     sickProofSubmitted:boolean|undefined;
     sickProofUploadedAt:Date|undefined;
     sickProofOriginalFilename:string|undefined;
-    rejectReason:string|undefined;
+    reviewComment:string|undefined;
     reason: string|undefined;  
     note:string|undefined;
     constructor () {

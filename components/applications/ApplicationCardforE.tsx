@@ -73,7 +73,7 @@ export const ApplicationCardforE: React.FC<ApplicationCardforEProps> = ({applica
     const statusLabel = normalizeStatus(application.status);
     const showSickProof = requiresSickProof(application);
     const proofSubmitted = application.sickProofSubmitted === true;
-    const hasHiddenDetailContent = Boolean(application.rejectReason?.trim()) || (application.reason?.trim()?.length || 0) > 90;
+    const hasHiddenDetailContent = Boolean(application.reviewComment?.trim()) || (application.reason?.trim()?.length || 0) > 90;
     const detailTriggerTextColor = hasHiddenDetailContent ? "$textLight800" : "$textLight700";
     const detailTriggerTextWeight = hasHiddenDetailContent ? "$semibold" : "$medium";
 
@@ -354,12 +354,12 @@ export const ApplicationCardforE: React.FC<ApplicationCardforEProps> = ({applica
                         {renderSummaryText(application.reason)}
                     </VStack>
 
-                    {application.rejectReason?
+                    {application.reviewComment?
                         <VStack marginTop={10}>
                             <Heading size="sm" color="$textDark900">
-                                Reject Reason
+                                Review Comment
                             </Heading>
-                            {renderSummaryText(application.rejectReason)}
+                            {renderSummaryText(application.reviewComment)}
                         </VStack>
                         :null}
 
@@ -422,7 +422,7 @@ export const ApplicationCardforE: React.FC<ApplicationCardforEProps> = ({applica
                     <ModalBody>
                         <ScrollView maxHeight={420}>
                             {renderDetailSection("Comment", application.reason)}
-                            {application.rejectReason ? renderDetailSection("Reject Reason", application.rejectReason) : null}
+                            {application.reviewComment ? renderDetailSection("Review Comment", application.reviewComment) : null}
                             {!canDelete ?
                                 <Text size="sm" color="$textLight500" flexWrap="wrap">
                                     {getDeleteUnavailableMessage(application.status)}

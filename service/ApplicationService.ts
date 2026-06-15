@@ -12,13 +12,13 @@ export const getApplicationByApplicant = async(applicant:string):Promise<LeaveAp
     const applicationArray = await leaveApplicationRequest.getApplication("",applicant)
     return applicationArray;
 }
-export const permitReview=async(id:number):Promise<Object>=>{
+export const permitReview=async(id:number,reviewComment?:string):Promise<Object>=>{
     const leaveApplicationRequest = new LeaveApplicationRequest()
-    return leaveApplicationRequest.permitReview(id);
+    return leaveApplicationRequest.permitReview(id,reviewComment);
 }
-export const rejectReview = async(id:number,rejectReason:string):Promise<Object>=>{
+export const rejectReview = async(id:number,reviewComment:string):Promise<Object>=>{
     const leaveApplicationRequest = new LeaveApplicationRequest()
-    return leaveApplicationRequest.rejectReview(id,rejectReason);
+    return leaveApplicationRequest.rejectReview(id,reviewComment);
 }
 export const getAllApplication = async():Promise<LeaveApplication[]>=>{
     const leaveApplicationRequest = new LeaveApplicationRequest()

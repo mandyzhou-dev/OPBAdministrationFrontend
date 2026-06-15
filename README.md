@@ -41,6 +41,24 @@ Related plan:
 - Leave application DatePicker guidance is captured in [docs/feature_spec/leave-application-datepicker-frontend-knowledge.md](docs/feature_spec/leave-application-datepicker-frontend-knowledge.md), with the matching repo-local skill at `.codex/skills/opboa-leave-datepicker-workflow/SKILL.md`. It covers the Ant Design `DatePicker` / `RangePicker` + dayjs pattern, Vancouver business-date rules, sick leave availability disabling, final helper-text style, fixed test-date fixtures, and focused tests.
 - Cross-stack DatePicker architecture guidance is captured in [docs/feature_spec/leave-application-datepicker-cross-stack-architecture.md](docs/feature_spec/leave-application-datepicker-cross-stack-architecture.md), with the matching repo-local skill at `.codex/skills/opb-leave-datepicker-cross-stack-architecture/SKILL.md`. It covers MAN-19 requirement evolution, normal/sick leave rules, Vancouver business-date contract, availability API, non-adopted TimePicker/start-end split direction, and final acceptance points.
 - Employee application card guidance is captured in [docs/feature_spec/employee-application-card-frontend-knowledge.md](docs/feature_spec/employee-application-card-frontend-knowledge.md). It covers MAN-25 delete visibility rules, the `Details + i` details-entry pattern, summary-card vs details-modal content split, backend delete validation as the required fallback, focused verification, and known unrelated blockers.
+- Review comment migration guidance is captured in [docs/feature_spec/review-comment-frontend-knowledge.md](docs/feature_spec/review-comment-frontend-knowledge.md). It covers the `rejectReason -> reviewComment` frontend contract, approve/decline JSON payloads, ReviewModal submit/error behavior, My Applications and History display rules, identity-parameter no-trim constraints, and focused verification.
+
+### Review Comment Migration
+
+Leave application decisions use neutral `reviewComment` semantics. The frontend no longer reads or writes `rejectReason`.
+
+- Model/API: `LeaveApplication` uses `reviewComment?: string`. `permitReview(id, reviewComment?)` and `rejectReview(id, reviewComment)` send JSON request bodies to the backend.
+- Approve: review comment is optional. Trim only the comment for blank detection; whitespace-only comments are omitted from the JSON body.
+- Decline: review comment is required. Trim only the comment for blank validation before sending `{ reviewComment }`.
+- ReviewModal: await the approve/decline request before closing or refreshing. Disable decision buttons while submitting. On failure, keep the modal open, preserve the typed comment, and show a concise error.
+- Display: My Applications and History show `Review Comment` for approved and rejected applications. Details entry visibility must use `reviewComment` so approved records with comments have an obvious details path.
+- Identity values: do not trim or normalize `user.username`, `application.applicant`, sick-proof applicant values, `employeeUsername`, or other identity/query parameters. Preserve trailing-space usernames such as `Harsimranjit Kaur ` exactly.
+
+Effective focused verification command:
+
+```bash
+TMPDIR=/Users/marktwain/Projects/OPBOA/.jest-tmp npx jest components/__tests__/ApplicationCardforEDeleteVisibility-test.js components/__tests__/HistoryApplicationCardSummary-test.js components/__tests__/ApplicationHistoryRequest-test.js components/__tests__/ReviewModal-test.js --runInBand --watchAll=false
+```
 
 ### Leave Application DatePicker
 

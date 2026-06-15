@@ -1,5 +1,5 @@
 import { LeaveApplication } from "@/model/LeaveApplication";
-import { Textarea,Button, ButtonText, CloseIcon, FormControl, FormControlLabel, FormControlLabelText, Heading, Icon, Modal, ModalBackdrop, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, TextareaInput, View } from "@gluestack-ui/themed";
+import { Textarea,Button, ButtonText, CloseIcon, FormControl, FormControlLabel, FormControlLabelText, Heading, Icon, Modal, ModalBackdrop, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, Text, TextareaInput, View } from "@gluestack-ui/themed";
 import {permitReview,rejectReview} from "@/service/ApplicationService";
 import React from "react";
 import { ProofStatusSummary } from "@/components/applications/ProofStatus";
@@ -10,32 +10,69 @@ interface ReviewModalProps{
     onClose:Function;
 }
 export const ReviewModal:React.FC<ReviewModalProps>=({currentApplication,showModal,setShowModal,onClose})=>{
-    const [rejectReason,setRejectReason] = React.useState("");
+    const [reviewComment,setReviewComment] = React.useState("");
     const [commentIsRequired,setCommentIsRequired] = React.useState(false);
-    const permit=()=>{
-        if(currentApplication.id === undefined){
-            return;
-        }
-        permitReview(currentApplication.id);
-        onClose();
+    const [isSubmitting,setIsSubmitting] = React.useState(false);
+    const [submitError,setSubmitError] = React.useState<string | null>(null);
+
+    React.useEffect(()=>{
+        setReviewComment("");
+        setCommentIsRequired(false);
+        setSubmitError(null);
+        setIsSubmitting(false);
+    },[currentApplication.id,showModal]);
+
+    const closeModal=()=>{
+        setReviewComment("");
+        setCommentIsRequired(false);
+        setSubmitError(null);
+        setShowModal(false);
     }
-    const reject=()=>{
+
+    const permit=async()=>{
         if(currentApplication.id === undefined){
             return;
         }
-        if(rejectReason==''){
+        const trimmedComment = reviewComment.trim();
+        setCommentIsRequired(false);
+        setSubmitError(null);
+        setIsSubmitting(true);
+        try{
+            await permitReview(currentApplication.id,trimmedComment || undefined);
+            onClose();
+        }catch(e){
+            setSubmitError("Review failed. Please try again.");
+        }finally{
+            setIsSubmitting(false);
+        }
+    }
+    const reject=async()=>{
+        if(currentApplication.id === undefined){
+            return;
+        }
+        const trimmedComment = reviewComment.trim();
+        if(trimmedComment==''){
             setCommentIsRequired(true);
+            setSubmitError(null);
             return;
         }
         setCommentIsRequired(false);
-        rejectReview(currentApplication.id,rejectReason);
-        onClose();
+        setSubmitError(null);
+        setIsSubmitting(true);
+        try{
+            await rejectReview(currentApplication.id,trimmedComment);
+            onClose();
+        }catch(e){
+            setSubmitError("Review failed. Please try again.");
+        }finally{
+            setIsSubmitting(false);
+        }
     }
     return(
         <View>
             <Modal
                 isOpen={showModal}
-                onClose={()=>{setShowModal(false)}}
+                onClose={closeModal}
             >
                 <ModalBackdrop/>
                 <ModalContent>
@@ -52,22 +89,26 @@ export const ReviewModal:React.FC<ReviewModalProps>=({currentApplication,showMod
                                 <FormControlLabelText>Comment</FormControlLabelText>
                             </FormControlLabel>
                             <Textarea>
-                                <TextareaInput placeholder="Describe the reason for rejecting..." onChangeText={(value)=>{setRejectReason(value)}} />
+                                <TextareaInput value={reviewComment} placeholder="Add a review comment..." onChangeText={(value)=>{setReviewComment(value)}} />
                             </Textarea>
+                            {commentIsRequired ? <Text color="$error700" fontSize={13} marginTop={6}>Review comment is required for declined applications.</Text> : null}
+                            {submitError ? <Text color="$error700" fontSize={13} marginTop={6}>{submitError}</Text> : null}
                         </FormControl>
                     </ModalBody>
                     <ModalFooter>
 
                         <Button
                         margin={3}
-                        onPress={()=>{permit()}}>
-                            <ButtonText>Approve</ButtonText>
+                        isDisabled={isSubmitting}
+                        onPress={()=>permit()}>
+                            <ButtonText>{isSubmitting ? "Submitting..." : "Approve"}</ButtonText>
                         </Button>
                         <Button
                         margin={3}
                         action="negative"
-                        onPress={()=>{reject()}}>
-                            <ButtonText>Decline</ButtonText>
+                        isDisabled={isSubmitting}
+                        onPress={()=>reject()}>
+                            <ButtonText>{isSubmitting ? "Submitting..." : "Decline"}</ButtonText>
                         </Button>
                     </ModalFooter>
                 </ModalContent>

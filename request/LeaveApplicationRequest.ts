@@ -61,9 +61,8 @@ export class LeaveApplicationRequest{
                 size: query.size ?? 20,
                 sort: query.sort ?? "submitTime,desc",
             };
-            const employeeUsername = query.employeeUsername?.trim();
-            if(employeeUsername){
-                params.employeeUsername = employeeUsername;
+            if(query.employeeUsername){
+                params.employeeUsername = query.employeeUsername;
             }
             const response:AxiosResponse = await axios.get(process.env.EXPO_PUBLIC_API_URL+'api/process/application/history',{
                 params:params
@@ -73,9 +72,15 @@ export class LeaveApplicationRequest{
             throw new Error("Request Failure" +(e as Error).message)
         }
     }
-    permitReview = async(id:number):Promise<Object>=>{
+    permitReview = async(id:number,reviewComment?:string):Promise<Object>=>{
         try{
-            const response:AxiosResponse = await axios.post(process.env.EXPO_PUBLIC_API_URL+'api/process/application/'+id+'/permit',);
+            const payload = this.buildReviewDecisionPayload(reviewComment);
+            const response:AxiosResponse = await axios.post(process.env.EXPO_PUBLIC_API_URL+'api/process/application/'+id+'/permit',
+            payload,{
+                headers:{
+                    'Content-Type':'application/json'
+                }
+            });
             return response.data;
         }catch(e){
             console.log(id);
@@ -83,18 +88,23 @@ export class LeaveApplicationRequest{
         }
     }
 
-    rejectReview = async(id:number,rejectReason:string):Promise<Object>=>{
+    rejectReview = async(id:number,reviewComment:string):Promise<Object>=>{
         try{
             const response:AxiosResponse = await axios.post(process.env.EXPO_PUBLIC_API_URL+'api/process/application/'+id+'/reject',
-            rejectReason,{
+            this.buildReviewDecisionPayload(reviewComment),{
                 headers:{
-                    'Content-type':'text/plain'
+                    'Content-Type':'application/json'
                 }
             })
             return response.data
         }catch(e){
             throw new Error("Post Failure"+(e as Error).message)
         }
+    }
+
+    private buildReviewDecisionPayload = (reviewComment?:string):{reviewComment?: string}=>{
+        const trimmedComment = reviewComment?.trim();
+        return trimmedComment ? { reviewComment: trimmedComment } : {};
     }
 
     addNote = async(id:number, note:string):Promise<Object>=>{
