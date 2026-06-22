@@ -46,6 +46,7 @@ describe("ShiftCell status detail display", () => {
     ["paid_sick_leave", "Paid sick leave"],
     ["unpaid_sick_leave", "Unpaid sick leave"],
     ["no_show", "No show"],
+    ["personal_leave", "Personal leave"],
   ])("renders %s status detail inside the shift cell", (status, label) => {
     const worker = new User("worker-1", "Worker One", undefined, undefined, undefined, undefined, undefined, undefined, undefined, "surrey");
     const shift = new Shift();

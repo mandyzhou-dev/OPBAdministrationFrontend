@@ -5,12 +5,14 @@ export type ShiftStatus =
   | "cancelled"
   | "no_show"
   | "paid_sick_leave"
-  | "unpaid_sick_leave";
+  | "unpaid_sick_leave"
+  | "personal_leave";
 
 export type ManualShiftStatus =
   | "no_show"
   | "paid_sick_leave"
-  | "unpaid_sick_leave";
+  | "unpaid_sick_leave"
+  | "personal_leave";
 
 export const SHIFT_STATUS_LABELS: Record<ShiftStatus, string> = {
   active: "Active",
@@ -18,6 +20,7 @@ export const SHIFT_STATUS_LABELS: Record<ShiftStatus, string> = {
   no_show: "No show",
   paid_sick_leave: "Paid sick leave",
   unpaid_sick_leave: "Unpaid sick leave",
+  personal_leave: "Personal leave",
 };
 
 export const MANUAL_SHIFT_STATUS_OPTIONS: Array<{
@@ -27,6 +30,7 @@ export const MANUAL_SHIFT_STATUS_OPTIONS: Array<{
   { label: "Mark as no show", value: "no_show" },
   { label: "Mark as paid sick leave", value: "paid_sick_leave" },
   { label: "Mark as unpaid sick leave", value: "unpaid_sick_leave" },
+  { label: "Mark as personal leave", value: "personal_leave" },
 ];
 
 export const NON_WORKED_SHIFT_STATUSES: ShiftStatus[] = [
@@ -34,6 +38,7 @@ export const NON_WORKED_SHIFT_STATUSES: ShiftStatus[] = [
   "no_show",
   "paid_sick_leave",
   "unpaid_sick_leave",
+  "personal_leave",
 ];
 
 export const SHIFT_STATUS_COLORS: Record<ShiftStatus, string | undefined> = {
@@ -42,6 +47,7 @@ export const SHIFT_STATUS_COLORS: Record<ShiftStatus, string | undefined> = {
   no_show: "#9CA3AF",
   paid_sick_leave: "#DDD6FE",
   unpaid_sick_leave: "#9CA3AF",
+  personal_leave: "#9CA3AF",
 };
 
 export const SHIFT_STATUS_TEXT_COLORS: Record<ShiftStatus, string | undefined> = {
@@ -50,6 +56,7 @@ export const SHIFT_STATUS_TEXT_COLORS: Record<ShiftStatus, string | undefined> =
   no_show: "#111827",
   paid_sick_leave: "#312E81",
   unpaid_sick_leave: "#111827",
+  personal_leave: "#111827",
 };
 
 export const normalizeShiftStatus = (status?: string | null): ShiftStatus => {
@@ -57,7 +64,8 @@ export const normalizeShiftStatus = (status?: string | null): ShiftStatus => {
     status === "cancelled" ||
     status === "no_show" ||
     status === "paid_sick_leave" ||
-    status === "unpaid_sick_leave"
+    status === "unpaid_sick_leave" ||
+    status === "personal_leave"
   ) {
     return status;
   }
