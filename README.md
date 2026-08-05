@@ -4,23 +4,46 @@ Expo / React Native Web frontend for the OPB administration system.
 
 ## Schedule Shift Status Display
 
-Schedule shift cells use the existing `shift.status` value for non-active status display.
+Schedule shift cells use the existing `shift.status` value for non-active status display and Manager-only manual status actions.
 
+- Manual Schedule status targets currently include:
+  - `no_show`: `Mark as no show`
+  - `paid_sick_leave`: `Mark as paid sick leave`
+  - `unpaid_sick_leave`: `Mark as unpaid sick leave`
+  - `personal_leave`: `Mark as personal leave`
+- The manager dropdown is rendered in `ShiftDetailModal` only when `useAuth().isManager === true`.
+- Selecting a manual status opens the existing confirmation dialog and then reuses `PATCH /api/shift/shiftarrangement/{id}/status` after confirmation.
 - Non-`active` shift cells directly show the status detail text in the cell:
   - `paid_sick_leave`: `Paid sick leave`
   - `unpaid_sick_leave`: `Unpaid sick leave`
   - `no_show`: `No show`
+  - `personal_leave`: `Personal leave`
 - `paid_sick_leave` keeps the existing light purple cell color.
-- `unpaid_sick_leave` and `no_show` keep the existing grey cell color.
+- `unpaid_sick_leave`, `no_show`, and `personal_leave` use the grey cell treatment:
+  - Background: `#9CA3AF`
+  - Text: `#111827`
 - Employee views are read-only for these states, but employees can see both the cell color and status detail text.
-- Manager operation logic is unchanged, including the status dropdown, confirmation modal, and paid sick leave quota hardlock.
-- API, backend, database, and SQL are unchanged for this display-only frontend update.
+- Paid sick leave quota and option hardlock apply only to `paid_sick_leave`. Do not reuse quota/probation locking for `personal_leave`, `no_show`, or `unpaid_sick_leave`.
+- `personal_leave` intentionally uses snake_case as a shift status. Do not confuse it with employee leave application type values such as `personalleave`.
+- API shape, backend database schema, and SQL are unchanged for the frontend status addition.
 
 Related implementation files:
 
 - `components/shift/ShiftCell.tsx`
+- `components/shift/ShiftDetailModal.tsx`
 - `constants/ShiftStatus.ts`
+- `request/ShiftRequest.ts`
+- `service/ShiftService.ts`
+- `components/__tests__/ShiftStatus-test.js`
 - `components/__tests__/ShiftCellStatusDetail-test.js`
+
+Effective focused verification command for manual Schedule statuses:
+
+```bash
+TMPDIR=/Users/marktwain/Projects/OPBOA/.jest-tmp npx jest --runInBand --watchAll=false components/__tests__/ShiftStatus-test.js components/__tests__/ShiftCellStatusDetail-test.js
+```
+
+Known typecheck caveat as of the `personal_leave` frontend pass: `npx tsc --noEmit` still fails on unrelated pre-existing errors in `app/applications/Regulations.tsx`, `app/setPassword.tsx`, and `components/FreeStyle/RequiredFormControl.tsx`. Use focused Jest for this flow until the repo-wide TypeScript blockers are cleaned up.
 
 ## Cross-Stack Planning Notes
 
@@ -30,10 +53,14 @@ The same notes now include the Select Shift Form candidate availability workflow
 
 The same notes also include the sick leave proof upload planning lessons: future cross-stack plans must separate `Backend Plan`, `Frontend Plan`, `API Contract`, `DB Change Required`, cross-module email/file-upload behavior, and separate Backend_Dev / Frontend_Dev task lists. UI details belong in the frontend/UI section, and database SQL must be complete and user-executed when schema or data changes are required.
 
+The same notes also include MAN-36 Schedule `personal_leave` lessons: keep the status naming contract explicit, update backend presentation query allow-lists for every visible status, scope paid sick leave quota only to `paid_sick_leave`, state the no-DB-change conclusion, and record final color decisions after product review.
+
 Related plan:
 
 - [plans/select-shift-form-preference-availability-plan-2026-05-21.md](plans/select-shift-form-preference-availability-plan-2026-05-21.md)
 - [plans/sick-leave-proof-upload-cross-stack-plan-2026-06-01.md](plans/sick-leave-proof-upload-cross-stack-plan-2026-06-01.md)
+- [plans/mark-as-personal-leave-frontend-plan-2026-06-18.md](plans/mark-as-personal-leave-frontend-plan-2026-06-18.md)
+- [docs/feature_spec/shift-status-paid-sick-leave-cross-stack.md](docs/feature_spec/shift-status-paid-sick-leave-cross-stack.md)
 
 ## Frontend Knowledge Notes
 
@@ -42,6 +69,7 @@ Related plan:
 - Cross-stack DatePicker architecture guidance is captured in [docs/feature_spec/leave-application-datepicker-cross-stack-architecture.md](docs/feature_spec/leave-application-datepicker-cross-stack-architecture.md), with the matching repo-local skill at `.codex/skills/opb-leave-datepicker-cross-stack-architecture/SKILL.md`. It covers MAN-19 requirement evolution, normal/sick leave rules, Vancouver business-date contract, availability API, non-adopted TimePicker/start-end split direction, and final acceptance points.
 - Employee application card guidance is captured in [docs/feature_spec/employee-application-card-frontend-knowledge.md](docs/feature_spec/employee-application-card-frontend-knowledge.md). It covers MAN-25 delete visibility rules, the `Details + i` details-entry pattern, summary-card vs details-modal content split, backend delete validation as the required fallback, focused verification, and known unrelated blockers.
 - Review comment migration guidance is captured in [docs/feature_spec/review-comment-frontend-knowledge.md](docs/feature_spec/review-comment-frontend-knowledge.md). It covers the `rejectReason -> reviewComment` frontend contract, approve/decline JSON payloads, ReviewModal submit/error behavior, My Applications and History display rules, identity-parameter no-trim constraints, and focused verification.
+- Schedule manual status guidance is captured in [docs/patch_doc/shift-status-paid-sick-leave-frontend.md](docs/patch_doc/shift-status-paid-sick-leave-frontend.md). It covers the manager status dropdown, `personal_leave`, cell detail display, status colors, paid sick leave quota boundaries, API payload, browser checks, focused Jest command, and known TypeScript caveat.
 
 ### Review Comment Migration
 

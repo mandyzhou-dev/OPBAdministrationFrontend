@@ -4,6 +4,8 @@ Date: 2026-05-13
 
 This document records the frontend decisions and verification notes for the Schedule shift status / paid sick leave change. It is a handoff document for future OPBOA frontend work; it does not define new business scope.
 
+Updated 2026-06-22: includes the follow-up `personal_leave` manual status addition and documentation handoff notes.
+
 ---
 
 ## 1. Scope
@@ -13,6 +15,7 @@ The change adds Manager-only status operations to the existing Schedule shift de
 - Mark as no show.
 - Mark as paid sick leave.
 - Mark as unpaid sick leave.
+- Mark as personal leave.
 
 The frontend must not expose a Reset status / Mark as active action. If reset is needed later, it should be treated as a new product decision and implemented with backend support.
 
@@ -30,6 +33,7 @@ The frontend must not expose a Reset status / Mark as active action. If reset is
 - `service/ShiftService.ts`
 - `util/useAuth.ts`
 - `components/__tests__/ShiftStatus-test.js`
+- `components/__tests__/ShiftCellStatusDetail-test.js`
 
 ---
 
@@ -39,10 +43,14 @@ The frontend must not expose a Reset status / Mark as active action. If reset is
 
 - `ShiftCell` reads `shift.status` from the schedule data.
 - Status colors are visible to all users, including employees.
-- `no_show` and `unpaid_sick_leave` display as grey.
+- `no_show`, `unpaid_sick_leave`, and `personal_leave` display as grey.
 - `paid_sick_leave` displays as light purple.
 - `active` keeps the existing group-based badge styling.
 - `cancelled` is treated as a non-worked display status and may use grey styling.
+- `personal_leave` uses the same grey treatment as `no_show`:
+  - Background: `#9CA3AF`
+  - Text: `#111827`
+- `personal_leave` shows the cell detail text `Personal leave`.
 
 ### ShiftDetailModal
 
@@ -52,6 +60,7 @@ The frontend must not expose a Reset status / Mark as active action. If reset is
   - `no_show`
   - `paid_sick_leave`
   - `unpaid_sick_leave`
+  - `personal_leave`
 - Selecting any status opens a confirmation dialog.
 - The status update request is sent only after the user confirms Yes.
 - Cancel closes the confirmation dialog without calling the backend.
@@ -91,7 +100,8 @@ UI rules:
 - If `probation === true` or `eligible === false`, hardlock paid sick leave and show probation / not eligible messaging.
 - If `canMarkPaidSickLeave === false`, hardlock paid sick leave and show quota-used-up messaging.
 - If `targetDateAlreadyCounted === true`, allow marking paid sick leave even when quota is otherwise full, because the backend counts the Vancouver calendar day only once.
-- No show and unpaid sick leave are not blocked by probation or paid sick leave quota.
+- No show, unpaid sick leave, and personal leave are not blocked by probation or paid sick leave quota.
+- The quota helper and hardlock must stay scoped to `paid_sick_leave`. `personal_leave` must not reuse paid sick leave quota logic.
 
 ---
 
@@ -113,7 +123,7 @@ Request body:
 
 ```json
 {
-  "status": "paid_sick_leave",
+  "status": "personal_leave",
   "operatorUsername": "manager_username"
 }
 ```
@@ -123,6 +133,9 @@ Allowed `status` values from the frontend:
 - `no_show`
 - `paid_sick_leave`
 - `unpaid_sick_leave`
+- `personal_leave`
+
+Naming note: the shift status value is `personal_leave` because manual shift statuses use snake_case. Do not rename or conflate this with employee leave application type values such as `personalleave`.
 
 ### Get Paid Sick Leave Quota
 
@@ -136,6 +149,8 @@ Expected response fields match `PaidSickLeaveQuota`.
 
 The schedule/visible-shifts response must include `status` for each shift. Without `status`, the frontend cannot display employee-visible grey/purple state colors.
 
+For `personal_leave`, the backend Schedule presentation queries must include the new status in their native-query allow-list. If the backend accepts the PATCH but omits `personal_leave` from the presentation allow-list, the update can succeed and then the marked shift can disappear from Schedule results.
+
 ---
 
 ## 6. Frontend Implementation Notes
@@ -145,6 +160,8 @@ The schedule/visible-shifts response must include `status` for each shift. Witho
 - Preserve existing shift status when editing time/group. Do not reset status to `active` in `modifyShift()`.
 - The frontend can block obvious paid sick leave actions for UX, but backend validation remains authoritative.
 - Do not calculate worked hours or KPI status exclusions on the frontend. Those values must come from backend statistics/KPI APIs.
+- Add new manual statuses through `ManualShiftStatus`, `MANUAL_SHIFT_STATUS_OPTIONS`, `NON_WORKED_SHIFT_STATUSES`, `SHIFT_STATUS_LABELS`, `SHIFT_STATUS_COLORS`, `SHIFT_STATUS_TEXT_COLORS`, and `normalizeShiftStatus` together.
+- Add cell-detail coverage in `ShiftCellStatusDetail-test.js` when a status should render visible status text inside Schedule cells.
 
 ---
 
@@ -165,7 +182,7 @@ Manual test:
 3. Confirm the modal shows the status dropdown and paid sick leave quota.
 4. Select `Mark as no show`, cancel, and confirm no request is sent.
 5. Select `Mark as no show`, confirm Yes, and verify the cell reloads grey.
-6. Repeat for `Mark as unpaid sick leave` and `Mark as paid sick leave`.
+6. Repeat for `Mark as unpaid sick leave`, `Mark as paid sick leave`, and `Mark as personal leave`.
 7. Log in as an employee and confirm status colors are visible but status controls are not.
 
 Network checks:
@@ -187,7 +204,7 @@ PATCH http://localhost:8080/api/shift/shiftarrangement/{id}/status
 
 ```json
 {
-  "status": "no_show",
+  "status": "personal_leave",
   "operatorUsername": "manager_username"
 }
 ```
@@ -201,7 +218,7 @@ If OPTIONS fails before PATCH is sent, investigate backend CORS/Spring Security 
 Focused Jest test:
 
 ```bash
-TMPDIR=/Users/marktwain/Projects/OPBOA/.jest-tmp npx jest --runTestsByPath components/__tests__/ShiftStatus-test.js --runInBand --watchAll=false
+TMPDIR=/Users/marktwain/Projects/OPBOA/.jest-tmp npx jest --runInBand --watchAll=false components/__tests__/ShiftStatus-test.js components/__tests__/ShiftCellStatusDetail-test.js
 ```
 
 Expo web export:
@@ -228,7 +245,6 @@ Known existing `tsc` failures at the time of this change:
 
 - `app/applications/Regulations.tsx`
 - `app/setPassword.tsx`
-- `components/applications/ReviewModal.tsx`
 - `components/FreeStyle/RequiredFormControl.tsx`
 
 These were not introduced by the shift status frontend work, but they prevent `npx tsc --noEmit` from being a clean project-wide gate until fixed.
