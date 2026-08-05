@@ -6,13 +6,15 @@ export type ShiftStatus =
   | "no_show"
   | "paid_sick_leave"
   | "unpaid_sick_leave"
-  | "personal_leave";
+  | "personal_leave"
+  | "annual_leave"
 
 export type ManualShiftStatus =
   | "no_show"
   | "paid_sick_leave"
   | "unpaid_sick_leave"
-  | "personal_leave";
+  | "personal_leave"
+  | "annual_leave";
 
 export const SHIFT_STATUS_LABELS: Record<ShiftStatus, string> = {
   active: "Active",
@@ -21,6 +23,7 @@ export const SHIFT_STATUS_LABELS: Record<ShiftStatus, string> = {
   paid_sick_leave: "Paid sick leave",
   unpaid_sick_leave: "Unpaid sick leave",
   personal_leave: "Personal leave",
+  annual_leave: "Annual leave"
 };
 
 export const MANUAL_SHIFT_STATUS_OPTIONS: Array<{
@@ -31,6 +34,7 @@ export const MANUAL_SHIFT_STATUS_OPTIONS: Array<{
   { label: "Mark as paid sick leave", value: "paid_sick_leave" },
   { label: "Mark as unpaid sick leave", value: "unpaid_sick_leave" },
   { label: "Mark as personal leave", value: "personal_leave" },
+  { label: "Mark as annual leave", value: "annual_leave" },
 ];
 
 export const NON_WORKED_SHIFT_STATUSES: ShiftStatus[] = [
@@ -39,6 +43,7 @@ export const NON_WORKED_SHIFT_STATUSES: ShiftStatus[] = [
   "paid_sick_leave",
   "unpaid_sick_leave",
   "personal_leave",
+  "annual_leave"
 ];
 
 export const SHIFT_STATUS_COLORS: Record<ShiftStatus, string | undefined> = {
@@ -48,6 +53,7 @@ export const SHIFT_STATUS_COLORS: Record<ShiftStatus, string | undefined> = {
   paid_sick_leave: "#DDD6FE",
   unpaid_sick_leave: "#9CA3AF",
   personal_leave: "#9CA3AF",
+  annual_leave:"#DDD6FE",
 };
 
 export const SHIFT_STATUS_TEXT_COLORS: Record<ShiftStatus, string | undefined> = {
@@ -57,6 +63,7 @@ export const SHIFT_STATUS_TEXT_COLORS: Record<ShiftStatus, string | undefined> =
   paid_sick_leave: "#312E81",
   unpaid_sick_leave: "#111827",
   personal_leave: "#111827",
+  annual_leave: "#312E81",
 };
 
 export const normalizeShiftStatus = (status?: string | null): ShiftStatus => {
@@ -65,7 +72,8 @@ export const normalizeShiftStatus = (status?: string | null): ShiftStatus => {
     status === "no_show" ||
     status === "paid_sick_leave" ||
     status === "unpaid_sick_leave" ||
-    status === "personal_leave"
+    status === "personal_leave"||
+    status === "annual_leave"
   ) {
     return status;
   }

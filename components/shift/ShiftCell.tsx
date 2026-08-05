@@ -51,7 +51,8 @@ export const ShiftCell: React.FC<ShiftCellProps> = ({ workers, shifts, onUpdated
                         shiftStatus === "paid_sick_leave" ||
                         shiftStatus === "unpaid_sick_leave" ||
                         shiftStatus === "no_show" ||
-                        shiftStatus === "personal_leave";
+                        shiftStatus === "personal_leave"||
+                        shiftStatus === "annual_leave";
                     return (
                         <div key={worker.username} onClick={() => callModals(shifts.get(worker.username ?? ""))}>
                             <Badge

@@ -14,6 +14,7 @@ describe("ShiftStatus constants", () => {
       "paid_sick_leave",
       "unpaid_sick_leave",
       "personal_leave",
+      "annual_leave",
     ]);
   });
 
@@ -24,6 +25,7 @@ describe("ShiftStatus constants", () => {
       "paid_sick_leave",
       "unpaid_sick_leave",
       "personal_leave",
+      "annual_leave",
     ]);
   });
 
@@ -33,6 +35,8 @@ describe("ShiftStatus constants", () => {
     expect(SHIFT_STATUS_COLORS.personal_leave).toBe("#9CA3AF");
     expect(SHIFT_STATUS_TEXT_COLORS.personal_leave).toBe("#111827");
     expect(SHIFT_STATUS_COLORS.paid_sick_leave).toBe("#DDD6FE");
+    expect(SHIFT_STATUS_COLORS.annual_leave).toBe("#DDD6FE");
+
   });
 
   it("normalizes personal leave as a known shift status", () => {
